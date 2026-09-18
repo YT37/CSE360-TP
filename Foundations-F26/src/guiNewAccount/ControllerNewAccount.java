@@ -1,9 +1,10 @@
 package guiNewAccount;
 
 import java.sql.SQLException;
-
 import database.Database;
 import entityClasses.User;
+import validators.UserNameRecognizer;
+import validators.PasswordValidator;
 
 /*******
  * <p> Title: ControllerNewAccount Class. </p>
@@ -72,6 +73,22 @@ public class ControllerNewAccount {
 				ViewNewAccount.theInvitationCode + "; email address: " + 
 				ViewNewAccount.emailAddress + "; Role: " + ViewNewAccount.theRole);
 		
+		// Check the username format
+		String usernameError = UserNameRecognizer.checkForValidUserName(username);
+		if (usernameError != "") {
+			ViewNewAccount.alertUsernamePasswordError.setContentText(usernameError);
+			ViewNewAccount.alertUsernamePasswordError.showAndWait();
+			return;
+		}
+		
+		// Check that the username isn't already taken
+		if (theDatabase.doesUserExist(username)) {
+			ViewNewAccount.alertUsernamePasswordError.setContentText(
+					"That username is already taken. Please choose another.");
+			ViewNewAccount.alertUsernamePasswordError.showAndWait();
+			return;
+		}
+		
 		// Initialize local variables that will be created during this process
 		int roleCode = 0;
 		User user = null;
@@ -79,6 +96,16 @@ public class ControllerNewAccount {
 		// Make sure the two passwords are the same.	
 		if (ViewNewAccount.text_Password1.getText().
 				compareTo(ViewNewAccount.text_Password2.getText()) == 0) {
+			
+			// Check the password format
+			String passwordError = PasswordValidator.evaluatePassword(password);
+			if (passwordError != "") {
+				ViewNewAccount.text_Password1.setText("");
+				ViewNewAccount.text_Password2.setText("");
+				ViewNewAccount.alertUsernamePasswordError.setContentText(passwordError);
+				ViewNewAccount.alertUsernamePasswordError.showAndWait();
+				return;
+			}
 			
 			// The passwords match so we will set up the role and the User object base on the 
 			// information provided in the invitation
@@ -98,30 +125,32 @@ public class ControllerNewAccount {
 			}
 			
 			// Unlike the FirstAdmin, we know the email address, so set that into the user as well.
-        	user.setEmailAddress(ViewNewAccount.emailAddress);
+	    	user.setEmailAddress(ViewNewAccount.emailAddress);
 
-        	// Inform the system about which role will be played
+	    	// Inform the system about which role will be played
 			applicationMain.FoundationsMain.activeHomePage = roleCode;
 			
-        	// Create the account based on user and proceed to the user account update page
-            try {
-            	// Create a new User object with the pre-set role and register in the database
-            	theDatabase.register(user);
-            } catch (SQLException e) {
-                System.err.println("*** ERROR *** Database error: " + e.getMessage());
-                e.printStackTrace();
-                System.exit(0);
-            }
-            
-            // The account has been set, so remove the invitation from the system
-            theDatabase.removeInvitationAfterUse(
-            		ViewNewAccount.text_Invitation.getText());
-            
-            // Set the database so it has this user and the current user
-            theDatabase.getUserAccountDetails(username);
+	    	// Create the account based on user and proceed to the user account update page
+	        try {
+	        	// Create a new User object with the pre-set role and register in the database
+	        	theDatabase.register(user);
+	        } catch (SQLException e) {
+	            System.err.println("*** ERROR *** Database error: " + e.getMessage());
+	            ViewNewAccount.alertUsernamePasswordError.setContentText(
+	            		"Something went wrong creating the account. Please try again.");
+	            ViewNewAccount.alertUsernamePasswordError.showAndWait();
+	            return;
+	        }
+	        
+	        // The account has been set, so remove the invitation from the system
+	        theDatabase.removeInvitationAfterUse(
+	        		ViewNewAccount.text_Invitation.getText());
+	        
+	        // Set the database so it has this user and the current user
+	        theDatabase.getUserAccountDetails(username);
 
-            // Navigate to the Welcome Login Page
-            guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewNewAccount.theStage, user);
+	        // Navigate to the Welcome Login Page
+	        guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewNewAccount.theStage, user);
 		}
 		else {
 			// The two passwords are NOT the same, so clear the passwords, explain the passwords

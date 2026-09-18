@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import database.Database;
 import entityClasses.User;
 import javafx.stage.Stage;
+import validators.UserNameRecognizer;
+import validators.PasswordValidator;
 
 /*******
  * <p> Title: ControllerFirstAdmin Class. </p>
@@ -104,33 +106,55 @@ public class ControllerFirstAdmin {
 	 */
 	protected static void doSetupAdmin(Stage ps, int r) {
 		
-		// Make sure the two passwords are the same
-		if (adminPassword1.compareTo(adminPassword2) == 0) {
-        	// Create the passwords and proceed to the user home page
-        	User user = new User(adminUsername, adminPassword1, "", "", "", "", "", true, false, 
-        			false);
-            try {
-            	// Create a new User object with admin role and register in the database
-            	theDatabase.register(user);
-            	}
-            catch (SQLException e) {
-                System.err.println("*** ERROR *** Database error trying to register a user: " + 
-                		e.getMessage());
-                e.printStackTrace();
-                System.exit(0);
-            }
-            
-            // User was established in the database, so navigate to the User Update Page
-        	guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewFirstAdmin.theStage, user);
+		// Check the username format first
+		String usernameError = UserNameRecognizer.checkForValidUserName(adminUsername);
+		if (usernameError != "") {
+			ViewFirstAdmin.alertUsernamePasswordError.setContentText(usernameError);
+			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
+			return;
 		}
-		else {
-			// The two passwords are NOT the same, so clear the passwords, explain the passwords
-			// must be the same, and clear the message as soon as the first character is typed.
+		
+		// Check that the username isn't already taken
+		if (theDatabase.doesUserExist(adminUsername)) {
+			ViewFirstAdmin.alertUsernamePasswordError.setContentText(
+					"That username is already taken. Please choose another.");
+			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
+			return;
+		}
+		
+		// Make sure the two passwords are the same
+		if (adminPassword1.compareTo(adminPassword2) != 0) {
 			ViewFirstAdmin.text_AdminPassword1.setText("");
 			ViewFirstAdmin.text_AdminPassword2.setText("");
 			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(
 					"The two passwords must match. Please try again!");
+			return;
 		}
+		
+		// Check the password format
+		String passwordError = PasswordValidator.evaluatePassword(adminPassword1);
+		if (passwordError != "") {
+			ViewFirstAdmin.text_AdminPassword1.setText("");
+			ViewFirstAdmin.text_AdminPassword2.setText("");
+			ViewFirstAdmin.alertUsernamePasswordError.setContentText(passwordError);
+			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
+			return;
+		}
+		
+		// Everything checks out -- create the account
+		User user = new User(adminUsername, adminPassword1, "", "", "", "", "", true, false, false);
+		try {
+			theDatabase.register(user);
+		} catch (SQLException e) {
+			System.err.println("*** ERROR *** Database error trying to register a user: " + e.getMessage());
+			ViewFirstAdmin.alertUsernamePasswordError.setContentText(
+					"Something went wrong creating the account. Please try again.");
+			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
+			return;
+		}
+
+		// User was established in the database, so navigate to the User Update Page
+		guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewFirstAdmin.theStage, user);
 	}
 	
 	
