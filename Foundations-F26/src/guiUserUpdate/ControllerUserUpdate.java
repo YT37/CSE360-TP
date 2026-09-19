@@ -1,6 +1,8 @@
 package guiUserUpdate;
 
+import database.Database;
 import entityClasses.User;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 public class ControllerUserUpdate {
@@ -35,26 +37,22 @@ public class ControllerUserUpdate {
 	 * 
 	 * @param theUser specifies the user so we go to the right page and so the right information
 	 */
-	protected static void goToUserHomePage(Stage theStage, User theUser) {
-		
-		// Get the roles the user selected during login
-		int theRole = applicationMain.FoundationsMain.activeHomePage;
+	
+	private static Database theDatabase = applicationMain.FoundationsMain.database;
 
-		// Use that role to proceed to that role's home page
-		switch (theRole) {
-		case 1:
-			guiAdminHome.ViewAdminHome.displayAdminHome(theStage, theUser);
-			break;
-		case 2:
-			guiRole1.ViewRole1Home.displayRole1Home(theStage, theUser);
-			break;
-		case 3:
-			guiRole2.ViewRole2Home.displayRole2Home(theStage, theUser);
-			break;
-		default: 
-			System.out.println("*** ERROR *** UserUpdate goToUserHome has an invalid role: " + 
-					theRole);
-			System.exit(0);
+	protected static void goToUserHomePage(Stage theStage, User theUser) {
+		theDatabase.getUserAccountDetails(theUser.getUserName());
+		if (theDatabase.getCurrentIsOneTimePassword()) {
+			Alert alert = new Alert(Alert.AlertType.WARNING,
+					"You must set a new password before continuing.");
+			alert.showAndWait();
+			return;
 		}
- 	}
+		int numberOfRoles = theDatabase.getNumberOfRoles(theUser);
+		if (numberOfRoles > 1) {
+			guiMultipleRoleDispatch.ViewMultipleRoleDispatch.displayMultipleRoleDispatch(theStage, theUser);
+		} else {
+			guiTools.GUISingleRoleDispatch.doSingleRoleDispatch(theStage, theUser);
+		}
+	}
 }

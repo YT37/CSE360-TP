@@ -146,8 +146,7 @@ public class ControllerNewAccount {
 	        }
 	        
 	        // The account has been set, so remove the invitation from the system
-	        theDatabase.removeInvitationAfterUse(
-	        		ViewNewAccount.text_Invitation.getText());
+	        theDatabase.removeInvitationAfterUse(ViewNewAccount.theInvitationCode);
 	        
 	        // Set the database so it has this user and the current user
 	        theDatabase.getUserAccountDetails(username);
@@ -160,6 +159,8 @@ public class ControllerNewAccount {
 			// must be the same, and clear the message as soon as the first character is typed.
 			ViewNewAccount.text_Password1.setText("");
 			ViewNewAccount.text_Password2.setText("");
+			ViewNewAccount.alertUsernamePasswordError.setHeaderText("Passwords Do Not Match");
+			ViewNewAccount.alertUsernamePasswordError.setContentText("The two passwords must be identical. Please try again.");
 			ViewNewAccount.alertUsernamePasswordError.showAndWait();
 		}
 	}

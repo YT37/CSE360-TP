@@ -3,6 +3,7 @@ package guiUserLogin;
 import database.Database;
 import entityClasses.User;
 import javafx.stage.Stage;
+import validators.PasswordValidator;
 
 /*******
  * <p> Title: ControllerUserLogin Class. </p>
@@ -68,6 +69,14 @@ public class ControllerUserLogin {
 		String password = ViewUserLogin.text_Password.getText();
     	boolean loginResult = false;
     	
+		// Defensive length check before DB lookup (avoids revealing why it failed)
+		if (username.length() > 16 || password.length() > PasswordValidator.MAX_PASSWORD_LENGTH) {
+			ViewUserLogin.alertUsernamePasswordError.setContentText(
+					"Incorrect username/password. Try again!");
+			ViewUserLogin.alertUsernamePasswordError.showAndWait();
+			return;
+		}
+
 		// Fetch the user and verify the username
      	if (theDatabase.getUserAccountDetails(username) == false) {
      		// Don't provide too much information.  Don't say the username is invalid or the
@@ -89,6 +98,20 @@ public class ControllerUserLogin {
     		return;
     	}
 		// System.out.println("*** Password is valid for this user");
+    	
+    	if (theDatabase.getCurrentIsOneTimePassword()) {
+    		ViewUserLogin.alertUsernamePasswordError.setContentText(
+    				"You're using a one-time password. Please set a new password to continue.");
+    		ViewUserLogin.alertUsernamePasswordError.showAndWait();
+    		
+    		User user = new User(username, password, theDatabase.getCurrentFirstName(), 
+    				theDatabase.getCurrentMiddleName(), theDatabase.getCurrentLastName(), 
+    				theDatabase.getCurrentPreferredFirstName(), theDatabase.getCurrentEmailAddress(), 
+    				theDatabase.getCurrentAdminRole(), 
+    				theDatabase.getCurrentNewRole1(), theDatabase.getCurrentNewRole2());
+    		guiUserUpdate.ViewUserUpdate.displayUserUpdate(theStage, user);
+    		return;
+    	}
 		
 		// Establish this user's details
     	User user = new User(username, password, theDatabase.getCurrentFirstName(), 
@@ -128,6 +151,13 @@ public class ControllerUserLogin {
 			// System.out.println("*** Going to displayMultipleRoleDispatch");
 			guiMultipleRoleDispatch.ViewMultipleRoleDispatch.
 				displayMultipleRoleDispatch(theStage, user);
+		}  else {
+			// numberOfRoles == 0 -- shouldn't normally happen, but Fix 2 above makes it
+			// impossible to reach zero via Add/Remove Roles, and this is the safety net
+			// for any other path that might still produce it
+			ViewUserLogin.alertUsernamePasswordError.setContentText(
+					"This account has no roles assigned. Contact an admin for help.");
+			ViewUserLogin.alertUsernamePasswordError.showAndWait();
 		}
 	}
 	

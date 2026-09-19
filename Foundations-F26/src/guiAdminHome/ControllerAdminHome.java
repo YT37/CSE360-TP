@@ -8,6 +8,8 @@ import javafx.scene.control.Alert.AlertType;
 import java.util.Optional;
 import java.util.List;
 import guiTools.UserListView;
+import validators.PasswordValidator;
+import guiTools.InvitationListView;
 
 /*******
  * <p> Title: GUIAdminHomePage Class. </p>
@@ -101,12 +103,8 @@ public class ControllerAdminHome {
 	 * <p> Description: Protected method that is currently a stub informing the user that
 	 * this function has not yet been implemented. </p>
 	 */
-	protected static void manageInvitations () {
-		System.out.println("\n*** WARNING ***: Manage Invitations Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("Manage Invitations Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("Manage Invitations Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+	protected static void manageInvitations() {
+		InvitationListView.show(ViewAdminHome.theStage, theDatabase);
 	}
 	
 	/**********
@@ -117,11 +115,41 @@ public class ControllerAdminHome {
 	 * <p> Description: Protected method that is currently a stub informing the user that
 	 * this function has not yet been implemented. </p>
 	 */
-	protected static void setOnetimePassword () {
-		System.out.println("\n*** WARNING ***: One-Time Password Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("One-Time Password Not Yet Implemented");
+	protected static void setOnetimePassword() {
+		TextInputDialog userDialog = new TextInputDialog("");
+		userDialog.setTitle("Set a One-Time Password");
+		userDialog.setHeaderText("Enter the username of the account");
+		Optional<String> userResult = userDialog.showAndWait();
+		if (!userResult.isPresent() || userResult.get().isEmpty()) return;
+		String username = userResult.get();
+		
+		if (username.length() > 16 || !theDatabase.doesUserExist(username)) {
+			ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
+			ViewAdminHome.alertNotImplemented.setContentText("No account exists with that username.");
+			ViewAdminHome.alertNotImplemented.showAndWait();
+			return;
+		}
+		
+		TextInputDialog passwordDialog = new TextInputDialog("");
+		passwordDialog.setTitle("Set a One-Time Password");
+		passwordDialog.setHeaderText("Enter a temporary password for \"" + username + "\"");
+		Optional<String> passwordResult = passwordDialog.showAndWait();
+		if (!passwordResult.isPresent() || passwordResult.get().isEmpty()) return;
+		String tempPassword = passwordResult.get();
+		
+		String passwordError = PasswordValidator.evaluatePassword(tempPassword);
+		if (passwordError != "") {
+			ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
+			ViewAdminHome.alertNotImplemented.setContentText(passwordError);
+			ViewAdminHome.alertNotImplemented.showAndWait();
+			return;
+		}
+		
+		theDatabase.setOneTimePassword(username, tempPassword);
+		ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Set");
+		ViewAdminHome.alertNotImplemented.setContentText(
+				"A one-time password has been set for \"" + username + "\". "
+				+ "They must set a new password the next time they log in.");
 		ViewAdminHome.alertNotImplemented.showAndWait();
 	}
 	

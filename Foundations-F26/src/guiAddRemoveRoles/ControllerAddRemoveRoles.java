@@ -236,24 +236,43 @@ public class ControllerAddRemoveRoles {
 	 * 
 	 */
 	protected static void performRemoveRole() {
-		
-		// Determine which item in the ComboBox list was selected
 		ViewAddRemoveRoles.theRemoveRole = (String) ViewAddRemoveRoles.
 				combobox_SelectRoleToRemove.getValue();
 		
-		// If the selection is the list header (e.g., "<Select a role>") don't do anything
 		if (ViewAddRemoveRoles.theRemoveRole.compareTo("<Select a role>") != 0) {
 			
-			// If an actual role was selected, update the database entry for that user for the role
+			// An admin cannot remove their own Admin role
+			if (ViewAddRemoveRoles.theSelectedUser.equals(ViewAddRemoveRoles.theUser.getUserName())
+					&& ViewAddRemoveRoles.theRemoveRole.compareTo("Admin") == 0) {
+				javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+						javafx.scene.control.Alert.AlertType.WARNING,
+						"An admin cannot remove their own Admin role.");
+				alert.showAndWait();
+				return;
+			}
+			
+			// Don't leave the user with zero roles
+			int roleCount = 0;
+			if (theDatabase.getCurrentAdminRole()) roleCount++;
+			if (theDatabase.getCurrentNewRole1()) roleCount++;
+			if (theDatabase.getCurrentNewRole2()) roleCount++;
+			if (roleCount <= 1) {
+				javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+						javafx.scene.control.Alert.AlertType.WARNING,
+						"A user must have at least one role. Assign a new role before removing this one.");
+				alert.showAndWait();
+				return;
+			}
+			
 			if (theDatabase.updateUserRole(ViewAddRemoveRoles.theSelectedUser, 
 					ViewAddRemoveRoles.theRemoveRole, "false") ) {
 				ViewAddRemoveRoles.combobox_SelectRoleToRemove = new ComboBox <String>();
 				ViewAddRemoveRoles.combobox_SelectRoleToRemove.setItems(FXCollections.
-					observableArrayList(ViewAddRemoveRoles.addList));
+					observableArrayList(ViewAddRemoveRoles.removeList));
 				ViewAddRemoveRoles.combobox_SelectRoleToRemove.getSelectionModel().
 					clearAndSelect(0);		
 				setupSelectedUser();
-			}				
+			}			
 		}
 	}
 	

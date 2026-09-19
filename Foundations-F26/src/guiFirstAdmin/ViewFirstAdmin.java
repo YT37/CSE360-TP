@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import guiTools.PasswordStatusPanel;
 
 
 /*******
@@ -64,6 +65,9 @@ public class ViewFirstAdmin {
 
 	// This alert is used should the user enter two passwords that do not match
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
+
+	// Password status panel for live requirement feedback
+	private static PasswordStatusPanel passwordStatus = new PasswordStatusPanel();
 
 	// This button allow the user to abort creating the first admin account and terminate
 	private static Button button_Quit = new Button("Quit");
@@ -166,6 +170,9 @@ public class ViewFirstAdmin {
 		text_AdminPassword1.setPromptText("Enter Admin Password");
 		text_AdminPassword1.textProperty().addListener((_, _, _)
 				-> {ControllerFirstAdmin.setAdminPassword1(); });
+		text_AdminPassword1.textProperty().addListener((_, _, newVal)
+				-> {passwordStatus.update(newVal);
+					updateAdminSetupButtonState(); });
 
 		// Establish the text input operand field for the password
 		setupTextUI(text_AdminPassword2, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 260, 
@@ -173,15 +180,23 @@ public class ViewFirstAdmin {
 		text_AdminPassword2.setPromptText("Enter Admin Password Again");
 		text_AdminPassword2.textProperty().addListener((_, _, _) 
 				-> {ControllerFirstAdmin.setAdminPassword2(); });
+		text_AdminPassword2.textProperty().addListener((_, _, newVal)
+				-> {passwordStatus.updateMatch(text_AdminPassword1.getText().equals(newVal) && !newVal.isEmpty());
+					updateAdminSetupButtonState(); });
 
 		// Set up the Log In button
 		setupButtonUI(button_AdminSetup, "Dialog", 18, 200, Pos.CENTER, 475, 210);
+		button_AdminSetup.setDisable(true);
 		button_AdminSetup.setOnAction((_) -> {
 			ControllerFirstAdmin.doSetupAdmin(theStage,1); 
 			});
 
 		// Label to display the Passwords do not match error message
 		setupLabelUI(label_PasswordsDoNotMatch, "Arial", 18, width, Pos.CENTER, 0, 300);
+
+		// Position the password status panel below the password fields
+		passwordStatus.setLayoutX(50);
+		passwordStatus.setLayoutY(295);
 
 		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 520);
 		button_Quit.setOnAction((_) -> {ControllerFirstAdmin.performQuit(); });
@@ -190,7 +205,13 @@ public class ViewFirstAdmin {
 		theRootPane.getChildren().addAll(label_ApplicationTitle, label_TitleLine1,
 				label_TitleLine2, text_AdminUsername, text_AdminPassword1, 
 				text_AdminPassword2, button_AdminSetup, label_PasswordsDoNotMatch,
-				button_Quit);
+				button_Quit, passwordStatus);
+	}
+
+	private static void updateAdminSetupButtonState() {
+		boolean passwordsMatch = text_AdminPassword1.getText().equals(text_AdminPassword2.getText())
+				&& !text_AdminPassword1.getText().isEmpty();
+		button_AdminSetup.setDisable(!passwordStatus.isFullyValidWithMatch());
 	}
 	
 	

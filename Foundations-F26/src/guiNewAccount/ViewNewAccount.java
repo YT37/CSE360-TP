@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import database.Database;
 import entityClasses.User;
+import guiTools.PasswordStatusPanel;
 
 /*******
  * <p> Title: ViewNewAccount Class. </p>
@@ -60,6 +61,9 @@ public class ViewNewAccount {
 
 	// This alert is used should the user enter two passwords that do not match
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
+
+	// Password status panel for live requirement feedback
+	private static PasswordStatusPanel passwordStatus = new PasswordStatusPanel();
 
     protected static Button button_Quit = new Button("Quit");
 
@@ -121,6 +125,7 @@ public class ViewNewAccount {
 		text_Username.setText("");	// Clear the input fields so previously entered values do not
 		text_Password1.setText("");	// appear for a new user
 		text_Password2.setText("");
+		passwordStatus.reset();	// Reset password status panel for new user
 		
 		// Fetch the role for this user
 		theRole = theDatabase.getRoleGivenAnInvitationCode(theInvitationCode);
@@ -136,7 +141,7 @@ public class ViewNewAccount {
     	// Place all of the established GUI elements into the pane
     	theRootPane.getChildren().clear();
     	theRootPane.getChildren().addAll(label_NewUserCreation, label_NewUserLine, text_Username,
-    			text_Password1, text_Password2, button_UserSetup, button_Quit);    	
+    			text_Password1, text_Password2, button_UserSetup, button_Quit, passwordStatus);    	
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
 		theStage.setTitle("CSE 360 Foundation Code: New User Account Setup");	
@@ -173,14 +178,20 @@ public class ViewNewAccount {
 		setupTextUI(text_Username, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 160, true);
 		text_Username.setPromptText("Enter the Username");
 		
-		// Establish the text input operand field for the password
+// Establish the text input operand field for the password
 		setupTextUI(text_Password1, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 210, true);
 		text_Password1.setPromptText("Enter the Password");
+		text_Password1.textProperty().addListener((obs, oldVal, newVal)
+				-> {passwordStatus.update(newVal);
+					updateUserSetupButtonState(); });
 		
 		// Establish the text input operand field to confirm the password
 		setupTextUI(text_Password2, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 260, true);
 		text_Password2.setPromptText("Enter the Password Again");
-		
+		text_Password2.textProperty().addListener((obs, oldVal, newVal)
+				-> {passwordStatus.updateMatch(text_Password1.getText().equals(newVal) && !newVal.isEmpty());
+					updateUserSetupButtonState(); });
+
 		// If the invitation code is wrong, this alert dialog will tell the user
 		alertInvitationCodeIsInvalid.setTitle("Invalid Invitation Code");
 		alertInvitationCodeIsInvalid.setHeaderText("The invitation code is not valid.");
@@ -193,11 +204,16 @@ public class ViewNewAccount {
 
         // Set up the account creation and login
         setupButtonUI(button_UserSetup, "Dialog", 18, 200, Pos.CENTER, 475, 210);
+        button_UserSetup.setDisable(true);
         button_UserSetup.setOnAction((_) -> {ControllerNewAccount.doCreateUser(); });
 		
-        // Enable the user to quit the application
-        setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
-        button_Quit.setOnAction((_) -> {ControllerNewAccount.performQuit(); });
+		// Enable the user to quit the application
+		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
+		button_Quit.setOnAction((_) -> {ControllerNewAccount.performQuit(); });
+
+		// Position the password status panel below the password fields
+		passwordStatus.setLayoutX(50);
+		passwordStatus.setLayoutY(295);
 	}
 	
 	
@@ -250,5 +266,9 @@ public class ViewNewAccount {
 		t.setLayoutX(x);
 		t.setLayoutY(y);		
 		t.setEditable(e);
-	}	
+	}
+
+	private static void updateUserSetupButtonState() {
+		button_UserSetup.setDisable(!passwordStatus.isFullyValidWithMatch());
+	}
 }

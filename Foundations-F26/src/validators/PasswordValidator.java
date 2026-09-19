@@ -1,5 +1,8 @@
 package validators;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /*******
  * <p> Title: PasswordValidator Class. </p>
  * 
@@ -19,6 +22,7 @@ public class PasswordValidator {
 	public static boolean foundNumericDigit = false;
 	public static boolean foundSpecialChar = false;
 	public static boolean foundLongEnough = false;
+	public static boolean foundInvalidChar = false;
 	private static String inputLine = "";
 	private static char currentChar;
 	private static int currentCharNdx;
@@ -48,6 +52,7 @@ public class PasswordValidator {
 		foundNumericDigit = false;
 		foundSpecialChar = false;
 		foundLongEnough = false;
+		foundInvalidChar = false;
 		running = true;
 
 		while (running) {
@@ -60,6 +65,7 @@ public class PasswordValidator {
 			} else if ("~`!@#$%^&*()_-+={}[]|\\:;\"'<>,.?/".indexOf(currentChar) >= 0) {
 				foundSpecialChar = true;
 			} else {
+				foundInvalidChar = true;
 				passwordIndexofError = currentCharNdx;
 				return "*** Error *** An invalid character has been found!";
 			}
@@ -74,17 +80,17 @@ public class PasswordValidator {
 				currentChar = input.charAt(currentCharNdx);
 		}
 
-		String errMessage = "";
-		if (!foundUpperCase) errMessage += "Upper case; ";
-		if (!foundLowerCase) errMessage += "Lower case; ";
-		if (!foundNumericDigit) errMessage += "Numeric digits; ";
-		if (!foundSpecialChar) errMessage += "Special character; ";
-		if (!foundLongEnough) errMessage += "Long Enough; ";
+		List<String> missing = new ArrayList<String>();
+		if (!foundUpperCase) missing.add("an uppercase letter");
+		if (!foundLowerCase) missing.add("a lowercase letter");
+		if (!foundNumericDigit) missing.add("a number");
+		if (!foundSpecialChar) missing.add("a special character");
+		if (!foundLongEnough) missing.add("at least 8 characters");
 
-		if (errMessage == "")
-			return "";
+		if (missing.isEmpty())
+		    return "";
 
 		passwordIndexofError = currentCharNdx;
-		return errMessage + "conditions were not satisfied";
+		return "Password must contain " + String.join(", ", missing) + ".";
 	}
 }

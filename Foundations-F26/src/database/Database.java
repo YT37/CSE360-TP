@@ -60,6 +60,7 @@ public class Database {
 	private boolean currentAdminRole;
 	private boolean currentNewRole1;
 	private boolean currentNewRole2;
+	private boolean currentIsOneTimePassword;
 
 	/*******
 	 * <p> Method: Database </p>
@@ -125,6 +126,8 @@ public class Database {
 	    		+ "emailAddress VARCHAR(255), "
 	            + "role VARCHAR(10))";
 	    statement.execute(invitationCodesTable);
+	    statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS isOneTimePassword BOOL DEFAULT FALSE");
+	    statement.execute("ALTER TABLE InvitationCodes ADD COLUMN IF NOT EXISTS deadline TIMESTAMP");
 	}
 
 
@@ -215,7 +218,7 @@ public class Database {
 			
 			currentNewRole2 = user.getNewRole2();
 			pstmt.setBoolean(10, currentNewRole2);
-			
+						
 			pstmt.executeUpdate();
 		}
 		
@@ -391,18 +394,60 @@ public class Database {
 	 */
 	// Generates a new invitation code and inserts it into the database.
 	public String generateInvitationCode(String emailAddress, String role) {
-	    String code = UUID.randomUUID().toString().substring(0, 6); // Generate a random 6-character code
-	    String query = "INSERT INTO InvitationCodes (code, emailaddress, role) VALUES (?, ?, ?)";
+	    String code = UUID.randomUUID().toString().substring(0, 6);
+	    String query = "INSERT INTO InvitationCodes (code, emailaddress, role, deadline) VALUES (?, ?, ?, ?)";
+	    Timestamp deadline = new Timestamp(System.currentTimeMillis() + (7L * 24 * 60 * 60 * 1000));
 
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 	        pstmt.setString(1, code);
 	        pstmt.setString(2, emailAddress);
 	        pstmt.setString(3, role);
+	        pstmt.setTimestamp(4, deadline);
 	        pstmt.executeUpdate();
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	    return code;
+	}
+	
+	
+	public void removeExpiredInvitations() {
+	    String query = "DELETE FROM InvitationCodes WHERE deadline IS NOT NULL AND deadline < CURRENT_TIMESTAMP";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	public List<String[]> getAllInvitations() {
+	    removeExpiredInvitations();
+	    List<String[]> invitations = new ArrayList<String[]>();
+	    String query = "SELECT code, emailAddress, role, deadline FROM InvitationCodes";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        ResultSet rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            invitations.add(new String[] {
+	                rs.getString("code"),
+	                rs.getString("emailAddress"),
+	                rs.getString("role"),
+	                rs.getTimestamp("deadline") == null ? "<none>" : rs.getTimestamp("deadline").toString()
+	            });
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return invitations;
+	}
+
+	public void cancelInvitation(String code) {
+	    String query = "DELETE FROM InvitationCodes WHERE code = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, code);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	
@@ -469,6 +514,7 @@ public class Database {
 	 */
 	// Obtain the roles associated with an invitation code.
 	public String getRoleGivenAnInvitationCode(String code) {
+		removeExpiredInvitations();
 	    String query = "SELECT * FROM InvitationCodes WHERE code = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 	        pstmt.setString(1, code);
@@ -833,6 +879,7 @@ public class Database {
 	    	currentAdminRole = rs.getBoolean(9);
 	    	currentNewRole1 = rs.getBoolean(10);
 	    	currentNewRole2 = rs.getBoolean(11);
+	    	currentIsOneTimePassword = rs.getBoolean(12);
 			return true;
 	    } catch (SQLException e) {
 			return false;
@@ -922,6 +969,29 @@ public class Database {
 	        e.printStackTrace();
 	    }
 	}
+	
+	
+	public void setOneTimePassword(String username, String tempPassword) {
+	    String query = "UPDATE userDB SET password = ?, isOneTimePassword = TRUE WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, tempPassword);
+	        pstmt.setString(2, username);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	public void clearOneTimePasswordFlag(String username) {
+	    String query = "UPDATE userDB SET isOneTimePassword = FALSE WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, username);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 
 	/*******
 	 * <p> Method: void updateUsername(String oldUsername, String newUsername) </p>
@@ -1105,6 +1175,9 @@ public class Database {
 	 *  
 	 */
 	public boolean getCurrentNewRole2() { return currentNewRole2;};
+	
+	
+	public boolean getCurrentIsOneTimePassword() { return currentIsOneTimePassword; }
 
 	
 	/*******

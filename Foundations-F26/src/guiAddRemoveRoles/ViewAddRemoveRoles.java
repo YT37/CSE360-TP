@@ -140,6 +140,7 @@ public class ViewAddRemoveRoles {
 		// If not yet established, populate the static aspects of the GUI by creating the 
 		// singleton instance of this class
 		if (theView == null) theView = new ViewAddRemoveRoles();
+		combobox_SelectUser.setItems(FXCollections.observableArrayList(theDatabase.getUserList()));
 		
 		// Default to no user selected
 		combobox_SelectUser.getSelectionModel().select(0);

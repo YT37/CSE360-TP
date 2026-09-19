@@ -16,6 +16,7 @@ import validators.EmailAddressRecognizer;
 import validators.NameValidator;
 import validators.PasswordValidator;
 import validators.UserNameRecognizer;
+import validators.PasswordValidator;
 
 /*******
  * <p> Title: ViewUserUpdate Class. </p>
@@ -105,7 +106,6 @@ public class ViewUserUpdate {
 	private static TextInputDialog dialogUpdateLastName;
 	private static TextInputDialog dialogUpdatePreferredFirstName;
 	private static TextInputDialog dialogUpdateEmailAddresss;
-	private static TextInputDialog dialogUpdatePassword;
 	private static TextInputDialog dialogUpdateUsername;
 	
 	// These attributes are used to configure the page and populate it with this user's information
@@ -226,7 +226,6 @@ public class ViewUserUpdate {
 		dialogUpdateLastName = new TextInputDialog("");
 		dialogUpdatePreferredFirstName = new TextInputDialog("");
 		dialogUpdateEmailAddresss = new TextInputDialog("");
-		dialogUpdatePassword = new TextInputDialog("");
 		dialogUpdateUsername = new TextInputDialog("");
 
 		// Establish the label for each of the dialogs.
@@ -244,9 +243,6 @@ public class ViewUserUpdate {
 		
 		dialogUpdateEmailAddresss.setTitle("Update Email Address");
 		dialogUpdateEmailAddresss.setHeaderText("Update your Email Address");
-		
-		dialogUpdatePassword.setTitle("Update Password");
-		dialogUpdatePassword.setHeaderText("Update your Password");
 		
 		dialogUpdateUsername.setTitle("Update Username");
 		dialogUpdateUsername.setHeaderText("Update your Username");
@@ -271,7 +267,7 @@ public class ViewUserUpdate {
 			if (usernameError != "") {
 				Alert alert = new Alert(Alert.AlertType.ERROR, usernameError);
 				alert.showAndWait();
-			} else if (theDatabase.doesUserExist(enteredUsername)) {
+			} else if (!enteredUsername.equals(theUser.getUserName()) && theDatabase.doesUserExist(enteredUsername)) {
 				Alert alert = new Alert(Alert.AlertType.ERROR, "That username is already taken.");
 				alert.showAndWait();
 			} else {
@@ -289,23 +285,35 @@ public class ViewUserUpdate {
         setupLabelUI(label_Password, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 150);
         setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 150);
         setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
-        button_UpdatePassword.setOnAction((_) -> {result = dialogUpdatePassword.showAndWait();
-		result.ifPresent(_ -> {
-			String enteredPassword = result.get();
-			String passwordError = PasswordValidator.evaluatePassword(enteredPassword);
-			if (passwordError != "") {
-				Alert alert = new Alert(Alert.AlertType.ERROR, passwordError);
-				alert.showAndWait();
-			} else {
+        button_UpdatePassword.setOnAction((_) -> {
+			Optional<String> pwResult = guiTools.PasswordEntryDialog.showAndWait(
+					theStage, "Update Password", "Enter a new password that meets all requirements below.");
+			pwResult.ifPresent(enteredPassword -> {
+				String passwordError = PasswordValidator.evaluatePassword(enteredPassword);
+				if (passwordError != "") {
+					Alert alert = new Alert(Alert.AlertType.ERROR, passwordError);
+					alert.showAndWait();
+					return;
+				}
+				theDatabase.getUserAccountDetails(theUser.getUserName());
+				boolean wasOneTimePassword = theDatabase.getCurrentIsOneTimePassword();
 				theDatabase.updatePassword(theUser.getUserName(), enteredPassword);
-			}
+				if (wasOneTimePassword) {
+					theDatabase.clearOneTimePasswordFlag(theUser.getUserName());
+					Alert doneAlert = new Alert(Alert.AlertType.INFORMATION,
+							"Your password has been updated. Please log in again.");
+					doneAlert.showAndWait();
+					guiUserLogin.ViewUserLogin.displayUserLogin(theStage);
+					return;
+				}
+				theDatabase.getUserAccountDetails(theUser.getUserName());
+				String newPassword = theDatabase.getCurrentPassword();
+				theUser.setPassword(newPassword);
+				if (newPassword == null || newPassword.length() < 1) label_CurrentPassword.setText("<none>");
+				else label_CurrentPassword.setText(newPassword);
+			});
 		});
-		theDatabase.getUserAccountDetails(theUser.getUserName());
-		String newPassword = theDatabase.getCurrentPassword();
-       	theUser.setPassword(newPassword);
-    	if (newPassword == null || newPassword.length() < 1)label_CurrentPassword.setText("<none>");
-    	else label_CurrentPassword.setText(newPassword);
-		});
+        
         
      // First Name
         setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);

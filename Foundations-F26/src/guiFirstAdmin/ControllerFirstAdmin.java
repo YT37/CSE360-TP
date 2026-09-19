@@ -109,6 +109,7 @@ public class ControllerFirstAdmin {
 		// Check the username format first
 		String usernameError = UserNameRecognizer.checkForValidUserName(adminUsername);
 		if (usernameError != "") {
+			ViewFirstAdmin.alertUsernamePasswordError.setHeaderText("Invalid Username");
 			ViewFirstAdmin.alertUsernamePasswordError.setContentText(usernameError);
 			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
 			return;
@@ -116,6 +117,7 @@ public class ControllerFirstAdmin {
 		
 		// Check that the username isn't already taken
 		if (theDatabase.doesUserExist(adminUsername)) {
+			ViewFirstAdmin.alertUsernamePasswordError.setHeaderText("Username Taken");
 			ViewFirstAdmin.alertUsernamePasswordError.setContentText(
 					"That username is already taken. Please choose another.");
 			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
@@ -136,6 +138,7 @@ public class ControllerFirstAdmin {
 		if (passwordError != "") {
 			ViewFirstAdmin.text_AdminPassword1.setText("");
 			ViewFirstAdmin.text_AdminPassword2.setText("");
+			ViewFirstAdmin.alertUsernamePasswordError.setHeaderText("Invalid Password");
 			ViewFirstAdmin.alertUsernamePasswordError.setContentText(passwordError);
 			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
 			return;
@@ -147,6 +150,7 @@ public class ControllerFirstAdmin {
 			theDatabase.register(user);
 		} catch (SQLException e) {
 			System.err.println("*** ERROR *** Database error trying to register a user: " + e.getMessage());
+			ViewFirstAdmin.alertUsernamePasswordError.setHeaderText("Error");
 			ViewFirstAdmin.alertUsernamePasswordError.setContentText(
 					"Something went wrong creating the account. Please try again.");
 			ViewFirstAdmin.alertUsernamePasswordError.showAndWait();
@@ -171,4 +175,3 @@ public class ControllerFirstAdmin {
 		System.exit(0);
 	}	
 }
-
