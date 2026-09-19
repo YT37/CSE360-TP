@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import entityClasses.User;
 import javafx.scene.control.Alert;
 import validators.EmailAddressRecognizer;
+import validators.NameValidator;
 
 /*******
  * <p> Title: ViewUserUpdate Class. </p>
@@ -257,12 +258,21 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 150);
         setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
         
-        // First Name
+     // First Name
         setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);
         setupLabelUI(label_CurrentFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 200);
         setupButtonUI(button_UpdateFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 193);
         button_UpdateFirstName.setOnAction((_) -> {result = dialogUpdateFirstName.showAndWait();
-        	result.ifPresent(_ -> theDatabase.updateFirstName(theUser.getUserName(), result.get()));
+        	result.ifPresent(_ -> {
+        		String enteredName = result.get();
+        		String nameError = NameValidator.checkName(enteredName);
+        		if (nameError != "") {
+        			Alert alert = new Alert(Alert.AlertType.ERROR, nameError);
+        			alert.showAndWait();
+        		} else {
+        			theDatabase.updateFirstName(theUser.getUserName(), enteredName);
+        		}
+        	});
         	theDatabase.getUserAccountDetails(theUser.getUserName());
          	String newName = theDatabase.getCurrentFirstName();
            	theUser.setFirstName(newName);
@@ -275,7 +285,16 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentMiddleName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 250);
         setupButtonUI(button_UpdateMiddleName, "Dialog", 18, 275, Pos.CENTER, 500, 243);
         button_UpdateMiddleName.setOnAction((_) -> {result = dialogUpdateMiddleName.showAndWait();
-    		result.ifPresent(_ -> theDatabase.updateMiddleName(theUser.getUserName(), result.get()));
+    		result.ifPresent(_ -> {
+    			String enteredName = result.get();
+    			String nameError = NameValidator.checkName(enteredName);
+    			if (nameError != "") {
+    				Alert alert = new Alert(Alert.AlertType.ERROR, nameError);
+    				alert.showAndWait();
+    			} else {
+    				theDatabase.updateMiddleName(theUser.getUserName(), enteredName);
+    			}
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newName = theDatabase.getCurrentMiddleName();
            	theUser.setMiddleName(newName);
@@ -288,7 +307,16 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentLastName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 300);
         setupButtonUI(button_UpdateLastName, "Dialog", 18, 275, Pos.CENTER, 500, 293);
         button_UpdateLastName.setOnAction((_) -> {result = dialogUpdateLastName.showAndWait();
-    		result.ifPresent(_ -> theDatabase.updateLastName(theUser.getUserName(), result.get()));
+    		result.ifPresent(_ -> {
+    			String enteredName = result.get();
+    			String nameError = NameValidator.checkName(enteredName);
+    			if (nameError != "") {
+    				Alert alert = new Alert(Alert.AlertType.ERROR, nameError);
+    				alert.showAndWait();
+    			} else {
+    				theDatabase.updateLastName(theUser.getUserName(), enteredName);
+    			}
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newName = theDatabase.getCurrentLastName();
            	theUser.setLastName(newName);
@@ -304,8 +332,16 @@ public class ViewUserUpdate {
         setupButtonUI(button_UpdatePreferredFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 343);
         button_UpdatePreferredFirstName.setOnAction((_) -> 
         	{result = dialogUpdatePreferredFirstName.showAndWait();
-    		result.ifPresent(_ -> 
-    		theDatabase.updatePreferredFirstName(theUser.getUserName(), result.get()));
+    		result.ifPresent(_ -> {
+    			String enteredName = result.get();
+    			String nameError = NameValidator.checkName(enteredName);
+    			if (nameError != "") {
+    				Alert alert = new Alert(Alert.AlertType.ERROR, nameError);
+    				alert.showAndWait();
+    			} else {
+    				theDatabase.updatePreferredFirstName(theUser.getUserName(), enteredName);
+    			}
+    		});
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newName = theDatabase.getCurrentPreferredFirstName();
            	theUser.setPreferredFirstName(newName);
