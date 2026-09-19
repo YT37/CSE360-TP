@@ -1,6 +1,7 @@
 package guiAdminHome;
 
 import database.Database;
+import validators.EmailAddressRecognizer;
 
 /*******
  * <p> Title: GUIAdminHomePage Class. </p>
@@ -184,6 +185,14 @@ public class ControllerAdminHome {
 			ViewAdminHome.alertEmailError.showAndWait();
 			return true;
 		}
+		
+		String emailError = EmailAddressRecognizer.checkEmailAddress(emailAddress);
+		if (emailError != "") {
+			ViewAdminHome.alertEmailError.setContentText(emailError);
+			ViewAdminHome.alertEmailError.showAndWait();
+			return true;
+		}
+		
 		return false;
 	}
 	

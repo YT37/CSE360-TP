@@ -76,6 +76,7 @@ public class ControllerNewAccount {
 		// Check the username format
 		String usernameError = UserNameRecognizer.checkForValidUserName(username);
 		if (usernameError != "") {
+			ViewNewAccount.alertUsernamePasswordError.setHeaderText("Invalid Username");
 			ViewNewAccount.alertUsernamePasswordError.setContentText(usernameError);
 			ViewNewAccount.alertUsernamePasswordError.showAndWait();
 			return;
@@ -83,6 +84,7 @@ public class ControllerNewAccount {
 		
 		// Check that the username isn't already taken
 		if (theDatabase.doesUserExist(username)) {
+			ViewNewAccount.alertUsernamePasswordError.setHeaderText("Username Taken");
 			ViewNewAccount.alertUsernamePasswordError.setContentText(
 					"That username is already taken. Please choose another.");
 			ViewNewAccount.alertUsernamePasswordError.showAndWait();
@@ -102,6 +104,7 @@ public class ControllerNewAccount {
 			if (passwordError != "") {
 				ViewNewAccount.text_Password1.setText("");
 				ViewNewAccount.text_Password2.setText("");
+				ViewNewAccount.alertUsernamePasswordError.setHeaderText("Invalid Password");
 				ViewNewAccount.alertUsernamePasswordError.setContentText(passwordError);
 				ViewNewAccount.alertUsernamePasswordError.showAndWait();
 				return;

@@ -1,7 +1,6 @@
 package guiUserUpdate;
 
 import java.util.Optional;
-
 import database.Database;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,6 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import entityClasses.User;
+import javafx.scene.control.Alert;
+import validators.EmailAddressRecognizer;
 
 /*******
  * <p> Title: ViewUserUpdate Class. </p>
@@ -317,13 +318,22 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentEmailAddress, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 400);
         setupButtonUI(button_UpdateEmailAddress, "Dialog", 18, 275, Pos.CENTER, 500, 393);
         button_UpdateEmailAddress.setOnAction((_) -> {result = dialogUpdateEmailAddresss.showAndWait();
-    		result.ifPresent(_ -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
-    		theDatabase.getUserAccountDetails(theUser.getUserName());
-    		String newEmail = theDatabase.getCurrentEmailAddress();
-           	theUser.setEmailAddress(newEmail);
-        	if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
-        	else label_CurrentEmailAddress.setText(newEmail);
- 			});
+		result.ifPresent(_ -> {
+			String enteredEmail = result.get();
+			String emailError = EmailAddressRecognizer.checkEmailAddress(enteredEmail);
+			if (emailError != "") {
+				Alert alert = new Alert(Alert.AlertType.ERROR, emailError);
+				alert.showAndWait();
+			} else {
+				theDatabase.updateEmailAddress(theUser.getUserName(), enteredEmail);
+			}
+		});
+		theDatabase.getUserAccountDetails(theUser.getUserName());
+		String newEmail = theDatabase.getCurrentEmailAddress();
+       	theUser.setEmailAddress(newEmail);
+    	if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
+    	else label_CurrentEmailAddress.setText(newEmail);
+			});
         
         // Set up the button to proceed to this user's home page
         setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, 
