@@ -2,6 +2,12 @@ package guiAdminHome;
 
 import database.Database;
 import validators.EmailAddressRecognizer;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import java.util.Optional;
+import java.util.List;
+import guiTools.UserListView;
 
 /*******
  * <p> Title: GUIAdminHomePage Class. </p>
@@ -128,11 +134,7 @@ public class ControllerAdminHome {
 	 * this function has not yet been implemented. </p>
 	 */
 	protected static void deleteUser() {
-		System.out.println("\n*** WARNING ***: Delete User Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("Delete User Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("Delete User Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		UserListView.show(ViewAdminHome.theStage, theDatabase, ViewAdminHome.theUser, true);
 	}
 	
 	/**********
@@ -144,11 +146,7 @@ public class ControllerAdminHome {
 	 * this function has not yet been implemented. </p>
 	 */
 	protected static void listUsers() {
-		System.out.println("\n*** WARNING ***: List Users Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("List User Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("List Users Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		UserListView.show(ViewAdminHome.theStage, theDatabase, ViewAdminHome.theUser, false);
 	}
 	
 	/**********

@@ -905,6 +905,96 @@ public class Database {
 		return false;
 	}
 	
+	/*******
+	 * <p> Method: void updatePassword(String username, String password) </p>
+	 * 
+	 * <p> Description: Update the password of a user given that user's username and the new
+	 *		password.</p>
+	 */
+	public void updatePassword(String username, String password) {
+	    String query = "UPDATE userDB SET password = ? WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, password);
+	        pstmt.setString(2, username);
+	        pstmt.executeUpdate();
+	        currentPassword = password;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	/*******
+	 * <p> Method: void updateUsername(String oldUsername, String newUsername) </p>
+	 * 
+	 * <p> Description: Update a user's username. The caller is responsible for checking
+	 *		doesUserExist(newUsername) first to avoid a duplicate-key error.</p>
+	 */
+	public void updateUsername(String oldUsername, String newUsername) {
+	    String query = "UPDATE userDB SET username = ? WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, newUsername);
+	        pstmt.setString(2, oldUsername);
+	        pstmt.executeUpdate();
+	        currentUsername = newUsername;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	/*******
+	 * <p> Method: boolean deleteUser(String username) </p>
+	 * 
+	 * <p> Description: Delete a user account given that user's username.</p>
+	 * 
+	 * @return true if a row was actually deleted, false otherwise
+	 */
+	public boolean deleteUser(String username) {
+	    String query = "DELETE FROM userDB WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, username);
+	        int rowsAffected = pstmt.executeUpdate();
+	        return rowsAffected > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	/*******
+	 * <p> Method: List<String[]> getAllUsersDetails() </p>
+	 * 
+	 * <p> Description: Returns one String[4] per user: {username, full name, email, roles},
+	 * for the admin's "List All Users" and "Delete a User" screens.</p>
+	 */
+	public List<String[]> getAllUsersDetails() {
+	    List<String[]> details = new ArrayList<String[]>();
+	    String query = "SELECT userName, firstName, lastName, emailAddress, adminRole, "
+	            + "newRole1, newRole2 FROM userDB";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        ResultSet rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            String roles = "";
+	            if (rs.getBoolean("adminRole")) roles += "Admin ";
+	            if (rs.getBoolean("newRole1")) roles += "Role1 ";
+	            if (rs.getBoolean("newRole2")) roles += "Role2 ";
+	            if (roles.isEmpty()) roles = "<none>";
+
+	            String first = rs.getString("firstName");
+	            String last = rs.getString("lastName");
+	            String fullName = ((first == null ? "" : first) + " " + (last == null ? "" : last)).trim();
+	            if (fullName.isEmpty()) fullName = "<none>";
+
+	            String email = rs.getString("emailAddress");
+	            if (email == null || email.isEmpty()) email = "<none>";
+
+	            details.add(new String[] { rs.getString("userName"), fullName, email, roles.trim() });
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return details;
+	}
+	
 	
 	// Attribute getters for the current user
 	/*******
