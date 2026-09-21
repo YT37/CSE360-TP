@@ -26,8 +26,8 @@ public class User {
     private String preferredFirstName;
     private String emailAddress;
     private boolean adminRole;
-    private boolean role1;
-    private boolean role2;
+    private boolean contributorRole;
+    private boolean viewerRole;
     
     
     /*****
@@ -52,9 +52,9 @@ public class User {
      * 
      * @param r1 specifies the the Admin attribute (TRUE or FALSE) for this user
      * 
-     * @param r2 specifies the the Student attribute (TRUE or FALSE) for this user
+     * @param r2 specifies the the Contributor attribute (TRUE or FALSE) for this user
      * 
-     * @param r3 specifies the the Reviewer attribute (TRUE or FALSE) for this user
+     * @param r3 specifies the the Viewer attribute (TRUE or FALSE) for this user
      * 
      */
     // Constructor to initialize a new User object with userName, password, and role.
@@ -68,8 +68,8 @@ public class User {
         this.preferredFirstName = pfn;
         this.emailAddress = ea;
         this.adminRole = r1;
-        this.role1 = r2;
-        this.role2 = r3;
+        this.contributorRole = r2;
+        this.viewerRole = r3;
     }
 
     
@@ -88,30 +88,30 @@ public class User {
 
     
     /*****
-     * <p> Method: void setRole1User(boolean role) </p>
+     * <p> Method: void setContributorRole(boolean role) </p>
      * 
-     * <p> Description: This setter defines the role1 attribute. </p>
+     * <p> Description: This setter defines the Contributor role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this user in playing role1.
+     * @param role is a boolean that specifies if this user in playing the Contributor role.
      * 
      */
-    // Sets the role1 user.
-    public void setRole1User(boolean role) {
-    	this.role1=role;
+    // Sets the role of the Contributor user.
+    public void setContributorRole(boolean role) {
+    	this.contributorRole=role;
     }
 
     
     /*****
-     * <p> Method: void setRole2User(boolean role) </p>
+     * <p> Method: void setViewerRole(boolean role) </p>
      * 
-     * <p> Description: This setter defines the role2 attribute. </p>
+     * <p> Description: This setter defines the Viewer role attribute. </p>
      * 
-     * @param role is a boolean that specifies if this user in playing role2.
+     * @param role is a boolean that specifies if this user in playing the Viewer role.
      * 
      */
-    // Sets the role2 user.
-    public void setRole2User(boolean role) {
-    	this.role2=role;
+    // Sets the role of the Viewer user.
+    public void setViewerRole(boolean role) {
+    	this.viewerRole=role;
     }
 
     
@@ -159,7 +159,7 @@ public class User {
      * @return a String of the MiddleName
 	 *
      */
-    // Gets the current value of the Student role attribute.
+    // Gets the current value of the MiddleName.
     public String getMiddleName() { return middleName; }
 
     
@@ -171,7 +171,7 @@ public class User {
      * @return a String of the LastName
 	 *
      */
-    // Gets the current value of the Student role attribute.
+    // Gets the current value of the LastName.
     public String getLastName() { return lastName; }
 
     
@@ -183,7 +183,7 @@ public class User {
      * @return a String of the PreferredFirstName
 	 *
      */
-    // Gets the current value of the Student role attribute.
+    // Gets the current value of the PreferredFirstName.
     public String getPreferredFirstName() { return preferredFirstName; }
 
     
@@ -195,7 +195,7 @@ public class User {
      * @return a String of the EmailAddress
 	 *
      */
-    // Gets the current value of the Student role attribute.
+    // Gets the current value of the EmailAddress.
     public String getEmailAddress() { return emailAddress; }
 
     public void setUserName(String s) { userName = s; }
@@ -220,43 +220,43 @@ public class User {
 
     
     /*****
-     * <p> Method: String getRole1() </p>
+     * <p> Method: boolean getContributorRole() </p>
      * 
-     * <p> Description: This getter returns the value of the role1 attribute. </p>
+     * <p> Description: This getter returns the value of the Contributor role attribute. </p>
      * 
      * @return a String of "TRUE" or "FALSE" based on state of the attribute
 	 *
      */
-    // Gets the current value of the role1 attribute.
-	public boolean getNewRole1() { return role1; }
+    // Gets the current value of the Contributor role attribute.
+	public boolean getContributorRole() { return contributorRole; }
 
     
     /*****
-     * <p> Method: String getRole2() </p>
+     * <p> Method: boolean getViewerRole() </p>
      * 
-     * <p> Description: This getter returns the value of the role2 attribute. </p>
+     * <p> Description: This getter returns the value of the Viewer role attribute. </p>
      * 
      * @return a String of "TRUE" or "FALSE" based on state of the attribute
 	 *
      */
-    // Gets the current value of the role2 attribute.
-    public boolean getNewRole2() { return role2; }
+    // Gets the current value of the Viewer role attribute.
+    public boolean getViewerRole() { return viewerRole; }
 
         
     /*****
      * <p> Method: int getNumRoles() </p>
      * 
-     * <p> Description: This getter returns the number of roles this user plays (0 - 5). </p>
+     * <p> Description: This getter returns the number of roles this user plays (0 - 3). </p>
      * 
-     * @return a value 0 - 5 of the number of roles this user plays
+     * @return a value 0 - 3 of the number of roles this user plays
 	 *
      */
-    // Gets the current value of the Staff role attribute.
+    // Gets the number of roles this user plays.
     public int getNumRoles() {
     	int numRoles = 0;
     	if (adminRole) numRoles++;
-    	if (role1) numRoles++;
-    	if (role2) numRoles++;
+    	if (contributorRole) numRoles++;
+    	if (viewerRole) numRoles++;
     	return numRoles;
     }
 }

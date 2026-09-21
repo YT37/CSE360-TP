@@ -130,10 +130,10 @@ public class ControllerAddRemoveRoles {
 		ViewAddRemoveRoles.addList.add("<Select a role>");
 		if (!theDatabase.getCurrentAdminRole())
 			ViewAddRemoveRoles.addList.add("Admin");
-		if (!theDatabase.getCurrentNewRole1())
-			ViewAddRemoveRoles.addList.add("Role1");
-		if (!theDatabase.getCurrentNewRole2())
-			ViewAddRemoveRoles.addList.add("Role2");
+		if (!theDatabase.getCurrentContributorRole())
+			ViewAddRemoveRoles.addList.add("Contributor");
+		if (!theDatabase.getCurrentViewerRole())
+			ViewAddRemoveRoles.addList.add("Viewer");
 
 		// Create the list of roles that could be removed for the currently selected user (e.g., Do
 		// not show a role to remove that the user does not have!)
@@ -141,10 +141,10 @@ public class ControllerAddRemoveRoles {
 		ViewAddRemoveRoles.removeList.add("<Select a role>");
 		if (theDatabase.getCurrentAdminRole())
 			ViewAddRemoveRoles.removeList.add("Admin");
-		if (theDatabase.getCurrentNewRole1())
-			ViewAddRemoveRoles.removeList.add("Role1");
-		if (theDatabase.getCurrentNewRole2())
-			ViewAddRemoveRoles.removeList.add("Role2");
+		if (theDatabase.getCurrentContributorRole())
+			ViewAddRemoveRoles.removeList.add("Contributor");
+		if (theDatabase.getCurrentViewerRole())
+			ViewAddRemoveRoles.removeList.add("Viewer");
 		
 		// Create the list or roles that the user currently has with proper use of a comma between
 		// items
@@ -158,21 +158,21 @@ public class ControllerAddRemoveRoles {
 		}
 		
 		// Roles 1 - It could be at the head of the list or later in the list
-		if (theDatabase.getCurrentNewRole1()) {
+		if (theDatabase.getCurrentContributorRole()) {
 			if (notTheFirst)
-				theCurrentRoles += ", Role1"; 
+				theCurrentRoles += ", Contributor"; 
 			else {
-				theCurrentRoles += "Role1";
+				theCurrentRoles += "Contributor";
 				notTheFirst = true;
 			}
 		}
 
 		// Roles 2 - It could be at the head of the list or later in the list
-		if (theDatabase.getCurrentNewRole2()) {
+		if (theDatabase.getCurrentViewerRole()) {
 			if (notTheFirst)
-				theCurrentRoles += ", Role2"; 
+				theCurrentRoles += ", Viewer"; 
 			else {
-				theCurrentRoles += "Role2";
+				theCurrentRoles += "Viewer";
 				notTheFirst = true;
 			}
 		}
@@ -254,8 +254,8 @@ public class ControllerAddRemoveRoles {
 			// Don't leave the user with zero roles
 			int roleCount = 0;
 			if (theDatabase.getCurrentAdminRole()) roleCount++;
-			if (theDatabase.getCurrentNewRole1()) roleCount++;
-			if (theDatabase.getCurrentNewRole2()) roleCount++;
+			if (theDatabase.getCurrentContributorRole()) roleCount++;
+			if (theDatabase.getCurrentViewerRole()) roleCount++;
 			if (roleCount <= 1) {
 				javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
 						javafx.scene.control.Alert.AlertType.WARNING,

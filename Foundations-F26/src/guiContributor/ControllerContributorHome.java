@@ -1,10 +1,10 @@
-package guiRole1;
+package guiContributor;
 
 
 /*******
- * <p> Title: ControllerRole1Home Class. </p>
+ * <p> Title: ControllerContributorHome Class. </p>
  * 
- * <p> Description: The Java/FX-based Role 1 Home Page.  This class provides the controller
+ * <p> Description: The Java/FX-based Contributor Home Page.  This class provides the controller
  * actions basic on the user's use of the JavaFX GUI widgets defined by the View class.
  * 
  * This page is a stub for establish future roles for the application.
@@ -21,7 +21,7 @@ package guiRole1;
  * @version 1.01		2025-09-16 Update Javadoc documentation *  
  */
 
-public class ControllerRole1Home {
+public class ControllerContributorHome {
 
 	/*-*******************************************************************************************
 
@@ -36,7 +36,7 @@ public class ControllerRole1Home {
 	/**
 	 * Default constructor is not used.
 	 */
-	public ControllerRole1Home() {
+	public ControllerContributorHome() {
 	}
 
 	/**********
@@ -47,7 +47,7 @@ public class ControllerRole1Home {
 	 * 
 	 */
 	protected static void performUpdate () {
-		guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewRole1Home.theStage, ViewRole1Home.theUser);
+		guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewContributorHome.theStage, ViewContributorHome.theUser);
 	}	
 
 	/**********
@@ -59,7 +59,7 @@ public class ControllerRole1Home {
 	 * 
 	 */
 	protected static void performLogout() {
-		guiUserLogin.ViewUserLogin.displayUserLogin(ViewRole1Home.theStage);
+		guiUserLogin.ViewUserLogin.displayUserLogin(ViewContributorHome.theStage);
 	}
 	
 	/**********

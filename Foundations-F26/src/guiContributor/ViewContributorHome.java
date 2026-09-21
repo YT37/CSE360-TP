@@ -1,4 +1,4 @@
-package guiRole1;
+package guiContributor;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,9 +13,9 @@ import entityClasses.User;
 
 
 /*******
- * <p> Title: ViewRole1Home Class. </p>
+ * <p> Title: ViewContributorHome Class. </p>
  * 
- * <p> Description: The Java/FX-based Role1 Home Page.  The page is a stub for some role needed for
+ * <p> Description: The Java/FX-based Contributor Home Page.  The page is a stub for some role needed for
  * the application.  The widgets on this page are likely the minimum number and kind for other role
  * pages that may be needed.</p>
  * 
@@ -27,7 +27,7 @@ import entityClasses.User;
  *  
  */
 
-public class ViewRole1Home {
+public class ViewContributorHome {
 	
 	/*-*******************************************************************************************
 
@@ -68,7 +68,7 @@ public class ViewRole1Home {
 	// This is the end of the GUI objects for the page.
 	
 	// These attributes are used to configure the page and populate it with this user's information
-	private static ViewRole1Home theView;		// Used to determine if instantiation of the class
+	private static ViewContributorHome theView;		// Used to determine if instantiation of the class
 												// is needed
 
 	// Reference for the in-memory database so this package has access
@@ -79,8 +79,8 @@ public class ViewRole1Home {
 	protected static User theUser;				// The current logged in User
 	
 
-	private static Scene theViewRole1HomeScene;	// The shared Scene each invocation populates
-	protected static final int theRole = 2;		// Admin: 1; Role1: 2; Role2: 3
+	private static Scene theViewContributorHomeScene;	// The shared Scene each invocation populates
+	protected static final int theRole = 2;		// Admin: 1; Contributor: 2; Viewer: 3
 
 	/*-*******************************************************************************************
 
@@ -90,10 +90,10 @@ public class ViewRole1Home {
 
 
 	/**********
-	 * <p> Method: displayRole1Home(Stage ps, User user) </p>
+	 * <p> Method: displayContributorHome(Stage ps, User user) </p>
 	 * 
 	 * <p> Description: This method is the single entry point from outside this package to cause
-	 * the Role1 Home page to be displayed.
+	 * the Contributor Home page to be displayed.
 	 * 
 	 * It first sets up every shared attributes so we don't have to pass parameters.
 	 * 
@@ -110,14 +110,14 @@ public class ViewRole1Home {
 	 * @param user specifies the User for this GUI and it's methods
 	 * 
 	 */
-	public static void displayRole1Home(Stage ps, User user) {
+	public static void displayContributorHome(Stage ps, User user) {
 		
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
 		
 		// If not yet established, populate the static aspects of the GUI
-		if (theView == null) theView = new ViewRole1Home();		// Instantiate singleton if needed
+		if (theView == null) theView = new ViewContributorHome();		// Instantiate singleton if needed
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.
@@ -127,41 +127,41 @@ public class ViewRole1Home {
 		label_UserDetails.setText("User: " + theUser.getUserName());
 				
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Role1 Home Page");
-		theStage.setScene(theViewRole1HomeScene);
+		theStage.setTitle("CSE 360 Foundations: Contributor Home Page");
+		theStage.setScene(theViewContributorHomeScene);
 		theStage.show();
 	}
 	
 	/**********
-	 * <p> Method: ViewRole1Home() </p>
+	 * <p> Method: ViewContributorHome() </p>
 	 * 
 	 * <p> Description: This method initializes all the elements of the graphical user interface.
 	 * This method determines the location, size, font, color, and change and event handlers for
 	 * each GUI object.</p>
 	 * 
 	 * This is a singleton and is only performed once.  Subsequent uses fill in the changeable
-	 * fields using the displayRole2Home method.</p>
+	 * fields using the displayContributorHome method.</p>
 	 * 
 	 */
-	private ViewRole1Home() {
+	private ViewContributorHome() {
 
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
-		theViewRole1HomeScene = new Scene(theRootPane, width, height);	// Create the scene
+		theViewContributorHomeScene = new Scene(theRootPane, width, height);	// Create the scene
 		
 		// Set the title for the window
 		
 		// Populate the window with the title and other common widgets and set their static state
 		
 		// GUI Area 1
-		label_PageTitle.setText("Role1 Home Page");
+		label_PageTitle.setText("Contributor Home Page");
 		setupLabelUI(label_PageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
 
 		label_UserDetails.setText("User: " + theUser.getUserName());
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		
 		setupButtonUI(button_UpdateThisUser, "Dialog", 18, 170, Pos.CENTER, 610, 45);
-		button_UpdateThisUser.setOnAction((_) -> {ControllerRole1Home.performUpdate(); });
+		button_UpdateThisUser.setOnAction((_) -> {ControllerContributorHome.performUpdate(); });
 		
 		// GUI Area 2
 		
@@ -170,10 +170,10 @@ public class ViewRole1Home {
 		
 		// GUI Area 3
         setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_Logout.setOnAction((_) -> {ControllerRole1Home.performLogout(); });
+        button_Logout.setOnAction((_) -> {ControllerContributorHome.performLogout(); });
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
-        button_Quit.setOnAction((_) -> {ControllerRole1Home.performQuit(); });
+        button_Quit.setOnAction((_) -> {ControllerContributorHome.performQuit(); });
 
 		// This is the end of the GUI initialization code
 		

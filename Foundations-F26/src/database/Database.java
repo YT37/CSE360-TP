@@ -58,8 +58,8 @@ public class Database {
 	private String currentPreferredFirstName;
 	private String currentEmailAddress;
 	private boolean currentAdminRole;
-	private boolean currentNewRole1;
-	private boolean currentNewRole2;
+	private boolean currentContributorRole;
+	private boolean currentViewerRole;
 	private boolean currentIsOneTimePassword;
 
 	/*******
@@ -116,15 +116,15 @@ public class Database {
 				+ "preferredFirstName VARCHAR(255), "
 				+ "emailAddress VARCHAR(255), "
 				+ "adminRole BOOL DEFAULT FALSE, "
-				+ "newRole1 BOOL DEFAULT FALSE, "
-				+ "newRole2 BOOL DEFAULT FALSE)";
+				+ "contributorRole BOOL DEFAULT FALSE, "
+				+ "viewerRole BOOL DEFAULT FALSE)";
 		statement.execute(userTable);
 		
 		// Create the invitation codes table
 	    String invitationCodesTable = "CREATE TABLE IF NOT EXISTS InvitationCodes ("
 	            + "code VARCHAR(10) PRIMARY KEY, "
 	    		+ "emailAddress VARCHAR(255), "
-	            + "role VARCHAR(10))";
+	            + "role VARCHAR(20))";
 	    statement.execute(invitationCodesTable);
 	    statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS isOneTimePassword BOOL DEFAULT FALSE");
 	    statement.execute("ALTER TABLE InvitationCodes ADD COLUMN IF NOT EXISTS deadline TIMESTAMP");
@@ -186,7 +186,7 @@ public class Database {
  */
 	public void register(User user) throws SQLException {
 		String insertUser = "INSERT INTO userDB (userName, password, firstName, middleName, "
-				+ "lastName, preferredFirstName, emailAddress, adminRole, newRole1, newRole2) "
+				+ "lastName, preferredFirstName, emailAddress, adminRole, contributorRole, viewerRole) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insertUser)) {
 			currentUsername = user.getUserName();
@@ -213,11 +213,11 @@ public class Database {
 			currentAdminRole = user.getAdminRole();
 			pstmt.setBoolean(8, currentAdminRole);
 			
-			currentNewRole1 = user.getNewRole1();
-			pstmt.setBoolean(9, currentNewRole1);
+			currentContributorRole = user.getContributorRole();
+			pstmt.setBoolean(9, currentContributorRole);
 			
-			currentNewRole2 = user.getNewRole2();
-			pstmt.setBoolean(10, currentNewRole2);
+			currentViewerRole = user.getViewerRole();
+			pstmt.setBoolean(10, currentViewerRole);
 						
 			pstmt.executeUpdate();
 		}
@@ -276,20 +276,20 @@ public class Database {
 	
 	
 /*******
- * <p> Method: boolean loginRole1(User user) </p>
+ * <p> Method: boolean loginContributor(User user) </p>
  * 
  * <p> Description: Check to see that a user with the specified username, password, and role
  * 		is the same as a row in the table for the username, password, and role. </p>
  * 
- * @param user specifies the specific user that should be logged in playing the Student role.
+ * @param user specifies the specific user that should be logged in playing the Contributor role.
  * 
- * @return true if the specified user has been logged in as an Student else false.
+ * @return true if the specified user has been logged in as a Contributor else false.
  * 
  */
-	public boolean loginRole1(User user) {
-		// Validates a student user's login credentials.
+	public boolean loginContributor(User user) {
+		// Validates a contributor user's login credentials.
 		String query = "SELECT * FROM userDB WHERE userName = ? AND password = ? AND "
-				+ "newRole1 = TRUE";
+				+ "contributorRole = TRUE";
 		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 			pstmt.setString(1, user.getUserName());
 			pstmt.setString(2, user.getPassword());
@@ -302,20 +302,20 @@ public class Database {
 	}
 
 	/*******
-	 * <p> Method: boolean loginRole2(User user) </p>
+	 * <p> Method: boolean loginViewer(User user) </p>
 	 * 
 	 * <p> Description: Check to see that a user with the specified username, password, and role
 	 * 		is the same as a row in the table for the username, password, and role. </p>
 	 * 
-	 * @param user specifies the specific user that should be logged in playing the Reviewer role.
+	 * @param user specifies the specific user that should be logged in playing the Viewer role.
 	 * 
-	 * @return true if the specified user has been logged in as an Student else false.
+	 * @return true if the specified user has been logged in as a Viewer else false.
 	 * 
 	 */
-	// Validates a reviewer user's login credentials.
-	public boolean loginRole2(User user) {
+	// Validates a viewer user's login credentials.
+	public boolean loginViewer(User user) {
 		String query = "SELECT * FROM userDB WHERE userName = ? AND password = ? AND "
-				+ "newRole2 = TRUE";
+				+ "viewerRole = TRUE";
 		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 			pstmt.setString(1, user.getUserName());
 			pstmt.setString(2, user.getPassword());
@@ -364,15 +364,15 @@ public class Database {
 	 * 
 	 * @param user specifies the specific user that we want to determine if it is in the table.
 	 * 
-	 * @return the number of roles this user plays (0 - 5).
+	 * @return the number of roles this user plays (0 - 3).
 	 * 
 	 */	
 	// Get the number of roles that this user plays
 	public int getNumberOfRoles (User user) {
 		int numberOfRoles = 0;
 		if (user.getAdminRole()) numberOfRoles++;
-		if (user.getNewRole1()) numberOfRoles++;
-		if (user.getNewRole2()) numberOfRoles++;
+		if (user.getContributorRole()) numberOfRoles++;
+		if (user.getViewerRole()) numberOfRoles++;
 		return numberOfRoles;
 	}	
 
@@ -877,8 +877,8 @@ public class Database {
 	    	currentPreferredFirstName = rs.getString(7);
 	    	currentEmailAddress = rs.getString(8);
 	    	currentAdminRole = rs.getBoolean(9);
-	    	currentNewRole1 = rs.getBoolean(10);
-	    	currentNewRole2 = rs.getBoolean(11);
+	    	currentContributorRole = rs.getBoolean(10);
+	    	currentViewerRole = rs.getBoolean(11);
 	    	currentIsOneTimePassword = rs.getBoolean(12);
 			return true;
 	    } catch (SQLException e) {
@@ -919,31 +919,31 @@ public class Database {
 				return false;
 			}
 		}
-		if (role.compareTo("Role1") == 0) {
-			String query = "UPDATE userDB SET newRole1 = ? WHERE username = ?";
+		if (role.compareTo("Contributor") == 0) {
+			String query = "UPDATE userDB SET contributorRole = ? WHERE username = ?";
 			try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 				pstmt.setString(1, value);
 				pstmt.setString(2, username);
 				pstmt.executeUpdate();
 				if (value.compareTo("true") == 0)
-					currentNewRole1 = true;
+					currentContributorRole = true;
 				else
-					currentNewRole1 = false;
+					currentContributorRole = false;
 				return true;
 			} catch (SQLException e) {
 				return false;
 			}
 		}
-		if (role.compareTo("Role2") == 0) {
-			String query = "UPDATE userDB SET newRole2 = ? WHERE username = ?";
+		if (role.compareTo("Viewer") == 0) {
+			String query = "UPDATE userDB SET viewerRole = ? WHERE username = ?";
 			try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 				pstmt.setString(1, value);
 				pstmt.setString(2, username);
 				pstmt.executeUpdate();
 				if (value.compareTo("true") == 0)
-					currentNewRole2 = true;
+					currentViewerRole = true;
 				else
-					currentNewRole2 = false;
+					currentViewerRole = false;
 				return true;
 			} catch (SQLException e) {
 				return false;
@@ -1039,14 +1039,14 @@ public class Database {
 	public List<String[]> getAllUsersDetails() {
 	    List<String[]> details = new ArrayList<String[]>();
 	    String query = "SELECT userName, firstName, lastName, emailAddress, adminRole, "
-	            + "newRole1, newRole2 FROM userDB";
+	            + "contributorRole, viewerRole FROM userDB";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 	        ResultSet rs = pstmt.executeQuery();
 	        while (rs.next()) {
 	            String roles = "";
 	            if (rs.getBoolean("adminRole")) roles += "Admin ";
-	            if (rs.getBoolean("newRole1")) roles += "Role1 ";
-	            if (rs.getBoolean("newRole2")) roles += "Role2 ";
+	            if (rs.getBoolean("contributorRole")) roles += "Contributor ";
+	            if (rs.getBoolean("viewerRole")) roles += "Viewer ";
 	            if (roles.isEmpty()) roles = "<none>";
 
 	            String first = rs.getString("firstName");
@@ -1156,25 +1156,25 @@ public class Database {
 
 	
 	/*******
-	 * <p> Method: boolean getCurrentNewRole1() </p>
+	 * <p> Method: boolean getCurrentContributorRole() </p>
 	 * 
-	 * <p> Description: Get the current user's Student role attribute.</p>
+	 * <p> Description: Get the current user's Contributor role attribute.</p>
 	 * 
-	 * @return true if this user plays a Student role, else false
+	 * @return true if this user plays a Contributor role, else false
 	 *  
 	 */
-	public boolean getCurrentNewRole1() { return currentNewRole1;};
+	public boolean getCurrentContributorRole() { return currentContributorRole;};
 
 	
 	/*******
-	 * <p> Method: boolean getCurrentNewRole2() </p>
+	 * <p> Method: boolean getCurrentViewerRole() </p>
 	 * 
-	 * <p> Description: Get the current user's Reviewer role attribute.</p>
+	 * <p> Description: Get the current user's Viewer role attribute.</p>
 	 * 
-	 * @return true if this user plays a Reviewer role, else false
+	 * @return true if this user plays a Viewer role, else false
 	 *  
 	 */
-	public boolean getCurrentNewRole2() { return currentNewRole2;};
+	public boolean getCurrentViewerRole() { return currentViewerRole;};
 	
 	
 	public boolean getCurrentIsOneTimePassword() { return currentIsOneTimePassword; }
