@@ -46,6 +46,7 @@ public class ViewUserLogin {
 	private static Label label_LogInInsrtuctions = new Label("Enter your user name and password and "+	
 			"then click on the LogIn button");
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
+	protected static Alert alertInvitationCodeError = new Alert(AlertType.INFORMATION);
 
 
 	//	private User user;
@@ -146,6 +147,8 @@ public class ViewUserLogin {
 
 		alertUsernamePasswordError.setTitle("Invalid username/password!");
 		alertUsernamePasswordError.setHeaderText(null);
+		alertInvitationCodeError.setTitle("Invalid Invitation Code");
+		alertInvitationCodeError.setHeaderText(null);
 
 
 		// The invitation to setup an account portion of the page

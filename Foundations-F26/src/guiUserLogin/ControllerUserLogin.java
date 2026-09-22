@@ -5,6 +5,7 @@ import entityClasses.User;
 import javafx.stage.Stage;
 import validators.PasswordValidator;
 import validators.UserNameRecognizer;
+import validators.InvitationCodeValidator;
 
 /*******
  * <p> Title: ControllerUserLogin Class. </p>
@@ -164,13 +165,28 @@ public class ControllerUserLogin {
 	
 		
 	/**********
-	 * <p> Method: setup() </p>
+	 * <p> Method: doSetupAccount(Stage theStage, String invitationCode) </p>
 	 * 
-	 * <p> Description: This method is called to reset the page and then populate it with new
-	 * content for the new user.</p>
+	 * <p> Description: This method is called when the user has clicked on the Setup Account
+	 * button.  The invitation code is checked for length and format before it is used to query
+	 * the database.  If it is not valid, an alert explains why and the user stays on this page.
+	 * Otherwise the New Account page is displayed for that code.</p>
+	 * 
+	 * @param theStage specifies the JavaFX Stage for next next GUI page and it's methods
+	 * 
+	 * @param invitationCode specifies the invitation code the user entered
 	 * 
 	 */
 	protected static void doSetupAccount(Stage theStage, String invitationCode) {
+		// Check the length and format of the code before any database lookup
+		String invitationCodeError = InvitationCodeValidator.checkInvitationCode(invitationCode);
+		if (invitationCodeError != "") {
+			ViewUserLogin.alertInvitationCodeError.setContentText(invitationCodeError);
+			ViewUserLogin.alertInvitationCodeError.showAndWait();
+			return;
+		}
+		
+		// The code is well formed, so see if it matches an invitation and set up the account
 		guiNewAccount.ViewNewAccount.displayNewAccount(theStage, invitationCode);
 	}
 
