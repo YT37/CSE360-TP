@@ -126,6 +126,8 @@ public class ControllerFirstAdmin {
 		
 		// Make sure the two passwords are the same
 		if (adminPassword1.compareTo(adminPassword2) != 0) {
+			// The two passwords are NOT the same, so clear the passwords, explain the passwords
+			// must be the same, and clear the message as soon as the first character is typed.
 			ViewFirstAdmin.text_AdminPassword1.setText("");
 			ViewFirstAdmin.text_AdminPassword2.setText("");
 			ViewFirstAdmin.label_PasswordsDoNotMatch.setText(
@@ -147,6 +149,7 @@ public class ControllerFirstAdmin {
 		// Everything checks out -- create the account
 		User user = new User(adminUsername, adminPassword1, "", "", "", "", "", true, false, false);
 		try {
+			// Create a new User object with admin role and register in the database
 			theDatabase.register(user);
 		} catch (SQLException e) {
 			System.err.println("*** ERROR *** Database error trying to register a user: " + e.getMessage());
@@ -175,3 +178,4 @@ public class ControllerFirstAdmin {
 		System.exit(0);
 	}	
 }
+

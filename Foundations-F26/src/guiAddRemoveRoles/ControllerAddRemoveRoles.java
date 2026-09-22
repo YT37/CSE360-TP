@@ -3,6 +3,7 @@ package guiAddRemoveRoles;
 import database.Database;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 
 /*******
@@ -60,7 +61,7 @@ public class ControllerAddRemoveRoles {
 		// Replacing the ComboBox items briefly clears the selection, so ignore that null value
 		if (ViewAddRemoveRoles.combobox_SelectUser.getValue() == null) return;
 
-		ViewAddRemoveRoles.theSelectedUser =
+		ViewAddRemoveRoles.theSelectedUser = 
 				(String) ViewAddRemoveRoles.combobox_SelectUser.getValue();
 		theDatabase.getUserAccountDetails(ViewAddRemoveRoles.theSelectedUser);
 		setupSelectedUser();
@@ -239,16 +240,18 @@ public class ControllerAddRemoveRoles {
 	 * 
 	 */
 	protected static void performRemoveRole() {
+		
+		// Determine which item in the ComboBox list was selected
 		ViewAddRemoveRoles.theRemoveRole = (String) ViewAddRemoveRoles.
 				combobox_SelectRoleToRemove.getValue();
 		
+		// If the selection is the list header (e.g., "<Select a role>") don't do anything
 		if (ViewAddRemoveRoles.theRemoveRole.compareTo("<Select a role>") != 0) {
 			
 			// An admin cannot remove their own Admin role
 			if (ViewAddRemoveRoles.theSelectedUser.equals(ViewAddRemoveRoles.theUser.getUserName())
 					&& ViewAddRemoveRoles.theRemoveRole.compareTo("Admin") == 0) {
-				javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-						javafx.scene.control.Alert.AlertType.WARNING,
+				Alert alert = new Alert(Alert.AlertType.WARNING,
 						"An admin cannot remove their own Admin role.");
 				alert.showAndWait();
 				return;
@@ -260,13 +263,13 @@ public class ControllerAddRemoveRoles {
 			if (theDatabase.getCurrentContributorRole()) roleCount++;
 			if (theDatabase.getCurrentViewerRole()) roleCount++;
 			if (roleCount <= 1) {
-				javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-						javafx.scene.control.Alert.AlertType.WARNING,
+				Alert alert = new Alert(Alert.AlertType.WARNING,
 						"A user must have at least one role. Assign a new role before removing this one.");
 				alert.showAndWait();
 				return;
 			}
 			
+			// If an actual role was selected, update the database entry for that user for the role
 			if (theDatabase.updateUserRole(ViewAddRemoveRoles.theSelectedUser, 
 					ViewAddRemoveRoles.theRemoveRole, "false") ) {
 				ViewAddRemoveRoles.combobox_SelectRoleToRemove = new ComboBox <String>();
@@ -275,7 +278,7 @@ public class ControllerAddRemoveRoles {
 				ViewAddRemoveRoles.combobox_SelectRoleToRemove.getSelectionModel().
 					clearAndSelect(0);		
 				setupSelectedUser();
-			}			
+			}				
 		}
 	}
 	

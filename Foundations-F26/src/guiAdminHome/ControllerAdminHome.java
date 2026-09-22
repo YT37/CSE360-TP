@@ -17,10 +17,10 @@ import guiTools.InvitationListView;
  * <p> Description: The Java/FX-based Admin Home Page.  This class provides the controller actions
  * basic on the user's use of the JavaFX GUI widgets defined by the View class.
  * 
- * This page contains a number of buttons that have not yet been implemented.  WHen those buttons
- * are pressed, an alert pops up to tell the user that the function associated with the button has
- * not been implemented. Also, be aware that What has been implemented may not work the way the
- * final product requires and there maybe defects in this code.
+ * This page contains the buttons an admin uses to invite users, manage invitations, set one-time
+ * passwords, delete users, list users, and add or remove roles.  Be aware that what has been
+ * implemented may not work the way the final product requires and there maybe defects in this
+ * code.
  * 
  * The class has been written assuming that the View or the Model are the only class methods that
  * can invoke these methods.  This is why each has been declared at "protected".  Do not change any
@@ -100,8 +100,9 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: manageInvitations () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that opens the Manage Invitations window.  The window
+	 * lists every outstanding invitation (code, email address, role, and deadline), after expired
+	 * invitations have been removed, and allows the admin to cancel a selected invitation. </p>
 	 */
 	protected static void manageInvitations() {
 		InvitationListView.show(ViewAdminHome.theStage, theDatabase);
@@ -112,8 +113,10 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: setOnetimePassword () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that allows an admin to set a one-time password for an
+	 * existing account.  The admin is asked for the username, which must exist, and then for a
+	 * temporary password, which must satisfy the password rules.  The password is stored and
+	 * flagged as one-time, so that user must set a new password the next time they log in. </p>
 	 */
 	protected static void setOnetimePassword() {
 		TextInputDialog userDialog = new TextInputDialog("");
@@ -158,8 +161,9 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: deleteUser () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that opens the user table with a Delete button.  The
+	 * admin selects a user and must answer "Are you sure?" before the account is deleted.  An
+	 * admin cannot delete their own account. </p>
 	 */
 	protected static void deleteUser() {
 		UserListView.show(ViewAdminHome.theStage, theDatabase, ViewAdminHome.theUser, true);
@@ -170,8 +174,8 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: listUsers () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that opens a table listing every user account with
+	 * the username, name, email address, and roles of each user. </p>
 	 */
 	protected static void listUsers() {
 		UserListView.show(ViewAdminHome.theStage, theDatabase, ViewAdminHome.theUser, false);
@@ -198,11 +202,13 @@ public class ControllerAdminHome {
 	 * Title: invalidEmailAddress () Method. </p>
 	 * 
 	 * <p> Description: Protected method that is intended to check an email address before it is
-	 * used to reduce errors.  The code currently only checks to see that the email address is not
-	 * empty.  In the future, a syntactic check must be performed and maybe there is a way to check
-	 * if a properly email address is active.</p>
+	 * used to reduce errors.  The code checks to see that the email address is not empty and then
+	 * uses the EmailAddressRecognizer to perform a syntactic check.  If there is a problem, an
+	 * alert explains it to the admin.</p>
 	 * 
 	 * @param emailAddress	This String holds what is expected to be an email address
+	 * 
+	 * @return true if the email address is invalid, else false
 	 */
 	protected static boolean invalidEmailAddress(String emailAddress) {
 		if (emailAddress.length() == 0) {

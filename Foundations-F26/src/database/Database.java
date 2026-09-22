@@ -218,7 +218,7 @@ public class Database {
 			
 			currentViewerRole = user.getViewerRole();
 			pstmt.setBoolean(10, currentViewerRole);
-						
+			
 			pstmt.executeUpdate();
 		}
 		
@@ -383,7 +383,8 @@ public class Database {
 	 * <p> Description: Given an email address and a roles, this method establishes and invitation
 	 * code and adds a record to the InvitationCodes table.  When the invitation code is used, the
 	 * stored email address is used to establish the new user and the record is removed from the
-	 * table.</p>
+	 * table.  Each code is given a deadline seven days from now, after which it is removed as
+	 * expired.</p>
 	 * 
 	 * @param emailAddress specifies the email address for this new user.
 	 * 
@@ -394,7 +395,7 @@ public class Database {
 	 */
 	// Generates a new invitation code and inserts it into the database.
 	public String generateInvitationCode(String emailAddress, String role) {
-	    String code = UUID.randomUUID().toString().substring(0, 6);
+	    String code = UUID.randomUUID().toString().substring(0, 6); // Generate a random 6-character code
 	    String query = "INSERT INTO InvitationCodes (code, emailaddress, role, deadline) VALUES (?, ?, ?, ?)";
 	    Timestamp deadline = new Timestamp(System.currentTimeMillis() + (7L * 24 * 60 * 60 * 1000));
 
@@ -409,8 +410,16 @@ public class Database {
 	    }
 	    return code;
 	}
-	
-	
+
+
+	/*******
+	 * <p> Method: void removeExpiredInvitations() </p>
+	 *
+	 * <p> Description: Remove every record from the InvitationCodes table whose deadline has
+	 * passed, so an expired invitation code can no longer be used or listed.</p>
+	 *
+	 */
+	// Delete the invitation codes whose deadline has passed.
 	public void removeExpiredInvitations() {
 	    String query = "DELETE FROM InvitationCodes WHERE deadline IS NOT NULL AND deadline < CURRENT_TIMESTAMP";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -420,6 +429,18 @@ public class Database {
 	    }
 	}
 
+
+	/*******
+	 * <p> Method: List<String[]> getAllInvitations() </p>
+	 *
+	 * <p> Description: Remove any expired invitations and then return one String[4] per
+	 * outstanding invitation: {code, email address, role, deadline}.  This list is used by the
+	 * admin's "Manage Invitations" window.</p>
+	 *
+	 * @return a list of the outstanding invitations, which is empty if there are none.
+	 *
+	 */
+	// Get the details of every outstanding invitation.
 	public List<String[]> getAllInvitations() {
 	    removeExpiredInvitations();
 	    List<String[]> invitations = new ArrayList<String[]>();
@@ -440,6 +461,17 @@ public class Database {
 	    return invitations;
 	}
 
+
+	/*******
+	 * <p> Method: void cancelInvitation(String code) </p>
+	 *
+	 * <p> Description: Remove the record for the specified invitation code from the
+	 * InvitationCodes table so the code can no longer be used to establish an account.</p>
+	 *
+	 * @param code is the 6 character String invitation code to be cancelled
+	 *
+	 */
+	// Cancel an outstanding invitation.
 	public void cancelInvitation(String code) {
 	    String query = "DELETE FROM InvitationCodes WHERE code = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -505,7 +537,8 @@ public class Database {
 	/*******
 	 * <p> Method: String getRoleGivenAnInvitationCode(String code) </p>
 	 * 
-	 * <p> Description: Get the role associated with an invitation code.</p>
+	 * <p> Description: Get the role associated with an invitation code.  Expired invitations are
+	 * removed first, so an expired code returns an empty string.</p>
 	 * 
 	 * @param code is the 6 character String invitation code
 	 *  
@@ -957,7 +990,13 @@ public class Database {
 	 * 
 	 * <p> Description: Update the password of a user given that user's username and the new
 	 *		password.</p>
+	 *
+	 * @param username is the username of the user
+	 *
+	 * @param password is the new password for the user
+	 *
 	 */
+	// Update a user's password
 	public void updatePassword(String username, String password) {
 	    String query = "UPDATE userDB SET password = ? WHERE username = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -969,8 +1008,21 @@ public class Database {
 	        e.printStackTrace();
 	    }
 	}
-	
-	
+
+
+	/*******
+	 * <p> Method: void setOneTimePassword(String username, String tempPassword) </p>
+	 *
+	 * <p> Description: Replace a user's password with a temporary one set by an admin and mark
+	 *		it as a one-time password, so the user is required to set a new password the next
+	 *		time they log in.</p>
+	 *
+	 * @param username is the username of the user
+	 *
+	 * @param tempPassword is the temporary password the user will use to log in once
+	 *
+	 */
+	// Set a one-time password for a user
 	public void setOneTimePassword(String username, String tempPassword) {
 	    String query = "UPDATE userDB SET password = ?, isOneTimePassword = TRUE WHERE username = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -982,6 +1034,17 @@ public class Database {
 	    }
 	}
 
+
+	/*******
+	 * <p> Method: void clearOneTimePasswordFlag(String username) </p>
+	 *
+	 * <p> Description: Mark a user's password as a normal password once the user has replaced
+	 *		their one-time password with a new one.</p>
+	 *
+	 * @param username is the username of the user
+	 *
+	 */
+	// Clear the one-time password flag for a user
 	public void clearOneTimePasswordFlag(String username) {
 	    String query = "UPDATE userDB SET isOneTimePassword = FALSE WHERE username = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -998,7 +1061,13 @@ public class Database {
 	 * 
 	 * <p> Description: Update a user's username. The caller is responsible for checking
 	 *		doesUserExist(newUsername) first to avoid a duplicate-key error.</p>
+	 *
+	 * @param oldUsername is the user's current username
+	 *
+	 * @param newUsername is the username that will replace it
+	 *
 	 */
+	// Update a user's username
 	public void updateUsername(String oldUsername, String newUsername) {
 	    String query = "UPDATE userDB SET username = ? WHERE username = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -1015,9 +1084,13 @@ public class Database {
 	 * <p> Method: boolean deleteUser(String username) </p>
 	 * 
 	 * <p> Description: Delete a user account given that user's username.</p>
-	 * 
+	 *
+	 * @param username is the username of the user to be deleted
+	 *
 	 * @return true if a row was actually deleted, false otherwise
+	 *
 	 */
+	// Delete a user account
 	public boolean deleteUser(String username) {
 	    String query = "DELETE FROM userDB WHERE username = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -1035,7 +1108,11 @@ public class Database {
 	 * 
 	 * <p> Description: Returns one String[4] per user: {username, full name, email, roles},
 	 * for the admin's "List All Users" and "Delete a User" screens.</p>
+	 *
+	 * @return a list with the details of every user account
+	 *
 	 */
+	// Get the details of every user account
 	public List<String[]> getAllUsersDetails() {
 	    List<String[]> details = new ArrayList<String[]>();
 	    String query = "SELECT userName, firstName, lastName, emailAddress, adminRole, "
@@ -1175,8 +1252,16 @@ public class Database {
 	 *  
 	 */
 	public boolean getCurrentViewerRole() { return currentViewerRole;};
-	
-	
+
+
+	/*******
+	 * <p> Method: boolean getCurrentIsOneTimePassword() </p>
+	 *
+	 * <p> Description: Get whether the current user's password is a one-time password.</p>
+	 *
+	 * @return true if this user must set a new password after logging in, else false
+	 *
+	 */
 	public boolean getCurrentIsOneTimePassword() { return currentIsOneTimePassword; }
 
 	

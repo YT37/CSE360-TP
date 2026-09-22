@@ -151,10 +151,9 @@ public class ControllerUserLogin {
 			// System.out.println("*** Going to displayMultipleRoleDispatch");
 			guiMultipleRoleDispatch.ViewMultipleRoleDispatch.
 				displayMultipleRoleDispatch(theStage, user);
-		}  else {
-			// numberOfRoles == 0 -- shouldn't normally happen, but Fix 2 above makes it
-			// impossible to reach zero via Add/Remove Roles, and this is the safety net
-			// for any other path that might still produce it
+		} else {
+			// The user has no roles.  This should not happen, since Add/Remove Roles will not
+			// remove a user's last role, but if it does, tell the user instead of doing nothing
 			ViewUserLogin.alertUsernamePasswordError.setContentText(
 					"This account has no roles assigned. Contact an admin for help.");
 			ViewUserLogin.alertUsernamePasswordError.showAndWait();
