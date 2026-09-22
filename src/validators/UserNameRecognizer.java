@@ -29,8 +29,8 @@ public class UserNameRecognizer {
 	public static String userNameRecognizerErrorMessage = "";	// The error message text
 	public static String userNameRecognizerInput = "";			// The input being processed
 	public static int userNameRecognizerIndexofError = -1;		// The index of error location
-	public static final int MAX_USERNAME_LENGTH = 16;	// TP1: reasonable upper size limit, also
-														// checked by callers before any lookup
+	public static final int MAX_USERNAME_LENGTH = 16;	// The maximum length, also checked by
+														// callers before any lookup
 	private static int state = 0;						// The current state value
 	private static int nextState = 0;					// The next state value
 	private static boolean finalState = false;			// Is this state a final state?

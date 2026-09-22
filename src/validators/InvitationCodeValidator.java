@@ -3,8 +3,8 @@ package validators;
 /*******
  * <p> Title: InvitationCodeValidator Class. </p>
  *
- * <p> Description: Validates the invitation code a potential new user enters on the login page
- * per TP1's Input Validation rules.  An invitation code is the first six characters of a UUID
+ * <p> Description: Validates the invitation code a potential new user enters on the login page.
+ * An invitation code is the first six characters of a UUID
  * (see Database.generateInvitationCode), so it must be exactly six characters long and may
  * contain only hexadecimal digits: 0-9 and the lowercase letters a-f.  The length is checked
  * before any other processing is performed, and the code is checked before it is used to query
@@ -12,8 +12,8 @@ package validators;
  */
 public class InvitationCodeValidator {
 
-	public static final int INVITATION_CODE_LENGTH = 6;	// TP1: invitation codes are always this
-														// long, so this is also the maximum
+	public static final int INVITATION_CODE_LENGTH = 6;	// Invitation codes are always this long,
+														// so this is also the maximum
 
 	/**********
 	 * <p> Method: String checkInvitationCode(String input) </p>

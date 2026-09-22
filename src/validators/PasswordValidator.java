@@ -6,17 +6,23 @@ import java.util.ArrayList;
 /*******
  * <p> Title: PasswordValidator Class. </p>
  * 
- * <p> Description: Standalone copy of the password evaluation logic from
- * PasswordEvaluationTestbed-F26's Model.java, trimmed of its GUI-testbed-specific code so it can
- * be reused in Foundations-F26. Includes the TP1 max-length check (see MAX_PASSWORD_LENGTH). </p>
+ * <p> Description: Evaluates a password against the password rules.  A password must be 8 to
+ * MAX_PASSWORD_LENGTH characters long, may contain only letters, digits, and the listed special
+ * characters, and must include an uppercase letter, a lowercase letter, a digit, and a special
+ * character.  The length is checked before any other processing is performed.  The found...
+ * attributes record which requirements the most recently evaluated password met, so a page can
+ * show live feedback as the user types. </p>
+ * 
+ * @version 1.00		2026-09-18 Derived from the password evaluation logic in
+ * 							PasswordEvaluationTestbed-F26's Model.java, without its GUI code
  */
 public class PasswordValidator {
 
 	public static String passwordErrorMessage = "";
 	public static String passwordInput = "";
 	public static int passwordIndexofError = -1;
-	public static final int MAX_PASSWORD_LENGTH = 64;	// TP1: reasonable upper size limit, checked
-														// before any other processing is performed
+	public static final int MAX_PASSWORD_LENGTH = 64;	// The maximum length, checked before any
+														// other processing is performed
 	public static boolean foundUpperCase = false;
 	public static boolean foundLowerCase = false;
 	public static boolean foundNumericDigit = false;
@@ -38,7 +44,7 @@ public class PasswordValidator {
 			return "*** Error *** The password is empty!";
 		}
 
-		// TP1: check size before doing anything else with the input
+		// Check the size before doing anything else with the input
 		if (input.length() > MAX_PASSWORD_LENGTH) {
 			passwordIndexofError = MAX_PASSWORD_LENGTH;
 			return "*** Error *** The password is too long! Passwords must be no more than " +
