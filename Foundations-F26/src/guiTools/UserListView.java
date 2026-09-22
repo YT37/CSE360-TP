@@ -26,7 +26,7 @@ import javafx.stage.Stage;
  *
  * <p> Description: A reusable table window showing every user account. Used by Admin Home's
  * "List All Users" button (allowDelete = false) and "Delete a User" button (allowDelete = true,
- * which adds a Delete button that removes the selected row after confirming).</p>
+ * which adds a Delete button that removes the selected row after the admin answers Yes).</p>
  */
 public class UserListView {
 
@@ -76,8 +76,9 @@ public class UserListView {
 	 *
 	 * <p> Description: This method builds and displays a table of every user account with the
 	 * username, name, email address, and roles of each user.  When allowDelete is true, a Delete
-	 * button is added.  The admin must confirm before a user is deleted, and an admin cannot
-	 * delete their own account.  The method does not return until the window is closed.</p>
+	 * button is added.  The admin must answer Yes to "Are you sure?" before a user is deleted,
+	 * and an admin cannot delete their own account.  The method does not return until the window
+	 * is closed.</p>
 	 *
 	 * @param owner specifies the Stage that owns this modal window
 	 *
@@ -148,12 +149,13 @@ public class UserListView {
 					return;
 				}
 
-				// Ask "Are you sure?" and delete the user only if the admin confirms
+				// Ask "Are you sure?" and delete the user only if the admin answers Yes
 				Alert confirm = new Alert(AlertType.CONFIRMATION,
-						"Are you sure you want to delete \"" + selected.getUsername() + "\"?");
+						"Are you sure you want to delete \"" + selected.getUsername() + "\"?",
+						ButtonType.YES, ButtonType.NO);
 				confirm.setHeaderText(null);
 				Optional<ButtonType> result = confirm.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
+				if (result.isPresent() && result.get() == ButtonType.YES) {
 					theDatabase.deleteUser(selected.getUsername());
 					rows.remove(selected);
 					countLabel.setText("Number of users: " + rows.size());
