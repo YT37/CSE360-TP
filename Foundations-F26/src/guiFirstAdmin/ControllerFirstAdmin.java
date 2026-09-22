@@ -13,10 +13,9 @@ import validators.PasswordValidator;
  * <p> Description: ControllerFirstAdmin class provides the controller actions based on the user's
  *  use of the JavaFX GUI widgets defined by the View class.
  * 
- * This page contains a number of buttons that have not yet been implemented.  WHhen those buttons
- * are pressed, an alert pops up to tell the user that the function associated with the button has
- * not been implemented. Also, be aware that What has been implemented may not work the way the
- * final product requires and there maybe defects in this code.
+ * This page checks the username and the two passwords entered for the first admin account and,
+ * when they are valid, establishes that account.  Be aware that what has been implemented may not
+ * work the way the final product requires and there maybe defects in this code.
  * 
  * The class has been written assuming that the View or the Model are the only class methods that
  * can invoke these methods.  This is why each has been declared at "protected".  Do not change any

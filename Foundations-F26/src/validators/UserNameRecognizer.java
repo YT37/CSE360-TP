@@ -29,6 +29,8 @@ public class UserNameRecognizer {
 	public static String userNameRecognizerErrorMessage = "";	// The error message text
 	public static String userNameRecognizerInput = "";			// The input being processed
 	public static int userNameRecognizerIndexofError = -1;		// The index of error location
+	public static final int MAX_USERNAME_LENGTH = 16;	// TP1: reasonable upper size limit, also
+														// checked by callers before any lookup
 	private static int state = 0;						// The current state value
 	private static int nextState = 0;					// The next state value
 	private static boolean finalState = false;			// Is this state a final state?
@@ -161,7 +163,7 @@ public class UserNameRecognizer {
 				
 				// The execution of this state is finished
 				// If the size is larger than 16, the loop must stop
-				if (userNameSize > 16)
+				if (userNameSize > MAX_USERNAME_LENGTH)
 					running = false;
 				break;			
 				
@@ -184,7 +186,7 @@ public class UserNameRecognizer {
 
 				// The execution of this state is finished
 				// If the size is larger than 16, the loop must stop
-				if (userNameSize > 16)
+				if (userNameSize > MAX_USERNAME_LENGTH)
 					running = false;
 				break;			
 			}
@@ -237,10 +239,10 @@ public class UserNameRecognizer {
 				userNameRecognizerErrorMessage += "A UserName must have at least 4 characters.\n";
 				return userNameRecognizerErrorMessage;
 			}
-			else if (userNameSize > 16) {
+			else if (userNameSize > MAX_USERNAME_LENGTH) {
 				// UserName is too long
 				userNameRecognizerErrorMessage += 
-					"A UserName must have no more than 16 characters.\n";
+					"A UserName must have no more than " + MAX_USERNAME_LENGTH + " characters.\n";
 				return userNameRecognizerErrorMessage;
 			}
 			else if (currentCharNdx < input.length()) {

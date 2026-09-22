@@ -4,6 +4,7 @@ import database.Database;
 import entityClasses.User;
 import javafx.stage.Stage;
 import validators.PasswordValidator;
+import validators.UserNameRecognizer;
 
 /*******
  * <p> Title: ControllerUserLogin Class. </p>
@@ -70,7 +71,8 @@ public class ControllerUserLogin {
     	boolean loginResult = false;
     	
 		// Defensive length check before DB lookup (avoids revealing why it failed)
-		if (username.length() > 16 || password.length() > PasswordValidator.MAX_PASSWORD_LENGTH) {
+		if (username.length() > UserNameRecognizer.MAX_USERNAME_LENGTH || 
+				password.length() > PasswordValidator.MAX_PASSWORD_LENGTH) {
 			ViewUserLogin.alertUsernamePasswordError.setContentText(
 					"Incorrect username/password. Try again!");
 			ViewUserLogin.alertUsernamePasswordError.showAndWait();

@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.List;
 import guiTools.UserListView;
 import validators.PasswordValidator;
+import validators.UserNameRecognizer;
 import guiTools.InvitationListView;
 
 /*******
@@ -119,6 +120,7 @@ public class ControllerAdminHome {
 	 * flagged as one-time, so that user must set a new password the next time they log in. </p>
 	 */
 	protected static void setOnetimePassword() {
+		// Ask for the username of the account; do nothing if the admin cancels
 		TextInputDialog userDialog = new TextInputDialog("");
 		userDialog.setTitle("Set a One-Time Password");
 		userDialog.setHeaderText("Enter the username of the account");
@@ -126,13 +128,16 @@ public class ControllerAdminHome {
 		if (!userResult.isPresent() || userResult.get().isEmpty()) return;
 		String username = userResult.get();
 		
-		if (username.length() > 16 || !theDatabase.doesUserExist(username)) {
-			ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
-			ViewAdminHome.alertNotImplemented.setContentText("No account exists with that username.");
-			ViewAdminHome.alertNotImplemented.showAndWait();
+		// Check the length before the lookup, then make sure the account exists
+		if (username.length() > UserNameRecognizer.MAX_USERNAME_LENGTH || 
+				!theDatabase.doesUserExist(username)) {
+			ViewAdminHome.alertOneTimePasswordError.setContentText(
+					"No account exists with that username.");
+			ViewAdminHome.alertOneTimePasswordError.showAndWait();
 			return;
 		}
 		
+		// Ask for the temporary password; do nothing if the admin cancels
 		TextInputDialog passwordDialog = new TextInputDialog("");
 		passwordDialog.setTitle("Set a One-Time Password");
 		passwordDialog.setHeaderText("Enter a temporary password for \"" + username + "\"");
@@ -140,20 +145,20 @@ public class ControllerAdminHome {
 		if (!passwordResult.isPresent() || passwordResult.get().isEmpty()) return;
 		String tempPassword = passwordResult.get();
 		
+		// The temporary password must satisfy the same rules as any other password
 		String passwordError = PasswordValidator.evaluatePassword(tempPassword);
 		if (passwordError != "") {
-			ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
-			ViewAdminHome.alertNotImplemented.setContentText(passwordError);
-			ViewAdminHome.alertNotImplemented.showAndWait();
+			ViewAdminHome.alertOneTimePasswordError.setContentText(passwordError);
+			ViewAdminHome.alertOneTimePasswordError.showAndWait();
 			return;
 		}
 		
+		// Store the password, flag it as one-time, and tell the admin it has been set
 		theDatabase.setOneTimePassword(username, tempPassword);
-		ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Set");
-		ViewAdminHome.alertNotImplemented.setContentText(
+		ViewAdminHome.alertOneTimePasswordSet.setContentText(
 				"A one-time password has been set for \"" + username + "\". "
 				+ "They must set a new password the next time they log in.");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		ViewAdminHome.alertOneTimePasswordSet.showAndWait();
 	}
 	
 	/**********

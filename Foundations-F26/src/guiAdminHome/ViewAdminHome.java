@@ -24,9 +24,8 @@ import guiUserUpdate.ViewUserUpdate;
  * <p> Title: ViewAdminHome Class. </p>
  * 
  * <p> Description: The Java/FX-based Admin Home Page.  This class provides the JavaFX GUI widgets
- * that enable an admin to perform admin functions.  This page contains a number of buttons that
- * have not yet been implemented.  What has been implemented may not work the way the final product
- * requires and there maybe defects in this code.
+ * that enable an admin to perform admin functions.  What has been implemented may not work the way
+ * the final product requires and there maybe defects in this code.
  * 
  * The class has been written using a singleton design pattern and is the View portion of the 
  * Model, View, Controller pattern.  The pattern is designed that the all accesses to this page and
@@ -96,14 +95,15 @@ public class ViewAdminHome {
 	private static Line line_Separator3 = new Line(20, 255, width-20, 255);
 	
 	// GUI Area 4: This is the second of the two action item areas.  This provides a set of other
-	// admin buttons to use to perform other roles.  Many of these buttons are just stubs and an
-	// alert pops up to inform the admin of this fact.
+	// admin buttons to use to perform other roles, and the alerts used by the one-time password
+	// button.
 	protected static Button button_ManageInvitations = new Button("Manage Invitations");
 	protected static Button button_SetOnetimePassword = new Button("Set a One-Time Password");
 	protected static Button button_DeleteUser = new Button("Delete a User");
 	protected static Button button_ListUsers = new Button("List All Users");
 	protected static Button button_AddRemoveRoles = new Button("Add/Remove Roles");
-	protected static Alert alertNotImplemented = new Alert(AlertType.INFORMATION);
+	protected static Alert alertOneTimePasswordError = new Alert(AlertType.ERROR);
+	protected static Alert alertOneTimePasswordSet = new Alert(AlertType.INFORMATION);
 
 	// This is a separator and it is used to partition the GUI for various tasks
 	private static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -239,6 +239,10 @@ public class ViewAdminHome {
 		combobox_SelectRole.getSelectionModel().select(0);
 		alertEmailSent.setTitle("Invitation");
 		alertEmailSent.setHeaderText("Invitation was sent");
+		alertOneTimePasswordError.setTitle("Set a One-Time Password");
+		alertOneTimePasswordError.setHeaderText("One-Time Password Issue");
+		alertOneTimePasswordSet.setTitle("Set a One-Time Password");
+		alertOneTimePasswordSet.setHeaderText("One-Time Password Set");
 
 		setupButtonUI(button_SendInvitation, "Dialog", 16, 150, Pos.CENTER, 630, 205);
 		button_SendInvitation.setOnAction((_) -> {ControllerAdminHome.performInvitation(); });
