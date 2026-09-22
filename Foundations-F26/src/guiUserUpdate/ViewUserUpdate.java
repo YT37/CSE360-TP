@@ -315,7 +315,7 @@ public class ViewUserUpdate {
 		});
         
         
-     // First Name
+        // First Name
         setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);
         setupLabelUI(label_CurrentFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 200);
         setupButtonUI(button_UpdateFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 193);
@@ -421,12 +421,12 @@ public class ViewUserUpdate {
 				theDatabase.updateEmailAddress(theUser.getUserName(), enteredEmail);
 			}
 		});
-		theDatabase.getUserAccountDetails(theUser.getUserName());
-		String newEmail = theDatabase.getCurrentEmailAddress();
-       	theUser.setEmailAddress(newEmail);
-    	if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
-    	else label_CurrentEmailAddress.setText(newEmail);
-			});
+    		theDatabase.getUserAccountDetails(theUser.getUserName());
+    		String newEmail = theDatabase.getCurrentEmailAddress();
+           	theUser.setEmailAddress(newEmail);
+        	if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
+        	else label_CurrentEmailAddress.setText(newEmail);
+ 			});
         
         // Set up the button to proceed to this user's home page
         setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, 

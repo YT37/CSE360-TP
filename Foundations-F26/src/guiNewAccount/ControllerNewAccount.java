@@ -1,6 +1,7 @@
 package guiNewAccount;
 
 import java.sql.SQLException;
+
 import database.Database;
 import entityClasses.User;
 import validators.UserNameRecognizer;
@@ -128,31 +129,31 @@ public class ControllerNewAccount {
 			}
 			
 			// Unlike the FirstAdmin, we know the email address, so set that into the user as well.
-	    	user.setEmailAddress(ViewNewAccount.emailAddress);
+        	user.setEmailAddress(ViewNewAccount.emailAddress);
 
-	    	// Inform the system about which role will be played
+        	// Inform the system about which role will be played
 			applicationMain.FoundationsMain.activeHomePage = roleCode;
 			
-	    	// Create the account based on user and proceed to the user account update page
-	        try {
-	        	// Create a new User object with the pre-set role and register in the database
-	        	theDatabase.register(user);
-	        } catch (SQLException e) {
-	            System.err.println("*** ERROR *** Database error: " + e.getMessage());
+        	// Create the account based on user and proceed to the user account update page
+            try {
+            	// Create a new User object with the pre-set role and register in the database
+            	theDatabase.register(user);
+            } catch (SQLException e) {
+                System.err.println("*** ERROR *** Database error: " + e.getMessage());
 	            ViewNewAccount.alertUsernamePasswordError.setContentText(
 	            		"Something went wrong creating the account. Please try again.");
 	            ViewNewAccount.alertUsernamePasswordError.showAndWait();
 	            return;
-	        }
+            }
 	        
-	        // The account has been set, so remove the invitation from the system
+            // The account has been set, so remove the invitation from the system
 	        theDatabase.removeInvitationAfterUse(ViewNewAccount.theInvitationCode);
 	        
-	        // Set the database so it has this user and the current user
-	        theDatabase.getUserAccountDetails(username);
+            // Set the database so it has this user and the current user
+            theDatabase.getUserAccountDetails(username);
 
-	        // Navigate to the Welcome Login Page
-	        guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewNewAccount.theStage, user);
+            // Navigate to the Welcome Login Page
+            guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewNewAccount.theStage, user);
 		}
 		else {
 			// The two passwords are NOT the same, so clear the passwords, explain the passwords

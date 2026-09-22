@@ -178,7 +178,7 @@ public class ViewNewAccount {
 		setupTextUI(text_Username, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 160, true);
 		text_Username.setPromptText("Enter the Username");
 		
-// Establish the text input operand field for the password
+		// Establish the text input operand field for the password
 		setupTextUI(text_Password1, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 210, true);
 		text_Password1.setPromptText("Enter the Password");
 		text_Password1.textProperty().addListener((obs, oldVal, newVal)
@@ -207,9 +207,9 @@ public class ViewNewAccount {
         button_UserSetup.setDisable(true);
         button_UserSetup.setOnAction((_) -> {ControllerNewAccount.doCreateUser(); });
 		
-		// Enable the user to quit the application
-		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
-		button_Quit.setOnAction((_) -> {ControllerNewAccount.performQuit(); });
+        // Enable the user to quit the application
+        setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
+        button_Quit.setOnAction((_) -> {ControllerNewAccount.performQuit(); });
 
 		// Position the password status panel below the password fields
 		passwordStatus.setLayoutX(50);
@@ -266,7 +266,7 @@ public class ViewNewAccount {
 		t.setLayoutX(x);
 		t.setLayoutY(y);		
 		t.setEditable(e);
-	}
+	}	
 
 	private static void updateUserSetupButtonState() {
 		button_UserSetup.setDisable(!passwordStatus.isFullyValidWithMatch());
