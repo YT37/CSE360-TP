@@ -66,6 +66,9 @@ public class ViewAddRemoveRoles {
 	// Area 2b: When a user has been selected these widgets are shown and can be used
 	protected static List<String> addList = new ArrayList<String>();
 	protected static Button button_AddRole = new Button("Add This Role");
+	
+	// The shared height of the ComboBoxes and the Add and Remove buttons, so each row lines up
+	private static final double CONTROL_HEIGHT = 38;
 	protected static List<String> removeList = new ArrayList<String>();
 	protected static Button button_RemoveRole = new Button("Remove This Role");
 	protected static Label label_CurrentRoles = new Label("This user's current roles:");
@@ -202,15 +205,19 @@ public class ViewAddRemoveRoles {
 		// GUI Area 2b
 		setupLabelUI(label_CurrentRoles, "Arial", 16, 300, Pos.BASELINE_LEFT, 50, 170);	
 		setupLabelUI(label_SelectRoleToBeAdded, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 210);
-		setupComboBoxUI(combobox_SelectRoleToAdd, "Dialog", 16, 150, 310, 205);
-		setupButtonUI(button_AddRole, "Dialog", 16, 150, Pos.CENTER, 490, 205);
+		setupComboBoxUI(combobox_SelectRoleToAdd, "Dialog", 16, 250, 310, 205);
+		setupButtonUI(button_AddRole, "Dialog", 16, 150, Pos.CENTER, 580, 205);
+		button_AddRole.setMinHeight(CONTROL_HEIGHT);
+		button_AddRole.setPrefHeight(CONTROL_HEIGHT);
 		ViewAddRemoveRoles.button_AddRole.setOnAction((_) -> 
 			{ControllerAddRemoveRoles.performAddRole(); });
-		setupButtonUI(button_RemoveRole, "Dialog", 16, 150, Pos.CENTER, 490, 275);			
+		setupButtonUI(button_RemoveRole, "Dialog", 16, 150, Pos.CENTER, 580, 275);
+		button_RemoveRole.setMinHeight(CONTROL_HEIGHT);
+		button_RemoveRole.setPrefHeight(CONTROL_HEIGHT);			
 		ViewAddRemoveRoles.button_RemoveRole.setOnAction((_) -> 
 			{ControllerAddRemoveRoles.performRemoveRole(); });
 		setupLabelUI(label_SelectRoleToBeRemoved, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 280);	
-		setupComboBoxUI(combobox_SelectRoleToRemove, "Dialog", 16, 150, 310, 275);	
+		setupComboBoxUI(combobox_SelectRoleToRemove, "Dialog", 16, 250, 310, 275);	
 		
 		// GUI Area 3		
 		setupButtonUI(button_Return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
@@ -293,5 +300,10 @@ public class ViewAddRemoveRoles {
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);
+		
+		// Every ComboBox on this page is as tall as the Add and Remove buttons, so each one lines
+		// up with the button and the label next to it
+		c.setMinHeight(CONTROL_HEIGHT);
+		c.setPrefHeight(CONTROL_HEIGHT);
 	}
 }

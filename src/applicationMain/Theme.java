@@ -58,7 +58,7 @@ public class Theme {
 			while (change.next()) {
 				for (Window window : change.getAddedSubList()) {
 					apply(window.getScene());
-					window.sceneProperty().addListener((_, _, newScene) -> apply(newScene));
+					window.sceneProperty().addListener((observable, oldScene, newScene) -> apply(newScene));
 
 					// A window sizes itself before it opens, using the default look.  Now that the
 					// theme's padding and fonts apply, size it again so text such as a long alert

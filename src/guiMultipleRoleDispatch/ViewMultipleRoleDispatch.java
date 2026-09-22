@@ -162,11 +162,14 @@ public class ViewMultipleRoleDispatch {
 		setupLabelUI(label_WhichRole, "Arial", 20, 400, Pos.BASELINE_LEFT, 45, 145);
 		label_WhichRole.getStyleClass().add("section-label");
 
-		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 300, 45, 195);
+		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 300, 45, 192);
 
 		// The Continue button is the primary action.  It stays disabled while the list header
 		// ("<Select a role>") is selected, since that is not a role that can be performed.
 		setupButtonUI(button_PerformRole, "Dialog", 18, 160, Pos.CENTER, 365, 192);
+
+		// The ComboBox is as tall as the Continue button so the two line up
+		combobox_SelectRole.minHeightProperty().bind(button_PerformRole.heightProperty());
 		button_PerformRole.getStyleClass().add("primary");
 		button_PerformRole.disableProperty().bind(
 				combobox_SelectRole.getSelectionModel().selectedIndexProperty().lessThan(1));
