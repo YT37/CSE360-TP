@@ -71,7 +71,7 @@ public class ControllerUserLogin {
 		String password = ViewUserLogin.text_Password.getText();
     	boolean loginResult = false;
     	
-		// Defensive length check before DB lookup (avoids revealing why it failed)
+		// Check the length of the username and password before looking up the account
 		if (username.length() > UserNameRecognizer.MAX_USERNAME_LENGTH || 
 				password.length() > PasswordValidator.MAX_PASSWORD_LENGTH) {
 			ViewUserLogin.alertUsernamePasswordError.setContentText(

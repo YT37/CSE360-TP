@@ -245,7 +245,6 @@ public class ViewAdminHome {
 		setupTextUI(text_InvitationEmailAddress, "Arial", 16, 310, Pos.BASELINE_LEFT,
 		145, 205, true);
 	
-		// The role list is as wide as the Send Invitation button and as tall as the email field
 		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 150, 468, 205);
 		combobox_SelectRole.minHeightProperty().bind(text_InvitationEmailAddress.heightProperty());
 	
@@ -394,7 +393,6 @@ public class ViewAdminHome {
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w, double x, double y){
-		// The ComboBox font is set by the combo-box rule in application.css
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);

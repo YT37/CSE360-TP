@@ -259,7 +259,7 @@ public class ViewUserUpdate {
         setupLabelUI(label_Purpose, "Arial", 14, width-40, Pos.BASELINE_LEFT, 20, 60);
         label_Purpose.getStyleClass().add("helper-text");
         
-        // The panel behind the rows of account details
+        // Set up the account details panel
         panel_Details.getStyleClass().add("surface");
         panel_Details.setLayoutX(10);
         panel_Details.setLayoutY(83);

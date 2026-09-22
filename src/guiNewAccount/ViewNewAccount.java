@@ -186,7 +186,7 @@ public class ViewNewAccount {
     	setupLabelUI(label_NewUserLine, "Arial", 14, width, Pos.CENTER, 0, 100);
     	label_NewUserLine.getStyleClass().add("helper-text");
 
-		// The panel behind the account fields and the password requirements
+		// Set up the account panel
 		panel_Account.getStyleClass().add("surface");
 		panel_Account.setLayoutX(85);
 		panel_Account.setLayoutY(135);
@@ -222,8 +222,7 @@ public class ViewNewAccount {
 		alertUsernamePasswordError.setHeaderText("The two passwords must be identical.");
 		alertUsernamePasswordError.setContentText("Correct the passwords and try again.");
 
-        // Set up the account creation and login, the primary action, which stays disabled until
-        // every field has been entered and the password meets all of the requirements
+        // Set up the Create Account button
         setupButtonUI(button_UserSetup, "Dialog", 18, 300, Pos.CENTER, 120, 330);
         button_UserSetup.getStyleClass().add("primary");
         button_UserSetup.setDisable(true);

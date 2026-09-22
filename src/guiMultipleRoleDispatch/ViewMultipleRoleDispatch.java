@@ -164,8 +164,7 @@ public class ViewMultipleRoleDispatch {
 
 		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 300, 45, 192);
 
-		// The Continue button is the primary action.  It stays disabled while the list header
-		// ("<Select a role>") is selected, since that is not a role that can be performed.
+		// Set up the Continue button
 		setupButtonUI(button_PerformRole, "Dialog", 18, 160, Pos.CENTER, 365, 192);
 
 		// The ComboBox is as tall as the Continue button so the two line up
@@ -254,7 +253,6 @@ public class ViewMultipleRoleDispatch {
 	 */
 	private void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w, double x, 
 			double y){
-		// The ComboBox font is set by the combo-box rule in application.css
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);

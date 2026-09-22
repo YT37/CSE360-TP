@@ -153,9 +153,7 @@ public class ViewUserLogin {
 		setupTextUI(text_Password, "Arial", 18, 340, Pos.BASELINE_LEFT, 230, 210, true);
 		text_Password.setPromptText("Enter Password");
 
-		// Set up the Log In button, the primary action, which stays disabled until both the
-		// username and the password have been entered.  Pressing Enter in either field also
-		// presses the button (a disabled button ignores it).
+		// Set up the Log In button
 		setupButtonUI(button_Login, "Dialog", 18, 340, Pos.CENTER, 230, 264);
 		button_Login.getStyleClass().add("primary");
 		button_Login.disableProperty().bind(text_Username.textProperty().isEmpty()

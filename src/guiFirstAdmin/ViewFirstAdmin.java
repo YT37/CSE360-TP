@@ -164,7 +164,7 @@ public class ViewFirstAdmin {
 		setupLabelUI(label_TitleLine2, "Arial", 14, width, Pos.CENTER, 0, 100);
 		label_TitleLine2.getStyleClass().add("helper-text");
 
-		// The panel behind the account fields and the password requirements
+		// Set up the account panel
 		panel_Account.getStyleClass().add("surface");
 		panel_Account.setLayoutX(85);
 		panel_Account.setLayoutY(135);
@@ -199,8 +199,7 @@ public class ViewFirstAdmin {
 				-> {passwordStatus.updateMatch(text_AdminPassword1.getText().equals(newVal) && !newVal.isEmpty());
 					updateAdminSetupButtonState(); });
 
-		// Set up the Create Admin Account button, the primary action, which stays disabled until
-		// every field has been entered and the password meets all of the requirements
+		// Set up the Create Admin Account button
 		setupButtonUI(button_AdminSetup, "Dialog", 18, 300, Pos.CENTER, 120, 330);
 		button_AdminSetup.getStyleClass().add("primary");
 		button_AdminSetup.setDisable(true);

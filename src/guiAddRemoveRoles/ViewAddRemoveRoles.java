@@ -66,8 +66,6 @@ public class ViewAddRemoveRoles {
 	// Area 2b: When a user has been selected these widgets are shown and can be used
 	protected static List<String> addList = new ArrayList<String>();
 	protected static Button button_AddRole = new Button("Add This Role");
-	
-	// The shared height of the ComboBoxes and the Add and Remove buttons, so each row lines up
 	private static final double CONTROL_HEIGHT = 38;
 	protected static List<String> removeList = new ArrayList<String>();
 	protected static Button button_RemoveRole = new Button("Remove This Role");
@@ -296,13 +294,9 @@ public class ViewAddRemoveRoles {
 	 */
 	protected static void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w,
 			double x, double y){
-		// The ComboBox font is set by the combo-box rule in application.css
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);
-		
-		// Every ComboBox on this page is as tall as the Add and Remove buttons, so each one lines
-		// up with the button and the label next to it
 		c.setMinHeight(CONTROL_HEIGHT);
 		c.setPrefHeight(CONTROL_HEIGHT);
 	}

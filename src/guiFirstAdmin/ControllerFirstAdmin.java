@@ -147,7 +147,7 @@ public class ControllerFirstAdmin {
 			return;
 		}
 		
-		// Everything checks out -- create the account
+		// All of the checks have passed, so create the account
 		User user = new User(adminUsername, adminPassword1, "", "", "", "", "", true, false, false);
 		try {
 			// Create a new User object with admin role and register in the database

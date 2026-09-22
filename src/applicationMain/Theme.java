@@ -11,14 +11,9 @@ import javafx.stage.Window;
 /*******
  * <p> Title: Theme Class </p>
  *
- * <p> Description: This class applies the application's dark theme, defined in application.css,
- * to every window the application displays.  Rather than asking each page, modal window, Alert,
- * and TextInputDialog to load the stylesheet itself, install() watches the list of open windows
- * and adds the stylesheet to each window's Scene when the window opens and whenever that window
- * is given a new Scene (as the main Stage is each time the user moves to another page).</p>
- *
- * <p> The class also holds the one font family used throughout the application, so the View
- * classes' setup helpers all use the same family while keeping their own font sizes.</p>
+ * <p> Description: This class applies the dark theme in application.css to every window the
+ * application opens, including Alerts and other dialogs, and holds the one font family that
+ * every page uses.</p>
  *
  */
 public class Theme {
