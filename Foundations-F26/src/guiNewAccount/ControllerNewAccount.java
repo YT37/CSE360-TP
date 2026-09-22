@@ -74,8 +74,10 @@ public class ControllerNewAccount {
 				ViewNewAccount.theInvitationCode + "; email address: " + 
 				ViewNewAccount.emailAddress + "; Role: " + ViewNewAccount.theRole);
 		
-		// Check the username format
-		String usernameError = UserNameRecognizer.checkForValidUserName(username);
+		// Check the username length first, then its format
+		String usernameError = (username.length() > UserNameRecognizer.MAX_USERNAME_LENGTH) ?
+				"A UserName must have no more than " + UserNameRecognizer.MAX_USERNAME_LENGTH + " characters." :
+				UserNameRecognizer.checkForValidUserName(username);
 		if (usernameError != "") {
 			ViewNewAccount.alertUsernamePasswordError.setHeaderText("Invalid Username");
 			ViewNewAccount.alertUsernamePasswordError.setContentText(usernameError);

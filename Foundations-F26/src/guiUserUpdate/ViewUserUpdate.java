@@ -263,7 +263,10 @@ public class ViewUserUpdate {
         button_UpdateUsername.setOnAction((_) -> {result = dialogUpdateUsername.showAndWait();
 		result.ifPresent(_ -> {
 			String enteredUsername = result.get();
-			String usernameError = UserNameRecognizer.checkForValidUserName(enteredUsername);
+			// Check the username length first, then its format
+			String usernameError = (enteredUsername.length() > UserNameRecognizer.MAX_USERNAME_LENGTH) ?
+					"A UserName must have no more than " + UserNameRecognizer.MAX_USERNAME_LENGTH + " characters." :
+					UserNameRecognizer.checkForValidUserName(enteredUsername);
 			if (usernameError != "") {
 				Alert alert = new Alert(Alert.AlertType.ERROR, usernameError);
 				alert.showAndWait();

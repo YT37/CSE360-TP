@@ -105,8 +105,10 @@ public class ControllerFirstAdmin {
 	 */
 	protected static void doSetupAdmin(Stage ps, int r) {
 		
-		// Check the username format first
-		String usernameError = UserNameRecognizer.checkForValidUserName(adminUsername);
+		// Check the username length first, then its format
+		String usernameError = (adminUsername.length() > UserNameRecognizer.MAX_USERNAME_LENGTH) ?
+				"A UserName must have no more than " + UserNameRecognizer.MAX_USERNAME_LENGTH + " characters." :
+				UserNameRecognizer.checkForValidUserName(adminUsername);
 		if (usernameError != "") {
 			ViewFirstAdmin.alertUsernamePasswordError.setHeaderText("Invalid Username");
 			ViewFirstAdmin.alertUsernamePasswordError.setContentText(usernameError);
