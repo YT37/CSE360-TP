@@ -82,6 +82,9 @@ public class FoundationsMain extends Application {
 	@Override
 	public void start(Stage theStage) {
 		
+		// Apply the application's theme (application.css) to every window from now on
+		Theme.install();
+		
 		// Connect to the in-memory database
 		try {
 			// Connect to the database

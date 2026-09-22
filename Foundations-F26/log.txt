@@ -1,0 +1,189 @@
+
+Current Final Input  Next
+State   State Char  State  Size
+   0             t     1     1
+   1       F     e     1     2
+   1       F     s     1     3
+   1       F     t     1     4
+   1       F     @    -1     4
+The loop has ended.
+
+Current Final Input  Next
+State   State Char  State  Size
+   0       F     t     1     1
+   1       F     e     1     2
+   1       F     s     1     3
+   1       F     t     1     4
+   1       F     @    -1     4
+The loop has ended.
+
+Current Final Input  Next
+State   State Char  State  Size
+   0       F     t     1     1
+   1       F     e     1     2
+   1       F     s     1     3
+   1       F     t     1     4
+   1       F   None
+The loop has ended.
+*** Fetching account data for user: test
+************** Just entered single role dispatch page
+
+Current Final Input  Next  DomainName
+State   State Char  State  Size
+   0             t     1     0
+   1             e     1     0
+   1             s     1     0
+   1             t     1     0
+   1             @     2     0
+   2             g     3     1
+   3             m     3     2
+   3             a     3     3
+   3             i     3     4
+   3             l     3     5
+   3             .     2     0
+   2             c     3     1
+   3             o     3     2
+   3             m     3     3
+End of input was found!
+   3           None
+The loop has ended.
+Code: 5ed004 for role Contributor was sent to: test@gmail.com
+*** Entering setupSelectedUser
+**** Calling doSetupAccount
+** Account for Username: test2; theInvitationCode: 5ed004; email address: test@gmail.com; Role: Contributor
+
+Current Final Input  Next
+State   State Char  State  Size
+   0       F     t     1     1
+   1       F     e     1     2
+   1       F     s     1     3
+   1       F     t     1     4
+   1       F     2     1     5
+   1       F   None
+The loop has ended.
+*** Fetching account data for user: test2
+************** Just entered single role dispatch page
+*** Fetching account data for user: test2
+************** Just entered single role dispatch page
+*** Entering setupSelectedUser
+Exception in thread "JavaFX Application Thread" java.lang.NullPointerException: Cannot invoke "String.compareTo(String)" because "guiAddRemoveRoles.ViewAddRemoveRoles.theSelectedUser" is null
+	at FoundationsF26/guiAddRemoveRoles.ControllerAddRemoveRoles.repaintTheWindow(ControllerAddRemoveRoles.java:79)
+	at FoundationsF26/guiAddRemoveRoles.ControllerAddRemoveRoles.setupSelectedUser(ControllerAddRemoveRoles.java:197)
+	at FoundationsF26/guiAddRemoveRoles.ControllerAddRemoveRoles.doSelectUser(ControllerAddRemoveRoles.java:63)
+	at FoundationsF26/guiAddRemoveRoles.ViewAddRemoveRoles.lambda$1(ViewAddRemoveRoles.java:200)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper$Generic.fireValueChangedEvent(ExpressionHelper.java:386)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:91)
+	at javafx.base@26.0.2/javafx.beans.property.ReadOnlyObjectPropertyBase.fireValueChangedEvent(ReadOnlyObjectPropertyBase.java:80)
+	at javafx.base@26.0.2/javafx.beans.property.ReadOnlyObjectWrapper.fireValueChangedEvent(ReadOnlyObjectWrapper.java:103)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.markInvalid(ObjectPropertyBase.java:113)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.set(ObjectPropertyBase.java:147)
+	at javafx.controls@26.0.2/javafx.scene.control.SelectionModel.setSelectedItem(SelectionModel.java:105)
+	at javafx.controls@26.0.2/javafx.scene.control.ComboBox$ComboBoxSelectionModel.lambda$new$0(ComboBox.java:562)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper$SingleInvalidation.fireValueChangedEvent(ExpressionHelper.java:147)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:91)
+	at javafx.base@26.0.2/javafx.beans.property.ReadOnlyIntegerPropertyBase.fireValueChangedEvent(ReadOnlyIntegerPropertyBase.java:78)
+	at javafx.base@26.0.2/javafx.beans.property.ReadOnlyIntegerWrapper.fireValueChangedEvent(ReadOnlyIntegerWrapper.java:102)
+	at javafx.base@26.0.2/javafx.beans.property.IntegerPropertyBase.markInvalid(IntegerPropertyBase.java:114)
+	at javafx.base@26.0.2/javafx.beans.property.IntegerPropertyBase.set(IntegerPropertyBase.java:148)
+	at javafx.controls@26.0.2/javafx.scene.control.SelectionModel.setSelectedIndex(SelectionModel.java:69)
+	at javafx.controls@26.0.2/javafx.scene.control.SingleSelectionModel.updateSelectedIndex(SingleSelectionModel.java:215)
+	at javafx.controls@26.0.2/javafx.scene.control.SingleSelectionModel.clearSelection(SingleSelectionModel.java:68)
+	at javafx.controls@26.0.2/javafx.scene.control.SingleSelectionModel.select(SingleSelectionModel.java:144)
+	at javafx.controls@26.0.2/javafx.scene.control.skin.ComboBoxListViewSkin.lambda$createListView$0(ComboBoxListViewSkin.java:585)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper$Generic.fireValueChangedEvent(ExpressionHelper.java:376)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:91)
+	at javafx.base@26.0.2/javafx.beans.property.ReadOnlyIntegerPropertyBase.fireValueChangedEvent(ReadOnlyIntegerPropertyBase.java:78)
+	at javafx.base@26.0.2/javafx.beans.property.ReadOnlyIntegerWrapper.fireValueChangedEvent(ReadOnlyIntegerWrapper.java:102)
+	at javafx.base@26.0.2/javafx.beans.property.IntegerPropertyBase.markInvalid(IntegerPropertyBase.java:114)
+	at javafx.base@26.0.2/javafx.beans.property.IntegerPropertyBase.set(IntegerPropertyBase.java:148)
+	at javafx.controls@26.0.2/javafx.scene.control.SelectionModel.setSelectedIndex(SelectionModel.java:69)
+	at javafx.controls@26.0.2/javafx.scene.control.MultipleSelectionModelBase.clearSelection(MultipleSelectionModelBase.java:574)
+	at javafx.controls@26.0.2/javafx.scene.control.ListView$ListViewBitSetSelectionModel.updateDefaultSelection(ListView.java:1581)
+	at javafx.controls@26.0.2/javafx.scene.control.ListView$ListViewBitSetSelectionModel.updateItemsObserver(ListView.java:1559)
+	at javafx.controls@26.0.2/javafx.scene.control.ListView$ListViewBitSetSelectionModel$1.invalidated(ListView.java:1283)
+	at javafx.base@26.0.2/javafx.beans.WeakInvalidationListener.invalidated(WeakInvalidationListener.java:82)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper$Generic.fireValueChangedEvent(ExpressionHelper.java:376)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:91)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.fireValueChangedEvent(ObjectPropertyBase.java:106)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.markInvalid(ObjectPropertyBase.java:113)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.set(ObjectPropertyBase.java:147)
+	at javafx.controls@26.0.2/javafx.scene.control.ListView.setItems(ListView.java:437)
+	at javafx.controls@26.0.2/javafx.scene.control.skin.ComboBoxListViewSkin.updateListViewItems(ComboBoxListViewSkin.java:396)
+	at javafx.controls@26.0.2/javafx.scene.control.skin.ComboBoxListViewSkin.lambda$new$0(ComboBoxListViewSkin.java:152)
+	at javafx.controls@26.0.2/com.sun.javafx.scene.control.ListenerHelper$6.invalidated(ListenerHelper.java:288)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper$Generic.fireValueChangedEvent(ExpressionHelper.java:376)
+	at javafx.base@26.0.2/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:91)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.fireValueChangedEvent(ObjectPropertyBase.java:106)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.markInvalid(ObjectPropertyBase.java:113)
+	at javafx.base@26.0.2/javafx.beans.property.ObjectPropertyBase.set(ObjectPropertyBase.java:147)
+	at javafx.controls@26.0.2/javafx.scene.control.ComboBox.setItems(ComboBox.java:312)
+	at FoundationsF26/guiAddRemoveRoles.ViewAddRemoveRoles.displayAddRemoveRoles(ViewAddRemoveRoles.java:143)
+	at FoundationsF26/guiAdminHome.ControllerAdminHome.addRemoveRoles(ControllerAdminHome.java:191)
+	at FoundationsF26/guiAdminHome.ViewAdminHome.lambda$6(ViewAdminHome.java:262)
+	at javafx.base@26.0.2/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189)
+	at javafx.base@26.0.2/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base@26.0.2/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@26.0.2/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@26.0.2/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49)
+	at javafx.base@26.0.2/javafx.event.Event.fireEvent(Event.java:199)
+	at javafx.graphics@26.0.2/javafx.scene.Node.fireEvent(Node.java:9092)
+	at javafx.controls@26.0.2/javafx.scene.control.Button.fire(Button.java:203)
+	at javafx.controls@26.0.2/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207)
+	at javafx.controls@26.0.2/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274)
+	at javafx.base@26.0.2/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247)
+	at javafx.base@26.0.2/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189)
+	at javafx.base@26.0.2/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base@26.0.2/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@26.0.2/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@26.0.2/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base@26.0.2/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base@26.0.2/javafx.event.Event.fireEvent(Event.java:199)
+	at javafx.graphics@26.0.2/javafx.scene.Scene$MouseHandler.process(Scene.java:4134)
+	at javafx.graphics@26.0.2/javafx.scene.Scene.processMouseEvent(Scene.java:1953)
+	at javafx.graphics@26.0.2/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2802)
+	at javafx.graphics@26.0.2/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.get(GlassViewEventHandler.java:353)
+	at javafx.graphics@26.0.2/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.get(GlassViewEventHandler.java:255)
+	at javafx.graphics@26.0.2/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:429)
+	at javafx.graphics@26.0.2/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:387)
+	at javafx.graphics@26.0.2/com.sun.glass.ui.View.handleMouseEvent(View.java:573)
+	at javafx.graphics@26.0.2/com.sun.glass.ui.View.notifyMouse(View.java:970)
+	at javafx.graphics@26.0.2/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics@26.0.2/com.sun.glass.ui.win.WinApplication.lambda$runLoop$0(WinApplication.java:173)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+*** Entering setupSelectedUser
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Could not resolve '-fx-text-background-color' while resolving lookups for '-fx-text-fill' from rule '*.label' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Could not resolve '-fx-text-background-color' while resolving lookups for '-fx-text-fill' from rule '*.label' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Could not resolve '-fx-text-base-color' while resolving lookups for '-fx-text-fill' from rule '*.button' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Caught 'java.lang.ClassCastException: class java.lang.String cannot be cast to class javafx.scene.paint.Paint (java.lang.String is in module java.base of loader 'bootstrap'; javafx.scene.paint.Paint is in module javafx.graphics@26.0.2 of loader 'app')' while converting value for '-fx-background-color' from rule '*.button' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Caught 'java.lang.ClassCastException: class java.lang.String cannot be cast to class javafx.scene.paint.Paint (java.lang.String is in module java.base of loader 'bootstrap'; javafx.scene.paint.Paint is in module javafx.graphics@26.0.2 of loader 'app')' while converting value for '-fx-background-color' from rule '*.combo-box-base' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Caught 'java.lang.ClassCastException: class java.lang.String cannot be cast to class javafx.scene.paint.Paint (java.lang.String is in module java.base of loader 'bootstrap'; javafx.scene.paint.Paint is in module javafx.graphics@26.0.2 of loader 'app')' while converting value for '-fx-background-color' from rule '*.combo-box-base>*.arrow-button>*.arrow' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Could not resolve '-fx-text-base-color' while resolving lookups for '-fx-text-fill' from rule '*.combo-box>*.list-cell' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Could not resolve '-fx-text-base-color' while resolving lookups for '-fx-text-fill' from rule '*.button' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+Sept 21, 2026 6:20:35 PM javafx.scene.CssStyleHelper calculateValue
+WARNING: Caught 'java.lang.ClassCastException: class java.lang.String cannot be cast to class javafx.scene.paint.Paint (java.lang.String is in module java.base of loader 'bootstrap'; javafx.scene.paint.Paint is in module javafx.graphics@26.0.2 of loader 'app')' while converting value for '-fx-background-color' from rule '*.button:focused' in stylesheet jar:file:///C:/Users/Yug%20Thapar/javafx-sdk-26.0.2/lib/javafx.controls.jar!/com/sun/javafx/scene/control/skin/modena/modena.bss
+*** Entering setupSelectedUser
+*** Entering setupSelectedUser
+*** Entering setupSelectedUser
+*** Entering setupSelectedUser
+Perform Quit

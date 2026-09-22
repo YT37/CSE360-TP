@@ -226,10 +226,12 @@ public class ViewAdminHome {
 		setupLabelUI(label_InvitationEmailAddress, "Arial", 16, width, Pos.BASELINE_LEFT,
 		20, 210);
 	
-		setupTextUI(text_InvitationEmailAddress, "Arial", 16, 360, Pos.BASELINE_LEFT,
-		130, 205, true);
+		setupTextUI(text_InvitationEmailAddress, "Arial", 16, 310, Pos.BASELINE_LEFT,
+		145, 205, true);
 	
-		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 90, 500, 205);
+		// The role list is as wide as the Send Invitation button and as tall as the email field
+		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 150, 468, 205);
+		combobox_SelectRole.minHeightProperty().bind(text_InvitationEmailAddress.heightProperty());
 	
 		List<String> list = new ArrayList<String>();	// Create a new list empty list of the
 		for (int i = 0; i < roles.length; i++) {		// roles this code currently supports
@@ -306,7 +308,7 @@ public class ViewAdminHome {
 	 * Private local method to initialize the standard fields for a label
 	 * 
 	 * @param l		The Label object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -314,7 +316,7 @@ public class ViewAdminHome {
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
-		l.setFont(Font.font(ff, f));
+		l.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		l.setMinWidth(w);
 		l.setAlignment(p);
 		l.setLayoutX(x);
@@ -326,7 +328,7 @@ public class ViewAdminHome {
 	 * Private local method to initialize the standard fields for a button
 	 * 
 	 * @param b		The Button object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -334,7 +336,7 @@ public class ViewAdminHome {
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupButtonUI(Button b, String ff, double f, double w, Pos p, double x, double y){
-		b.setFont(Font.font(ff, f));
+		b.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		b.setMinWidth(w);
 		b.setAlignment(p);
 		b.setLayoutX(x);
@@ -346,7 +348,7 @@ public class ViewAdminHome {
 	 * Private local method to initialize the standard fields for a text input field
 	 * 
 	 * @param b		The TextField object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -355,7 +357,7 @@ public class ViewAdminHome {
 	 * @param e		Is this TextField user editable?
 	 */
 	private void setupTextUI(TextField t, String ff, double f, double w, Pos p, double x, double y, boolean e){
-		t.setFont(Font.font(ff, f));
+		t.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		t.setMinWidth(w);
 		t.setMaxWidth(w);
 		t.setAlignment(p);
@@ -369,14 +371,14 @@ public class ViewAdminHome {
 	 * Private local method to initialize the standard fields for a ComboBox
 	 * 
 	 * @param c		The ComboBox object to be initialized
-	 * @param ff	The font to be used
-	 * @param f		The size of the font to be used
+	 * @param ff	The font requested by the caller (the stylesheet sets the ComboBox font)
+	 * @param f		The size of the font requested (the combo-box rule in application.css uses 16)
 	 * @param w		The width of the ComboBox
 	 * @param x		The location from the left edge (x axis)
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w, double x, double y){
-		c.setStyle("-fx-font: " + f + " " + ff + ";");
+		// The ComboBox font is set by the combo-box rule in application.css
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);

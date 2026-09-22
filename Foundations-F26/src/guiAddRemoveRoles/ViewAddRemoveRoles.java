@@ -190,7 +190,7 @@ public class ViewAddRemoveRoles {
 		// GUI Area 2a
 		setupLabelUI(label_SelectUser, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 130);
 		
-		setupComboBoxUI(combobox_SelectUser, "Dialog", 16, 250, 280, 125);
+		setupComboBoxUI(combobox_SelectUser, "Dialog", 16, 250, 310, 125);
 		List<String> userList = theDatabase.getUserList();	
 		combobox_SelectUser.setItems(FXCollections.observableArrayList(userList));
 		combobox_SelectUser.getSelectionModel().select(0);
@@ -202,15 +202,15 @@ public class ViewAddRemoveRoles {
 		// GUI Area 2b
 		setupLabelUI(label_CurrentRoles, "Arial", 16, 300, Pos.BASELINE_LEFT, 50, 170);	
 		setupLabelUI(label_SelectRoleToBeAdded, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 210);
-		setupComboBoxUI(combobox_SelectRoleToAdd, "Dialog", 16, 150, 280, 205);
-		setupButtonUI(button_AddRole, "Dialog", 16, 150, Pos.CENTER, 460, 205);
+		setupComboBoxUI(combobox_SelectRoleToAdd, "Dialog", 16, 150, 310, 205);
+		setupButtonUI(button_AddRole, "Dialog", 16, 150, Pos.CENTER, 490, 205);
 		ViewAddRemoveRoles.button_AddRole.setOnAction((_) -> 
 			{ControllerAddRemoveRoles.performAddRole(); });
-		setupButtonUI(button_RemoveRole, "Dialog", 16, 150, Pos.CENTER, 460, 275);			
+		setupButtonUI(button_RemoveRole, "Dialog", 16, 150, Pos.CENTER, 490, 275);			
 		ViewAddRemoveRoles.button_RemoveRole.setOnAction((_) -> 
 			{ControllerAddRemoveRoles.performRemoveRole(); });
 		setupLabelUI(label_SelectRoleToBeRemoved, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 280);	
-		setupComboBoxUI(combobox_SelectRoleToRemove, "Dialog", 16, 150, 280, 275);	
+		setupComboBoxUI(combobox_SelectRoleToRemove, "Dialog", 16, 150, 310, 275);	
 		
 		// GUI Area 3		
 		setupButtonUI(button_Return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
@@ -239,7 +239,7 @@ public class ViewAddRemoveRoles {
 	 * Private local method to initialize the standard fields for a label
 	 * 
 	 * @param l		The Label object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -249,7 +249,7 @@ public class ViewAddRemoveRoles {
 	
 	private static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x,
 			double y){
-		l.setFont(Font.font(ff, f));
+		l.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		l.setMinWidth(w);
 		l.setAlignment(p);
 		l.setLayoutX(x);
@@ -261,7 +261,7 @@ public class ViewAddRemoveRoles {
 	 * Private local method to initialize the standard fields for a button
 	 * 
 	 * @param b		The Button object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -270,7 +270,7 @@ public class ViewAddRemoveRoles {
 	 */
 	protected static void setupButtonUI(Button b, String ff, double f, double w, Pos p, double x,
 			double y){
-		b.setFont(Font.font(ff, f));
+		b.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		b.setMinWidth(w);
 		b.setAlignment(p);
 		b.setLayoutX(x);
@@ -281,15 +281,15 @@ public class ViewAddRemoveRoles {
 	 * Private local method to initialize the standard fields for a ComboBox
 	 * 
 	 * @param c		The ComboBox object to be initialized
-	 * @param ff	The font to be used
-	 * @param f		The size of the font to be used
+	 * @param ff	The font requested by the caller (the stylesheet sets the ComboBox font)
+	 * @param f		The size of the font requested (the combo-box rule in application.css uses 16)
 	 * @param w		The width of the ComboBox
 	 * @param x		The location from the left edge (x axis)
 	 * @param y		The location from the top (y axis)
 	 */
 	protected static void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w,
 			double x, double y){
-		c.setStyle("-fx-font: " + f + " " + ff + ";");
+		// The ComboBox font is set by the combo-box rule in application.css
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);

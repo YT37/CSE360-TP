@@ -1,1 +1,397 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+/*******
+ * Title: application.css
+ *
+ * Description: The dark theme for the whole application, inspired by Zoom's sign-in page:
+ * a near-black charcoal background, slightly lighter surface panels for grouped content,
+ * off-white text, and one blue accent used only for primary actions.  Theme.install() adds this
+ * stylesheet to every window, including Alerts, TextInputDialogs, and the modal list windows.
+ *
+ * Note on fonts: the View classes set each widget's font family and size in code (see
+ * Theme.FONT_FAMILY).  Font properties are deliberately NOT set on .root, because JavaFX would
+ * pass them down to every widget and override those sizes.  Fonts are only set here for style
+ * classes whose size is part of the design (titles, helper text) and for widgets that are not
+ * given a font in code (dialogs, tables, list cells, the password status panel).
+ */
+
+/* -------------------------------------------------------------------------------------------
+ * Palette.  These looked-up colors are used by the rules below and by JavaFX's built-in
+ * (modena) rules, so every control that is not styled explicitly is still dark.
+ * ------------------------------------------------------------------------------------------- */
+.root {
+	-app-background: #1C1C1F;		/* near-black charcoal page background */
+	-app-surface: #26262B;			/* grouped content panels, dialogs, popups */
+	-app-surface-raised: #2E2E34;	/* table headers, hover backgrounds */
+	-app-input: #202024;			/* text field and list fill */
+	-app-border: #3A3A42;			/* subtle 1px borders and separator lines */
+	-app-border-strong: #52525C;	/* outlined (secondary) button border */
+	-app-text: #F2F2F5;				/* primary text */
+	-app-text-muted: #A1A1AA;		/* secondary labels and helper text */
+	-app-text-faint: #7C7C86;		/* prompt text inside empty fields */
+	-app-accent: #0B5CFF;			/* the one accent color, for primary actions */
+	-app-accent-hover: #2F74FF;
+	-app-accent-pressed: #0848CC;
+	-app-error: #FF6B6B;			/* readable red on the dark background */
+	-app-success: #4ADE80;			/* readable green on the dark background */
+
+	/* modena's own looked-up colors, so its built-in rules follow the palette */
+	-fx-base: #2E2E34;
+	-fx-background: -app-background;
+	-fx-control-inner-background: -app-input;
+	-fx-control-inner-background-alt: #24242A;
+	-fx-accent: -app-accent;
+	-fx-default-button: -app-accent;
+	-fx-focus-color: -app-accent;
+	-fx-faint-focus-color: #0B5CFF33;
+	-fx-selection-bar: -app-accent;
+	-fx-selection-bar-non-focused: #28447F;
+	-fx-text-base-color: -app-text;
+	-fx-text-background-color: -app-text;
+	-fx-text-inner-color: -app-text;
+	-fx-prompt-text-fill: -app-text-faint;
+	-fx-mark-color: -app-text;
+	-fx-mark-highlight-color: transparent;
+	-fx-box-border: -app-border;
+	-fx-text-box-border: -app-border;
+	-fx-outer-border: -app-border;
+
+	-fx-background-color: -app-background;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Text and the type hierarchy: page title > section label > body (set in code) > helper text
+ * ------------------------------------------------------------------------------------------- */
+.label {
+	-fx-text-fill: -app-text;
+}
+
+.page-title {
+	-fx-font-size: 28px;
+	-fx-font-weight: bold;
+	-fx-text-fill: #FFFFFF;
+}
+
+.section-label {
+	-fx-font-size: 20px;
+	-fx-font-weight: bold;
+	-fx-text-fill: -app-text;
+}
+
+.subtitle {
+	-fx-text-fill: -app-text-muted;
+}
+
+.helper-text {
+	-fx-font-size: 14px;
+	-fx-text-fill: -app-text-muted;
+}
+
+.error-text {
+	-fx-text-fill: -app-error;
+}
+
+.success-text {
+	-fx-text-fill: -app-success;
+}
+
+/* The password requirement rows: a muted bullet before the user types, then a check mark in
+ * green or a cross in red as the user types */
+.status-met, .status-unmet, .status-pending {
+	-fx-font-size: 14px;
+}
+
+.status-pending {
+	-fx-text-fill: -app-text-muted;
+}
+
+.status-met {
+	-fx-text-fill: -app-success;
+}
+
+.status-unmet {
+	-fx-text-fill: -app-error;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Surfaces and separators
+ * ------------------------------------------------------------------------------------------- */
+.surface {
+	-fx-background-color: -app-surface;
+	-fx-background-radius: 12;
+	-fx-border-color: -app-border;
+	-fx-border-radius: 12;
+	-fx-border-width: 1;
+}
+
+Line {
+	-fx-stroke: -app-border;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Buttons.  Every button is a neutral outlined (secondary) button unless it is given the
+ * "primary" style class, which fills it with the accent color.  A dialog's default button
+ * (e.g., OK or Yes) is treated as primary.  Disabled buttons are clearly faded, since pages keep
+ * the primary button disabled until the input is valid.
+ * ------------------------------------------------------------------------------------------- */
+.button {
+	-fx-background-color: transparent;
+	-fx-background-radius: 8;
+	-fx-border-color: -app-border-strong;
+	-fx-border-radius: 8;
+	-fx-border-width: 1;
+	-fx-text-fill: -app-text;
+	-fx-padding: 7 16 7 16;
+	-fx-cursor: hand;
+}
+
+.button:hover {
+	-fx-background-color: -app-surface-raised;
+	-fx-border-color: #6A6A75;
+}
+
+.button:pressed {
+	-fx-background-color: -app-border;
+}
+
+.button:focused {
+	-fx-border-color: -app-accent;
+}
+
+.button.primary, .button:default {
+	-fx-background-color: -app-accent;
+	-fx-border-color: -app-accent;
+	-fx-text-fill: #FFFFFF;
+}
+
+.button.primary:hover, .button:default:hover {
+	-fx-background-color: -app-accent-hover;
+	-fx-border-color: -app-accent-hover;
+}
+
+.button.primary:pressed, .button:default:pressed {
+	-fx-background-color: -app-accent-pressed;
+	-fx-border-color: -app-accent-pressed;
+}
+
+.button.primary:focused, .button:default:focused {
+	-fx-border-color: #FFFFFF;
+}
+
+.button:disabled {
+	-fx-opacity: 0.4;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Text inputs: dark fill, subtle 1px border, rounded corners, and an accent focus ring
+ * ------------------------------------------------------------------------------------------- */
+.text-field, .password-field, .text-area {
+	-fx-background-color: -app-input;
+	-fx-background-radius: 8;
+	-fx-border-color: -app-border;
+	-fx-border-radius: 8;
+	-fx-border-width: 1;
+	-fx-text-fill: -app-text;
+	-fx-prompt-text-fill: -app-text-faint;
+	-fx-highlight-fill: -app-accent;
+	-fx-highlight-text-fill: #FFFFFF;
+	-fx-padding: 7 12 7 12;
+}
+
+.text-field:hover, .password-field:hover {
+	-fx-border-color: -app-border-strong;
+}
+
+.text-field:focused, .password-field:focused {
+	-fx-border-color: -app-accent;
+	-fx-effect: dropshadow(gaussian, rgba(11, 92, 255, 0.55), 8, 0.35, 0, 0);
+}
+
+/* -------------------------------------------------------------------------------------------
+ * ComboBox and its drop-down list
+ * ------------------------------------------------------------------------------------------- */
+.combo-box {
+	-fx-font-size: 16px;
+	-fx-background-color: -app-input;
+	-fx-background-radius: 8;
+	-fx-border-color: -app-border;
+	-fx-border-radius: 8;
+	-fx-border-width: 1;
+}
+
+.combo-box:hover {
+	-fx-border-color: -app-border-strong;
+}
+
+.combo-box:focused, .combo-box:showing {
+	-fx-border-color: -app-accent;
+}
+
+.combo-box .list-cell {
+	-fx-text-fill: -app-text;
+	-fx-background-color: transparent;
+	-fx-padding: 4 8 4 8;
+}
+
+.combo-box .arrow-button {
+	-fx-background-color: transparent;
+}
+
+.combo-box .arrow {
+	-fx-background-color: -app-text-muted;
+}
+
+.combo-box-popup .list-view {
+	-fx-background-color: -app-surface;
+	-fx-border-color: -app-border;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 12, 0, 0, 4);
+}
+
+.combo-box-popup .list-view .list-cell {
+	-fx-font-size: 16px;
+	-fx-background-color: -app-surface;
+	-fx-text-fill: -app-text;
+	-fx-padding: 6 10 6 10;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+	-fx-background-color: -app-surface-raised;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+	-fx-background-color: -app-accent;
+	-fx-text-fill: #FFFFFF;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * TableView (List All Users, Delete a User, Manage Invitations)
+ * ------------------------------------------------------------------------------------------- */
+.table-view {
+	-fx-font-size: 14px;
+	-fx-background-color: -app-input;
+	-fx-border-color: -app-border;
+	-fx-border-radius: 8;
+	-fx-background-radius: 8;
+	-fx-padding: 1;
+	-fx-table-cell-border-color: -app-border;
+}
+
+.table-view:focused {
+	-fx-border-color: -app-accent;
+	-fx-background-insets: 0;
+}
+
+.table-view .column-header-background,
+.table-view .column-header,
+.table-view .filler {
+	-fx-background-color: -app-surface-raised;
+	-fx-border-color: transparent -app-border -app-border transparent;
+}
+
+.table-view .column-header .label {
+	-fx-text-fill: -app-text;
+	-fx-font-weight: bold;
+	-fx-alignment: center-left;
+	-fx-padding: 4 8 4 8;
+}
+
+.table-row-cell {
+	-fx-background-color: -app-input;
+	-fx-text-background-color: -app-text;
+}
+
+.table-row-cell:odd {
+	-fx-background-color: #24242A;
+}
+
+.table-row-cell:hover {
+	-fx-background-color: -app-surface-raised;
+}
+
+.table-row-cell:filled:selected {
+	-fx-background-color: -app-accent;
+	-fx-text-background-color: #FFFFFF;
+}
+
+.table-cell {
+	-fx-text-fill: -app-text;
+	-fx-padding: 6 8 6 8;
+}
+
+.table-row-cell:filled:selected .table-cell {
+	-fx-text-fill: #FFFFFF;
+}
+
+.table-view .placeholder .label {
+	-fx-text-fill: -app-text-muted;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * Alert and TextInputDialog windows
+ * ------------------------------------------------------------------------------------------- */
+.dialog-pane {
+	-fx-font-size: 14px;
+	-fx-background-color: -app-surface;
+}
+
+.dialog-pane > .header-panel {
+	-fx-background-color: -app-surface-raised;
+	-fx-border-color: transparent transparent -app-border transparent;
+}
+
+.dialog-pane > .header-panel > .label {
+	-fx-font-size: 16px;
+	-fx-font-weight: bold;
+	-fx-text-fill: -app-text;
+}
+
+.dialog-pane > .content,
+.dialog-pane > .content.label {
+	-fx-text-fill: -app-text;
+	-fx-padding: 16 16 8 16;
+}
+
+.dialog-pane > .button-bar > .container {
+	-fx-padding: 8 12 12 12;
+}
+
+/* -------------------------------------------------------------------------------------------
+ * ScrollPane, scroll bars, and list views
+ * ------------------------------------------------------------------------------------------- */
+.scroll-pane, .scroll-pane > .viewport {
+	-fx-background-color: transparent;
+}
+
+.list-view {
+	-fx-background-color: -app-input;
+	-fx-border-color: -app-border;
+}
+
+.scroll-bar {
+	-fx-background-color: transparent;
+}
+
+.scroll-bar .track, .scroll-bar .track-background {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+}
+
+.scroll-bar .thumb {
+	-fx-background-color: #4A4A55;
+	-fx-background-radius: 6;
+}
+
+.scroll-bar .thumb:hover {
+	-fx-background-color: #6A6A75;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+	-fx-background-color: transparent;
+	-fx-padding: 2;
+}
+
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+	-fx-background-color: -app-text-muted;
+}
+
+.corner {
+	-fx-background-color: transparent;
+}

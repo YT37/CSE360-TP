@@ -156,19 +156,25 @@ public class PasswordStatusPanel extends VBox {
 
 	/**********
 	 * Private local method to show a requirement label as satisfied (a green check mark) or not
-	 * satisfied (a red cross)
+	 * satisfied (a red cross).  Until the user starts typing, every requirement is shown as
+	 * pending (a muted bullet) instead.  The colors come from the status-met, status-unmet, and
+	 * status-pending rules in application.css.
 	 * 
 	 * @param label		The Label object for the requirement
 	 * @param satisfied	Whether the requirement is satisfied
 	 */
 	private void setStatus(Label label, boolean satisfied) {
-		String base = label.getText().replaceFirst("^[\u2713\u2717] ", "");
-		if (satisfied) {
+		String base = label.getText().replaceFirst("^[\u2713\u2717\u2022] ", "");
+		label.getStyleClass().removeAll("status-met", "status-unmet", "status-pending");
+		if (!hasUserTyped) {
+			label.setText("\u2022 " + base);
+			label.getStyleClass().add("status-pending");
+		} else if (satisfied) {
 			label.setText("\u2713 " + base);
-			label.setStyle("-fx-text-fill: green; -fx-font-size: 12;");
+			label.getStyleClass().add("status-met");
 		} else {
 			label.setText("\u2717 " + base);
-			label.setStyle("-fx-text-fill: red; -fx-font-size: 12;");
+			label.getStyleClass().add("status-unmet");
 		}
 	}
 }

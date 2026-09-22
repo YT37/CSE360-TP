@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -46,7 +47,7 @@ public class ViewMultipleRoleDispatch {
 
 	// GUI Area 1: It informs the user about the purpose of this page and whose account is being
 	// used. There is no button to allow this user to update the account settings.
-	private static Label label_PageTitle = new Label("Multiple Role Dispatch Page");
+	private static Label label_PageTitle = new Label("Choose a Role");
 	private static Label label_UserDetails = new Label();
 	
 	// This is a separator and it is used to partition the GUI for various tasks
@@ -54,9 +55,10 @@ public class ViewMultipleRoleDispatch {
 
 	// GUI Area 2: This area consists of a label to ask the user what roles to place, a ComboBox 
 	// so the user can select the role, and a button to perform that role.
-	private static Label label_WhichRole = new Label("Which role do you wish to play:");
+	private static Label label_WhichRole = new Label("Which role do you want to use?");
 	protected static ComboBox <String> combobox_SelectRole = new ComboBox <String>();
-	private static Button button_PerformRole = new Button("Perform Role");		
+	private static Button button_PerformRole = new Button("Continue");		
+	private static Region panel_Role = new Region();	// The panel that groups these widgets
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	private static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -104,8 +106,10 @@ public class ViewMultipleRoleDispatch {
 		label_UserDetails.setText("User: " + theUser.getUserName() + "   Select which role");
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.CENTER, 0, 50);
 
-		label_UserDetails.setText("User: " + theUser.getUserName());
-		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);			
+		label_UserDetails.setText("Signed in as " + theUser.getUserName() + 
+				".  You have more than one role, so choose the one to use now.");
+		setupLabelUI(label_UserDetails, "Arial", 14, width-40, Pos.BASELINE_LEFT, 20, 60);
+		label_UserDetails.getStyleClass().add("helper-text");
 
 		System.out.println("*** Getting multiple role details for user: " + theUser.getUserName());
 		list = new ArrayList<String>();
@@ -146,14 +150,26 @@ public class ViewMultipleRoleDispatch {
 		// Populate the window with the title and other common widgets and set their static state
 		
 		// GUI Area 1
-		setupLabelUI(label_PageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
+		setupLabelUI(label_PageTitle, "Arial", 28, 500, Pos.BASELINE_LEFT, 20, 12);
+		label_PageTitle.getStyleClass().add("page-title");
 
 		// GUI Area 2
-		setupLabelUI(label_WhichRole, "Arial", 20, 200, Pos.BASELINE_LEFT, 20, 110);
+		panel_Role.getStyleClass().add("surface");
+		panel_Role.setLayoutX(20);
+		panel_Role.setLayoutY(120);
+		panel_Role.setPrefSize(width-40, 150);
 
-		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 100, 305, 105);
+		setupLabelUI(label_WhichRole, "Arial", 20, 400, Pos.BASELINE_LEFT, 45, 145);
+		label_WhichRole.getStyleClass().add("section-label");
 
-		setupButtonUI(button_PerformRole, "Dialog", 16, 100, Pos.CENTER, 495, 105);
+		setupComboBoxUI(combobox_SelectRole, "Dialog", 16, 300, 45, 195);
+
+		// The Continue button is the primary action.  It stays disabled while the list header
+		// ("<Select a role>") is selected, since that is not a role that can be performed.
+		setupButtonUI(button_PerformRole, "Dialog", 18, 160, Pos.CENTER, 365, 192);
+		button_PerformRole.getStyleClass().add("primary");
+		button_PerformRole.disableProperty().bind(
+				combobox_SelectRole.getSelectionModel().selectedIndexProperty().lessThan(1));
 		button_PerformRole.setOnAction((_) -> 
 		{guiMultipleRoleDispatch.ControllerMultipleRoleDispatch.performRole(); });
 
@@ -171,6 +187,7 @@ public class ViewMultipleRoleDispatch {
 
 		// Place all of the just-initialized GUI elements into the pane
 		theRootPane.getChildren().addAll(
+				panel_Role,
 				label_PageTitle,
 				label_UserDetails,
 				line_Separator1,
@@ -194,7 +211,7 @@ public class ViewMultipleRoleDispatch {
 	 */
 
 	private static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
-		l.setFont(Font.font(ff, f));
+		l.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		l.setMinWidth(w);
 		l.setAlignment(p);
 		l.setLayoutX(x);
@@ -206,7 +223,7 @@ public class ViewMultipleRoleDispatch {
 	 * Private local method to initialize the standard fields for a button
 	 * 
 	 * @param b		The Button object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -214,7 +231,7 @@ public class ViewMultipleRoleDispatch {
 	 * @param y		The location from the top (y axis)
 	 */
 	private static void setupButtonUI(Button b, String ff, double f, double w, Pos p, double x, double y){
-		b.setFont(Font.font(ff, f));
+		b.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		b.setMinWidth(w);
 		b.setAlignment(p);
 		b.setLayoutX(x);
@@ -226,15 +243,15 @@ public class ViewMultipleRoleDispatch {
 	 * Private local method to initialize the standard fields for a ComboBox
 	 * 
 	 * @param c		The ComboBox object to be initialized
-	 * @param ff	The font to be used
-	 * @param f		The size of the font to be used
+	 * @param ff	The font requested by the caller (the stylesheet sets the ComboBox font)
+	 * @param f		The size of the font requested (the combo-box rule in application.css uses 16)
 	 * @param w		The width of the ComboBox
 	 * @param x		The location from the left edge (x axis)
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupComboBoxUI(ComboBox <String> c, String ff, double f, double w, double x, 
 			double y){
-		c.setStyle("-fx-font: " + f + " " + ff + ";");
+		// The ComboBox font is set by the combo-box rule in application.css
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);

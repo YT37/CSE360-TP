@@ -8,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -49,25 +50,28 @@ public class ViewFirstAdmin {
 	// for the user to specify a username for this account and two copies of the password to be
 	// used (they must match), a button to request that the account be established, and a quit
 	// but to abort the action and stop the application.
-	private static Label label_ApplicationTitle = new Label("Foundation Application Startup Page");
+	private static Label label_ApplicationTitle = new Label("CSE 360 Foundations");
 	private static Label label_TitleLine1 = 
-			new Label(" You are the first user.  You must be an administrator.");
+			new Label("Create the administrator account");
 	
 	private static Label label_TitleLine2 = 
-			new Label("Enter the Admin's Username, the Password twice, and then click on " + 
-					"Setup Admin Account.");
+			new Label("You are the first user, so this account will be an administrator. " + 
+					"Choose a username and a password.");
 	
 	protected static Label label_PasswordsDoNotMatch = new Label();
 	protected static TextField text_AdminUsername = new TextField();
 	protected static PasswordField text_AdminPassword1 = new PasswordField();
 	protected static PasswordField text_AdminPassword2 = new PasswordField();
-	private static Button button_AdminSetup = new Button("Setup Admin Account");
+	private static Button button_AdminSetup = new Button("Create Admin Account");
+
+	// The panel that groups the account fields and the password requirements
+	private static Region panel_Account = new Region();
 
 	// This alert is used should the user enter two passwords that do not match
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
 
-	// Password status panel for live requirement feedback
-	private static PasswordStatusPanel passwordStatus = new PasswordStatusPanel();
+	// Password status panel for live requirement feedback, shown from the start
+	private static PasswordStatusPanel passwordStatus = new PasswordStatusPanel(true, true);
 
 	// This button allow the user to abort creating the first admin account and terminate
 	private static Button button_Quit = new Button("Quit");
@@ -149,23 +153,34 @@ public class ViewFirstAdmin {
 		theFirstAdminScene = new Scene(theRootPane, width, height);
 
 		// Label theScene with the name of the system startup screen
-		setupLabelUI(label_ApplicationTitle, "Arial", 32, width, Pos.CENTER, 0, 10);
+		setupLabelUI(label_ApplicationTitle, "Arial", 18, width, Pos.CENTER, 0, 24);
+		label_ApplicationTitle.getStyleClass().add("subtitle");
 
 		// Label to display the welcome message for the first user
-		setupLabelUI(label_TitleLine1, "Arial", 24, width, Pos.CENTER, 0, 70);
+		setupLabelUI(label_TitleLine1, "Arial", 28, width, Pos.CENTER, 0, 52);
+		label_TitleLine1.getStyleClass().add("page-title");
 
 		// Label to display the welcome message for the first user
-		setupLabelUI(label_TitleLine2, "Arial", 18, width, Pos.CENTER, 0, 130);
+		setupLabelUI(label_TitleLine2, "Arial", 14, width, Pos.CENTER, 0, 100);
+		label_TitleLine2.getStyleClass().add("helper-text");
+
+		// The panel behind the account fields and the password requirements
+		panel_Account.getStyleClass().add("surface");
+		panel_Account.setLayoutX(85);
+		panel_Account.setLayoutY(135);
+		panel_Account.setPrefSize(640, 290);
 
 		// Establish the text input operand field for the Admin username
-		setupTextUI(text_AdminUsername, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 160, 
+		setupTextUI(text_AdminUsername, "Arial", 18, 300, Pos.BASELINE_LEFT, 120, 165, 
 				true);
 		text_AdminUsername.setPromptText("Enter Admin Username");
 		text_AdminUsername.textProperty().addListener((_, _, _) 
 				-> {ControllerFirstAdmin.setAdminUsername(); });
+		text_AdminUsername.textProperty().addListener((_, _, _) 
+				-> {updateAdminSetupButtonState(); });
 
 		// Establish the text input operand field for the password
-		setupTextUI(text_AdminPassword1, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 210, 
+		setupTextUI(text_AdminPassword1, "Arial", 18, 300, Pos.BASELINE_LEFT, 120, 215, 
 				true);
 		text_AdminPassword1.setPromptText("Enter Admin Password");
 		text_AdminPassword1.textProperty().addListener((_, _, _)
@@ -175,7 +190,7 @@ public class ViewFirstAdmin {
 					updateAdminSetupButtonState(); });
 
 		// Establish the text input operand field for the password
-		setupTextUI(text_AdminPassword2, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 260, 
+		setupTextUI(text_AdminPassword2, "Arial", 18, 300, Pos.BASELINE_LEFT, 120, 265, 
 				true);
 		text_AdminPassword2.setPromptText("Enter Admin Password Again");
 		text_AdminPassword2.textProperty().addListener((_, _, _) 
@@ -184,34 +199,49 @@ public class ViewFirstAdmin {
 				-> {passwordStatus.updateMatch(text_AdminPassword1.getText().equals(newVal) && !newVal.isEmpty());
 					updateAdminSetupButtonState(); });
 
-		// Set up the Log In button
-		setupButtonUI(button_AdminSetup, "Dialog", 18, 200, Pos.CENTER, 475, 210);
+		// Set up the Create Admin Account button, the primary action, which stays disabled until
+		// every field has been entered and the password meets all of the requirements
+		setupButtonUI(button_AdminSetup, "Dialog", 18, 300, Pos.CENTER, 120, 330);
+		button_AdminSetup.getStyleClass().add("primary");
 		button_AdminSetup.setDisable(true);
 		button_AdminSetup.setOnAction((_) -> {
 			ControllerFirstAdmin.doSetupAdmin(theStage,1); 
 			});
 
 		// Label to display the Passwords do not match error message
-		setupLabelUI(label_PasswordsDoNotMatch, "Arial", 18, width, Pos.CENTER, 0, 300);
+		setupLabelUI(label_PasswordsDoNotMatch, "Arial", 16, 560, Pos.BASELINE_LEFT, 120, 385);
+		label_PasswordsDoNotMatch.getStyleClass().add("error-text");
 
-		// Position the password status panel below the password fields
-		passwordStatus.setLayoutX(50);
-		passwordStatus.setLayoutY(295);
+		// Position the password status panel to the right of the password fields
+		passwordStatus.setLayoutX(450);
+		passwordStatus.setLayoutY(167);
 
-		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 520);
+		setupButtonUI(button_Quit, "Dialog", 18, 150, Pos.CENTER, 325, 520);
 		button_Quit.setOnAction((_) -> {ControllerFirstAdmin.performQuit(); });
 
 		// Place all of the just-initialized GUI elements into the pane
-		theRootPane.getChildren().addAll(label_ApplicationTitle, label_TitleLine1,
+		theRootPane.getChildren().addAll(panel_Account, label_ApplicationTitle, label_TitleLine1,
 				label_TitleLine2, text_AdminUsername, text_AdminPassword1, 
 				text_AdminPassword2, button_AdminSetup, label_PasswordsDoNotMatch,
 				button_Quit, passwordStatus);
 	}
 
+	/**********
+	 * <p> Method: updateAdminSetupButtonState() </p>
+	 * 
+	 * <p> Description: This method is called whenever any of the three fields changes.  It
+	 * refreshes the "both passwords match" requirement (which can change when either password
+	 * changes) and enables the Create Admin Account button only when a username has been entered
+	 * and the password meets every requirement, including the maximum length.  The Controller
+	 * still validates everything when the button is pressed. </p>
+	 */
 	private static void updateAdminSetupButtonState() {
 		boolean passwordsMatch = text_AdminPassword1.getText().equals(text_AdminPassword2.getText())
 				&& !text_AdminPassword1.getText().isEmpty();
-		button_AdminSetup.setDisable(!passwordStatus.isFullyValidWithMatch());
+		passwordStatus.updateMatch(passwordsMatch);
+		button_AdminSetup.setDisable(text_AdminUsername.getText().isEmpty()
+				|| !passwordStatus.isFullyValidWithMatch()
+				|| !passwordStatus.isFullyValidWithMaxLength());
 	}
 	
 	
@@ -225,7 +255,7 @@ public class ViewFirstAdmin {
 	 * Private local method to initialize the standard fields for a label
 	 * 
 	 * @param l		The Label object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Label
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -234,7 +264,7 @@ public class ViewFirstAdmin {
 	 */
 
 	private void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
-		l.setFont(Font.font(ff, f));
+		l.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		l.setMinWidth(w);
 		l.setAlignment(p);
 		l.setLayoutX(x);
@@ -246,7 +276,7 @@ public class ViewFirstAdmin {
 	 * Private local method to initialize the standard fields for a button
 	 * 
 	 * @param b		The Button object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -254,7 +284,7 @@ public class ViewFirstAdmin {
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupButtonUI(Button b, String ff, double f, double w, Pos p, double x, double y){
-		b.setFont(Font.font(ff, f));
+		b.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		b.setMinWidth(w);
 		b.setAlignment(p);
 		b.setLayoutX(x);
@@ -266,7 +296,7 @@ public class ViewFirstAdmin {
 	 * Private local method to initialize the standard fields for a text field
 	 * 
 	 * @param t		The TextField object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -276,7 +306,7 @@ public class ViewFirstAdmin {
 	 */
 	private void setupTextUI(TextField t, String ff, double f, double w, Pos p, double x, double y, 
 			boolean e){
-		t.setFont(Font.font(ff, f));
+		t.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		t.setMinWidth(w);
 		t.setMaxWidth(w);
 		t.setAlignment(p);

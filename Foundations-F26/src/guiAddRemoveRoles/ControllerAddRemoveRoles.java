@@ -185,14 +185,14 @@ public class ControllerAddRemoveRoles {
 		ViewAddRemoveRoles.label_CurrentRoles.setText("This user's current roles: " + 
 				theCurrentRoles);		
 		ViewAddRemoveRoles.setupComboBoxUI(ViewAddRemoveRoles.combobox_SelectRoleToAdd, "Dialog",
-				16, 150, 280, 205);
+				16, 150, 310, 205);
 		ViewAddRemoveRoles.combobox_SelectRoleToAdd.setItems(FXCollections.
 				observableArrayList(ViewAddRemoveRoles.addList));
 		ViewAddRemoveRoles.combobox_SelectRoleToAdd.getSelectionModel().clearAndSelect(0);		
 		ViewAddRemoveRoles.setupButtonUI(ViewAddRemoveRoles.button_AddRole, "Dialog", 16, 150, 
-				Pos.CENTER, 460, 205);
+				Pos.CENTER, 490, 205);
 		ViewAddRemoveRoles.setupComboBoxUI(ViewAddRemoveRoles.combobox_SelectRoleToRemove, "Dialog",
-				16, 150, 280, 275);
+				16, 150, 310, 275);
 		ViewAddRemoveRoles.combobox_SelectRoleToRemove.setItems(FXCollections.
 				observableArrayList(ViewAddRemoveRoles.removeList));
 		ViewAddRemoveRoles.combobox_SelectRoleToRemove.getSelectionModel().select(0);

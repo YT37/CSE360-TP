@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import entityClasses.User;
@@ -61,9 +62,12 @@ public class ViewUserUpdate {
 	// is not able to logout, return, or quit from this page
 	
 	// These widgets display the purpose of the page and guide the user.
-	private static Label label_ApplicationTitle = new Label("Update a User's Account Details");
+	private static Label label_ApplicationTitle = new Label("Your Account");
     private static Label label_Purpose = 
-    		new Label(" Use this page to define or update your account information."); 
+    		new Label("Use this page to define or update your account information."); 
+    
+    // The panel that groups the account details
+    private static Region panel_Details = new Region();
     
     // These are static output labels and do not change during execution
 	private static Label label_Username = new Label("Username:");
@@ -95,7 +99,7 @@ public class ViewUserUpdate {
 
 	// This button enables the user to finish working on this page and proceed to the user's home
 	// page determined by the user's role at the time of log in.
-	private static Button button_ProceedToUserHomePage = new Button("Proceed to the User Home Page");
+	private static Button button_ProceedToUserHomePage = new Button("Continue to Home Page");
 	
 	// This is the end of the GUI widgets for this page.
 	
@@ -247,18 +251,26 @@ public class ViewUserUpdate {
 		dialogUpdateUsername.setTitle("Update Username");
 		dialogUpdateUsername.setHeaderText("Update your Username");
 
-		// Label theScene with the name of the startup screen, centered at the top of the pane
-		setupLabelUI(label_ApplicationTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
+		// Label theScene with the name of the startup screen, at the top left of the pane
+		setupLabelUI(label_ApplicationTitle, "Arial", 28, 500, Pos.BASELINE_LEFT, 20, 12);
+		label_ApplicationTitle.getStyleClass().add("page-title");
 
         // Label to display the welcome message for the first theUser
-        setupLabelUI(label_Purpose, "Arial", 20, width, Pos.CENTER, 0, 50);
+        setupLabelUI(label_Purpose, "Arial", 14, width-40, Pos.BASELINE_LEFT, 20, 60);
+        label_Purpose.getStyleClass().add("helper-text");
+        
+        // The panel behind the rows of account details
+        panel_Details.getStyleClass().add("surface");
+        panel_Details.setLayoutX(10);
+        panel_Details.setLayoutY(83);
+        panel_Details.setPrefSize(width-20, 362);
         
         // Display the titles, values, and update buttons for the various admin account attributes.
         // If the attributes is null or empty, display "<none>".
         
         // USername
-        setupLabelUI(label_Username, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 100);
-        setupLabelUI(label_CurrentUsername, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 100);
+        setupLabelUI(label_Username, "Arial", 18, 200, Pos.BASELINE_RIGHT, 15, 100);
+        setupLabelUI(label_CurrentUsername, "Arial", 18, 260, Pos.BASELINE_LEFT, 225, 100);
         setupButtonUI(button_UpdateUsername, "Dialog", 18, 275, Pos.CENTER, 500, 93);
         button_UpdateUsername.setOnAction((_) -> {result = dialogUpdateUsername.showAndWait();
 		result.ifPresent(_ -> {
@@ -285,8 +297,8 @@ public class ViewUserUpdate {
 		});
        
         // password
-        setupLabelUI(label_Password, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 150);
-        setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 150);
+        setupLabelUI(label_Password, "Arial", 18, 200, Pos.BASELINE_RIGHT, 15, 150);
+        setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 225, 150);
         setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
         button_UpdatePassword.setOnAction((_) -> {
 			Optional<String> pwResult = guiTools.PasswordEntryDialog.showAndWait(
@@ -319,8 +331,8 @@ public class ViewUserUpdate {
         
         
         // First Name
-        setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);
-        setupLabelUI(label_CurrentFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 200);
+        setupLabelUI(label_FirstName, "Arial", 18, 200, Pos.BASELINE_RIGHT, 15, 200);
+        setupLabelUI(label_CurrentFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 225, 200);
         setupButtonUI(button_UpdateFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 193);
         button_UpdateFirstName.setOnAction((_) -> {result = dialogUpdateFirstName.showAndWait();
         	result.ifPresent(_ -> {
@@ -341,8 +353,8 @@ public class ViewUserUpdate {
          	});
                
         // Middle Name
-        setupLabelUI(label_MiddleName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 250);
-        setupLabelUI(label_CurrentMiddleName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 250);
+        setupLabelUI(label_MiddleName, "Arial", 18, 200, Pos.BASELINE_RIGHT, 15, 250);
+        setupLabelUI(label_CurrentMiddleName, "Arial", 18, 260, Pos.BASELINE_LEFT, 225, 250);
         setupButtonUI(button_UpdateMiddleName, "Dialog", 18, 275, Pos.CENTER, 500, 243);
         button_UpdateMiddleName.setOnAction((_) -> {result = dialogUpdateMiddleName.showAndWait();
     		result.ifPresent(_ -> {
@@ -363,8 +375,8 @@ public class ViewUserUpdate {
     		});
         
         // Last Name
-        setupLabelUI(label_LastName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 300);
-        setupLabelUI(label_CurrentLastName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 300);
+        setupLabelUI(label_LastName, "Arial", 18, 200, Pos.BASELINE_RIGHT, 15, 300);
+        setupLabelUI(label_CurrentLastName, "Arial", 18, 260, Pos.BASELINE_LEFT, 225, 300);
         setupButtonUI(button_UpdateLastName, "Dialog", 18, 275, Pos.CENTER, 500, 293);
         button_UpdateLastName.setOnAction((_) -> {result = dialogUpdateLastName.showAndWait();
     		result.ifPresent(_ -> {
@@ -385,10 +397,10 @@ public class ViewUserUpdate {
     		});
         
         // Preferred First Name
-        setupLabelUI(label_PreferredFirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 
-        		5, 350);
+        setupLabelUI(label_PreferredFirstName, "Arial", 18, 200, Pos.BASELINE_RIGHT, 
+        		15, 350);
         setupLabelUI(label_CurrentPreferredFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 
-        		200, 350);
+        		225, 350);
         setupButtonUI(button_UpdatePreferredFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 343);
         button_UpdatePreferredFirstName.setOnAction((_) -> 
         	{result = dialogUpdatePreferredFirstName.showAndWait();
@@ -410,8 +422,8 @@ public class ViewUserUpdate {
      		});
         
         // Email Address
-        setupLabelUI(label_EmailAddress, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 400);
-        setupLabelUI(label_CurrentEmailAddress, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 400);
+        setupLabelUI(label_EmailAddress, "Arial", 18, 200, Pos.BASELINE_RIGHT, 15, 400);
+        setupLabelUI(label_CurrentEmailAddress, "Arial", 18, 260, Pos.BASELINE_LEFT, 225, 400);
         setupButtonUI(button_UpdateEmailAddress, "Dialog", 18, 275, Pos.CENTER, 500, 393);
         button_UpdateEmailAddress.setOnAction((_) -> {result = dialogUpdateEmailAddresss.showAndWait();
 		result.ifPresent(_ -> {
@@ -431,14 +443,21 @@ public class ViewUserUpdate {
         	else label_CurrentEmailAddress.setText(newEmail);
  			});
         
-        // Set up the button to proceed to this user's home page
+        // The names of the account details are secondary labels; their values are primary text
+        for (Label l : new Label[] {label_Username, label_Password, label_FirstName, 
+        		label_MiddleName, label_LastName, label_PreferredFirstName, label_EmailAddress})
+        	l.getStyleClass().add("subtitle");
+        
+        // Set up the button to proceed to this user's home page, the primary action
         setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, 
-        		Pos.CENTER, width/2-150, 450);
+        		Pos.CENTER, width/2-150, 470);
+        button_ProceedToUserHomePage.getStyleClass().add("primary");
         button_ProceedToUserHomePage.setOnAction((_) -> 
         	{ControllerUserUpdate.goToUserHomePage(theStage, theUser);});
     	
         // Populate the Pane's list of children widgets
         theRootPane.getChildren().addAll(
+        		panel_Details,
         		label_ApplicationTitle, label_Purpose, label_Username,
         		label_CurrentUsername, 
         		label_Password, label_CurrentPassword, 
@@ -464,7 +483,7 @@ public class ViewUserUpdate {
 	 * Private local method to initialize the standard fields for a label
 	 * 
 	 * @param l		The Label object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -472,7 +491,7 @@ public class ViewUserUpdate {
 	 * @param y		The location from the top (y axis)
 	 */
 	private static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
-		l.setFont(Font.font(ff, f));
+		l.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		l.setMinWidth(w);
 		l.setAlignment(p);
 		l.setLayoutX(x);
@@ -484,7 +503,7 @@ public class ViewUserUpdate {
 	 * Private local method to initialize the standard fields for a button
 	 * 
 	 * @param b		The Button object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -492,7 +511,7 @@ public class ViewUserUpdate {
 	 * @param y		The location from the top (y axis)
 	 */
 	private static void setupButtonUI(Button b, String ff, double f, double w, Pos p, double x, double y){
-		b.setFont(Font.font(ff, f));
+		b.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		b.setMinWidth(w);
 		b.setAlignment(p);
 		b.setLayoutX(x);

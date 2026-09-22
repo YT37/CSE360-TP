@@ -9,6 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -39,12 +40,11 @@ public class ViewUserLogin {
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 
-	private static Label label_ApplicationTitle = new Label("Foundation Application Startup Page");
+	private static Label label_ApplicationTitle = new Label("CSE 360 Foundations");
 
 	// This set is for all subsequent starts of the system
-	private static Label label_OperationalStartTitle = new Label("Log In or Invited User Account Setup ");
-	private static Label label_LogInInsrtuctions = new Label("Enter your user name and password and "+	
-			"then click on the LogIn button");
+	private static Label label_OperationalStartTitle = new Label("Sign in");
+	private static Label label_LogInInsrtuctions = new Label("Enter your username and password.");
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
 	protected static Alert alertInvitationCodeError = new Alert(AlertType.INFORMATION);
 
@@ -54,10 +54,13 @@ public class ViewUserLogin {
 	protected static PasswordField text_Password = new PasswordField();
 	private static Button button_Login = new Button("Log In");	
 
-	private static Label label_AccountSetupInsrtuctions = new Label("No account? "+	
-			"Enter your invitation code and click on the Account Setup button");
+	private static Label label_AccountSetupInsrtuctions = new Label("New here? Enter your " +
+			"invitation code.");
 	private static TextField text_Invitation = new TextField();
-	private static Button button_SetupAccount = new Button("Setup Account");
+	private static Button button_SetupAccount = new Button("Set Up Account");
+
+	// The panel that groups the sign in and account setup widgets
+	private static Region panel_SignIn = new Region();
 
 	private static Button button_Quit = new Button("Quit");
 
@@ -124,26 +127,42 @@ public class ViewUserLogin {
 		theUserLoginScene = new Scene(theRootPane, width, height);
 		
 		// Populate the window with the title and other common widgets and set their static state
-		setupLabelUI(label_ApplicationTitle, "Arial", 32, width, Pos.CENTER, 0, 10);
+		setupLabelUI(label_ApplicationTitle, "Arial", 18, width, Pos.CENTER, 0, 24);
+		label_ApplicationTitle.getStyleClass().add("subtitle");
 
-		setupLabelUI(label_OperationalStartTitle, "Arial", 24, width, Pos.CENTER, 0, 60);
+		setupLabelUI(label_OperationalStartTitle, "Arial", 28, width, Pos.CENTER, 0, 52);
+		label_OperationalStartTitle.getStyleClass().add("page-title");
+
+		// The panel behind the sign in and account setup widgets, centered on the page
+		panel_SignIn.getStyleClass().add("surface");
+		panel_SignIn.setLayoutX(200);
+		panel_SignIn.setLayoutY(110);
+		panel_SignIn.setPrefSize(400, 370);
 
 
 		// Existing user log in portion of the page
 
-		setupLabelUI(label_LogInInsrtuctions, "Arial", 18, width, Pos.BASELINE_LEFT, 20, 120);
+		setupLabelUI(label_LogInInsrtuctions, "Arial", 14, 340, Pos.BASELINE_LEFT, 230, 132);
+		label_LogInInsrtuctions.getStyleClass().add("helper-text");
 
 		// Establish the text input operand field for the username
-		setupTextUI(text_Username, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 160, true);
+		setupTextUI(text_Username, "Arial", 18, 340, Pos.BASELINE_LEFT, 230, 160, true);
 		text_Username.setPromptText("Enter Username");
 
 		// Establish the text input operand field for the password
-		setupTextUI(text_Password, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 210, true);
+		setupTextUI(text_Password, "Arial", 18, 340, Pos.BASELINE_LEFT, 230, 210, true);
 		text_Password.setPromptText("Enter Password");
 
-		// Set up the Log In button
-		setupButtonUI(button_Login, "Dialog", 18, 200, Pos.CENTER, 475, 180);
+		// Set up the Log In button, the primary action, which stays disabled until both the
+		// username and the password have been entered.  Pressing Enter in either field also
+		// presses the button (a disabled button ignores it).
+		setupButtonUI(button_Login, "Dialog", 18, 340, Pos.CENTER, 230, 264);
+		button_Login.getStyleClass().add("primary");
+		button_Login.disableProperty().bind(text_Username.textProperty().isEmpty()
+				.or(text_Password.textProperty().isEmpty()));
 		button_Login.setOnAction((_) -> {ControllerUserLogin.doLogin(theStage); });
+		text_Username.setOnAction((_) -> {button_Login.fire(); });
+		text_Password.setOnAction((_) -> {button_Login.fire(); });
 
 		alertUsernamePasswordError.setTitle("Invalid username/password!");
 		alertUsernamePasswordError.setHeaderText(null);
@@ -153,26 +172,30 @@ public class ViewUserLogin {
 
 		// The invitation to setup an account portion of the page
 
-		setupLabelUI(label_AccountSetupInsrtuctions, "Arial", 18, width, Pos.BASELINE_LEFT, 20, 300);
+		setupLabelUI(label_AccountSetupInsrtuctions, "Arial", 14, 340, Pos.BASELINE_LEFT, 230, 338);
+		label_AccountSetupInsrtuctions.getStyleClass().add("helper-text");
 
 		// Establish the text input operand field for the password
-		setupTextUI(text_Invitation, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 340, true);
+		setupTextUI(text_Invitation, "Arial", 18, 340, Pos.BASELINE_LEFT, 230, 366, true);
 		text_Invitation.setPromptText("Enter Invitation Code");
 
-		// Set up the setup button
-		setupButtonUI(button_SetupAccount, "Dialog", 18, 200, Pos.CENTER, 475, 340);
+		// Set up the setup button, which stays disabled until a code has been entered
+		setupButtonUI(button_SetupAccount, "Dialog", 18, 340, Pos.CENTER, 230, 418);
+		button_SetupAccount.disableProperty().bind(text_Invitation.textProperty().isEmpty());
+		text_Invitation.setOnAction((_) -> {button_SetupAccount.fire(); });
 		button_SetupAccount.setOnAction((_) -> {
 			System.out.println("**** Calling doSetupAccount");
 			ControllerUserLogin.doSetupAccount(theStage, text_Invitation.getText());
 		});
 
 		// Set up the Quit button  
-		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 520);
+		setupButtonUI(button_Quit, "Dialog", 18, 150, Pos.CENTER, 325, 520);
 		button_Quit.setOnAction((_) -> {ControllerUserLogin.performQuit(); });
 
 		//		theRootPane.getChildren().clear();
 
 		theRootPane.getChildren().addAll(
+				panel_SignIn,
 				label_ApplicationTitle, 
 				label_OperationalStartTitle,
 				label_LogInInsrtuctions, label_AccountSetupInsrtuctions, text_Username,
@@ -192,7 +215,7 @@ public class ViewUserLogin {
 	 */
 
 	private void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
-		l.setFont(Font.font(ff, f));
+		l.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		l.setMinWidth(w);
 		l.setAlignment(p);
 		l.setLayoutX(x);
@@ -204,7 +227,7 @@ public class ViewUserLogin {
 	 * Private local method to initialize the standard fields for a button
 	 * 
 	 * @param b		The Button object to be initialized
-	 * @param ff	The font to be used
+	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button
 	 * @param p		The alignment (e.g. left, centered, or right)
@@ -212,7 +235,7 @@ public class ViewUserLogin {
 	 * @param y		The location from the top (y axis)
 	 */
 	private void setupButtonUI(Button b, String ff, double f, double w, Pos p, double x, double y){
-		b.setFont(Font.font(ff, f));
+		b.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		b.setMinWidth(w);
 		b.setAlignment(p);
 		b.setLayoutX(x);
@@ -223,7 +246,7 @@ public class ViewUserLogin {
 	 * Private local method to initialize the standard fields for a text field
 	 */
 	private void setupTextUI(TextField t, String ff, double f, double w, Pos p, double x, double y, boolean e){
-		t.setFont(Font.font(ff, f));
+		t.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, f));
 		t.setMinWidth(w);
 		t.setMaxWidth(w);
 		t.setAlignment(p);
