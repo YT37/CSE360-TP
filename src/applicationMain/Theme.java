@@ -4,6 +4,8 @@ import java.net.URL;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.Scene;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Window;
 
 /*******
@@ -57,6 +59,18 @@ public class Theme {
 				for (Window window : change.getAddedSubList()) {
 					apply(window.getScene());
 					window.sceneProperty().addListener((_, _, newScene) -> apply(newScene));
+
+					// A window sizes itself before it opens, using the default look.  Now that the
+					// theme's padding and fonts apply, size it again so text such as a long alert
+					// message is not cut off.  A dialog is also allowed to grow as tall as its
+					// wrapped message needs.  (The pages' Scenes have a fixed size, so this does
+					// not change the size of the main window.)
+					if (window.getScene() != null) {
+						if (window.getScene().getRoot() instanceof DialogPane pane)
+							pane.setMinHeight(Region.USE_PREF_SIZE);
+						window.getScene().getRoot().applyCss();
+						window.sizeToScene();
+					}
 				}
 			}
 		});

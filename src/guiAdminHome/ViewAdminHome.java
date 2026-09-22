@@ -174,11 +174,27 @@ public class ViewAdminHome {
 
 		// Set the role for potential users to the default (No role selected)
 		combobox_SelectRole.getSelectionModel().select(0);
+		
+		// The counts may have changed since this page was last displayed
+		updateCounts();
 				
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundation Code: Admin Home Page");
+		theStage.setTitle("Lessons Learned System: Admin Home");
 		theStage.setScene(theAdminHomeScene);						// Set this page onto the stage
 		theStage.show();											// Display it to the user
+	}
+	
+	/**********
+	 * <p> Method: updateCounts() </p>
+	 * 
+	 * <p> Description: This method refreshes the number of outstanding invitations and the number
+	 * of users shown on this page.  It is called each time the page is displayed and after the
+	 * admin closes a window that may have deleted a user or cancelled an invitation. </p>
+	 */
+	protected static void updateCounts() {
+		label_NumberOfInvitations.setText("Number of outstanding invitations: " + 
+				theDatabase.getNumberOfInvitations());
+		label_NumberOfUsers.setText("Number of users: " + theDatabase.getNumberOfUsers());
 	}
 	
 	/**********

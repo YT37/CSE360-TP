@@ -200,7 +200,7 @@ public class ViewUserUpdate {
     	else label_CurrentEmailAddress.setText(s);
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
-    	theStage.setTitle("CSE 360 Foundation Code: Update User Account Details");
+    	theStage.setTitle("Lessons Learned System: Your Account");
         theStage.setScene(theUserUpdateScene);
 		theStage.show();
 	}

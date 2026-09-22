@@ -346,7 +346,6 @@ Line {
 .dialog-pane > .content,
 .dialog-pane > .content.label {
 	-fx-text-fill: -app-text;
-	-fx-padding: 16 16 8 16;
 }
 
 .dialog-pane > .button-bar > .container {

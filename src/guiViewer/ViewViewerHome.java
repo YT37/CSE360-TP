@@ -137,7 +137,7 @@ public class ViewViewerHome {
 		label_Welcome.setText("Welcome, " + name + "!");
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Viewer Home Page");
+		theStage.setTitle("Lessons Learned System: Viewer Home");
 		theStage.setScene(theViewerHomeScene);						// Set this page onto the stage
 		theStage.show();											// Display it to the user
 	}

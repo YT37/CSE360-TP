@@ -48,7 +48,7 @@ public class ViewNewAccount {
 	// difference is in this case we also know an email address, since it was used to send the
 	// invitation to the potential user.
 	private static Label label_ApplicationTitle = 
-			new Label("CSE 360 Foundations");
+			new Label("Lessons Learned System");
     protected static Label label_NewUserCreation = new Label("Create your account");
     protected static Label label_NewUserLine = new Label("Please enter a username and a password.");
     protected static TextField text_Username = new TextField();
@@ -153,7 +153,7 @@ public class ViewNewAccount {
     			text_Password1, text_Password2, button_UserSetup, button_Quit, passwordStatus);    	
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundation Code: New User Account Setup");	
+		theStage.setTitle("Lessons Learned System: Create Your Account");	
         theStage.setScene(theNewAccountScene);
 		theStage.show();
 	}

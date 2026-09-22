@@ -138,7 +138,7 @@ public class ViewContributorHome {
 		label_Welcome.setText("Welcome, " + name + "!");
 				
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Contributor Home Page");
+		theStage.setTitle("Lessons Learned System: Contributor Home");
 		theStage.setScene(theViewContributorHomeScene);
 		theStage.show();
 	}

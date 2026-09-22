@@ -50,7 +50,7 @@ public class ViewFirstAdmin {
 	// for the user to specify a username for this account and two copies of the password to be
 	// used (they must match), a button to request that the account be established, and a quit
 	// but to abort the action and stop the application.
-	private static Label label_ApplicationTitle = new Label("CSE 360 Foundations");
+	private static Label label_ApplicationTitle = new Label("Lessons Learned System");
 	private static Label label_TitleLine1 = 
 			new Label("Create the administrator account");
 	
@@ -114,7 +114,7 @@ public class ViewFirstAdmin {
 		applicationMain.FoundationsMain.activeHomePage = theRole;	// 1: Admin; 2: Contributor; 3: Viewer
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundation Code: First User Account Setup");	
+		theStage.setTitle("Lessons Learned System: Create the Administrator Account");	
 		theStage.setScene(theFirstAdminScene);
 		theStage.show();
 	}

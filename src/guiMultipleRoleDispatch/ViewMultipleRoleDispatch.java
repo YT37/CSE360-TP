@@ -123,7 +123,7 @@ public class ViewMultipleRoleDispatch {
 		combobox_SelectRole.getSelectionModel().select(0);
 		
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundation Code: Multiple Role Dispatch");	
+		theStage.setTitle("Lessons Learned System: Choose a Role");	
 		theStage.setScene(theMultipleRoleDispatchScene);		// Set this page onto the stage
 		theStage.show();										// Display it to the user
 	}

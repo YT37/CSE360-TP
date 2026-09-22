@@ -40,7 +40,7 @@ public class ViewUserLogin {
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 
-	private static Label label_ApplicationTitle = new Label("CSE 360 Foundations");
+	private static Label label_ApplicationTitle = new Label("Lessons Learned System");
 
 	// This set is for all subsequent starts of the system
 	private static Label label_OperationalStartTitle = new Label("Sign in");
@@ -93,7 +93,7 @@ public class ViewUserLogin {
 		text_Invitation.setText("");	// Same for the invitation code
 
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundation Code: User Login Page");		
+		theStage.setTitle("Lessons Learned System: Sign In");		
 		theStage.setScene(theUserLoginScene);
 		theStage.show();
 	}

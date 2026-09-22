@@ -107,6 +107,9 @@ public class ControllerAdminHome {
 	 */
 	protected static void manageInvitations() {
 		InvitationListView.show(ViewAdminHome.theStage, theDatabase);
+		
+		// An invitation may have been cancelled or expired, so refresh the counts
+		ViewAdminHome.updateCounts();
 	}
 	
 	/**********
@@ -172,6 +175,9 @@ public class ControllerAdminHome {
 	 */
 	protected static void deleteUser() {
 		UserListView.show(ViewAdminHome.theStage, theDatabase, ViewAdminHome.theUser, true);
+		
+		// A user may have been deleted, so refresh the counts
+		ViewAdminHome.updateCounts();
 	}
 	
 	/**********
