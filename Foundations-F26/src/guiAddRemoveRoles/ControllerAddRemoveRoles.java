@@ -57,7 +57,10 @@ public class ControllerAddRemoveRoles {
 	 * 
 	 */
 	protected static void doSelectUser() {
-		ViewAddRemoveRoles.theSelectedUser = 
+		// Replacing the ComboBox items briefly clears the selection, so ignore that null value
+		if (ViewAddRemoveRoles.combobox_SelectUser.getValue() == null) return;
+
+		ViewAddRemoveRoles.theSelectedUser =
 				(String) ViewAddRemoveRoles.combobox_SelectUser.getValue();
 		theDatabase.getUserAccountDetails(ViewAddRemoveRoles.theSelectedUser);
 		setupSelectedUser();
