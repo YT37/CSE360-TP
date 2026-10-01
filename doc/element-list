@@ -1,0 +1,16 @@
+module:CSE360TP
+applicationMain
+database
+entityClasses
+guiAddRemoveRoles
+guiAdminHome
+guiContributor
+guiFirstAdmin
+guiMultipleRoleDispatch
+guiNewAccount
+guiTools
+guiUserLogin
+guiUserUpdate
+guiViewer
+validators
+validatorTests
