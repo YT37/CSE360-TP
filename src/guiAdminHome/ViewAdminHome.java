@@ -362,7 +362,7 @@ public class ViewAdminHome {
 	/**********
 	 * Private local method to initialize the standard fields for a text input field
 	 * 
-	 * @param b		The TextField object to be initialized
+	 * @param t		The TextField object to be initialized
 	 * @param ff	The font requested by the caller (Theme.FONT_FAMILY is used instead)
 	 * @param f		The size of the font to be used
 	 * @param w		The width of the Button

@@ -228,7 +228,7 @@ public class Database {
  *  <p> Method: List getUserList() </p>
  *  
  *  <P> Description: Generate an List of Strings, one for each user in the database,
- *  starting with "<Select User>" at the start of the list. </p>
+ *  starting with "&lt;Select User&gt;" at the start of the list. </p>
  *  
  *  @return a list of userNames found in the database.
  */
@@ -431,7 +431,7 @@ public class Database {
 
 
 	/*******
-	 * <p> Method: List<String[]> getAllInvitations() </p>
+	 * <p> Method: List&lt;String[]&gt; getAllInvitations() </p>
 	 *
 	 * <p> Description: Remove any expired invitations and then return one String[4] per
 	 * outstanding invitation: {code, email address, role, deadline}.  This list is used by the
@@ -1104,7 +1104,7 @@ public class Database {
 	}
 	
 	/*******
-	 * <p> Method: List<String[]> getAllUsersDetails() </p>
+	 * <p> Method: List&lt;String[]&gt; getAllUsersDetails() </p>
 	 * 
 	 * <p> Description: Returns one String[4] per user: {username, full name, email, roles},
 	 * for the admin's "List All Users" and "Delete a User" screens.</p>
