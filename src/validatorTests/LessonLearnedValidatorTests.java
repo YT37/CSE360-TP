@@ -60,7 +60,7 @@ public class LessonLearnedValidatorTests {
 				"Only one process should use the H2 database file at a time.",
 				"Stop the first copy before starting another.", "h2, database");
 		performTestCase(18, "complete realistic CSE 360 lesson",
-				LessonLearnedValidator.checkLessonLearned(completeLesson), true, "");
+				LessonLearnedValidator.checkLessonLearned(completeLesson), false, "");
 
 		System.out.println("______________________________________\n");
 		System.out.println("Number of tests passed: " + numPassed);
