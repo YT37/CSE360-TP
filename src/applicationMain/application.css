@@ -64,6 +64,12 @@
 	-fx-text-fill: -app-text;
 }
 
+/* Keep form labels distinct from the larger page and section headings. */
+.form-label {
+	-fx-text-fill: -app-text-muted;
+	-fx-font-weight: bold;
+}
+
 .page-title {
 	-fx-font-size: 28px;
 	-fx-font-weight: bold;

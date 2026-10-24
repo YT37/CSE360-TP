@@ -49,6 +49,10 @@ public class ControllerContributorHome {
 	protected static void performUpdate () {
 		guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewContributorHome.theStage, ViewContributorHome.theUser);
 	}	
+	protected static void performLessonsLearned() {
+		guiLessonsLearned.ViewLessonsLearned.displayLessonsLearned(ViewContributorHome.theStage,
+				ViewContributorHome.theUser);
+	}
 
 	/**********
 	 * <p> Method: performLogout() </p>

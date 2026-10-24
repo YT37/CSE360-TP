@@ -49,6 +49,7 @@ public class ViewContributorHome {
 	protected static Label label_PageTitle = new Label();
 	protected static Label label_UserDetails = new Label();
 	protected static Button button_UpdateThisUser = new Button("Account Update");
+	protected static Button button_LessonsLearned = new Button("Lessons Learned");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
@@ -175,6 +176,9 @@ public class ViewContributorHome {
 		
 		setupButtonUI(button_UpdateThisUser, "Dialog", 18, 170, Pos.CENTER, 610, 30);
 		button_UpdateThisUser.setOnAction((_) -> {ControllerContributorHome.performUpdate(); });
+		setupButtonUI(button_LessonsLearned, "Dialog", 18, 250, Pos.CENTER, 20, 295);
+		button_LessonsLearned.getStyleClass().add("primary");
+		button_LessonsLearned.setOnAction((_) -> {ControllerContributorHome.performLessonsLearned(); });
 		
 		// GUI Area 2
 		panel_Welcome.getStyleClass().add("surface");
@@ -202,7 +206,7 @@ public class ViewContributorHome {
 		
 		// Place all of the widget items into the Root Pane's list of children
          theRootPane.getChildren().addAll(
-			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
+			label_PageTitle, label_UserDetails, button_UpdateThisUser, button_LessonsLearned, line_Separator1,
 			panel_Welcome, label_Welcome, label_RoleDescription,
 	        line_Separator4, button_Logout, button_Quit);
 }
