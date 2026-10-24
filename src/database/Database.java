@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 import entityClasses.User;
+import entityClasses.LessonLearned;
+import entityClasses.LessonLearnedList;
+import validators.LessonLearnedValidator;
 
 /*******
  * <p> Title: Database Class. </p>
@@ -43,10 +46,12 @@ public class Database {
 	//  Database credentials 
 	static final String USER = "sa"; 
 	static final String PASS = ""; 
+	private String databaseURL = DB_URL;
 
 	//  Shared variables used within this class
 	private Connection connection = null;		// Singleton to access the database 
 	private Statement statement = null;			// The H2 Statement is used to construct queries
+	private String lastLessonError = "";
 	
 	// These are the easily accessible attributes of the currently logged-in user
 	// This is only useful for single user applications
@@ -72,6 +77,10 @@ public class Database {
 	public Database () {
 		
 	}
+
+	public Database(String databaseURL) {
+		this.databaseURL = databaseURL;
+	}
 	
 	
 /*******
@@ -86,7 +95,7 @@ public class Database {
 	public void connectToDatabase() throws SQLException {
 		try {
 			Class.forName(JDBC_DRIVER); // Load the JDBC driver
-			connection = DriverManager.getConnection(DB_URL, USER, PASS);
+			connection = DriverManager.getConnection(databaseURL, USER, PASS);
 			statement = connection.createStatement(); 
 			// You can use this command to clear the database and restart from fresh.
 			//statement.execute("DROP ALL OBJECTS");
@@ -126,8 +135,23 @@ public class Database {
 	    		+ "emailAddress VARCHAR(255), "
 	            + "role VARCHAR(20))";
 	    statement.execute(invitationCodesTable);
+	    statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS adminRole BOOL DEFAULT FALSE");
+	    statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS contributorRole BOOL DEFAULT FALSE");
+	    statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS viewerRole BOOL DEFAULT FALSE");
 	    statement.execute("ALTER TABLE userDB ADD COLUMN IF NOT EXISTS isOneTimePassword BOOL DEFAULT FALSE");
 	    statement.execute("ALTER TABLE InvitationCodes ADD COLUMN IF NOT EXISTS deadline TIMESTAMP");
+	    String lessonTable = "CREATE TABLE IF NOT EXISTS lessonsLearnedDB ("
+				+ "lessonID INT AUTO_INCREMENT PRIMARY KEY, "
+				+ "contributorUserName VARCHAR(255) NOT NULL, "
+				+ "title VARCHAR(80) NOT NULL, "
+				+ "category VARCHAR(40) NOT NULL, "
+				+ "situation VARCHAR(2000) NOT NULL, "
+				+ "lessonText VARCHAR(2000) NOT NULL, "
+				+ "recommendation VARCHAR(1000), "
+				+ "keywords VARCHAR(200), "
+				+ "createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+				+ "updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+		statement.execute(lessonTable);
 	}
 
 
@@ -1069,14 +1093,29 @@ public class Database {
 	 */
 	// Update a user's username
 	public void updateUsername(String oldUsername, String newUsername) {
-	    String query = "UPDATE userDB SET username = ? WHERE username = ?";
-	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-	        pstmt.setString(1, newUsername);
-	        pstmt.setString(2, oldUsername);
-	        pstmt.executeUpdate();
-	        currentUsername = newUsername;
+	    String userQuery = "UPDATE userDB SET username = ? WHERE username = ?";
+	    String lessonQuery = "UPDATE lessonsLearnedDB SET contributorUserName = ? WHERE contributorUserName = ?";
+	    boolean autoCommit = true;
+	    try {
+	        autoCommit = connection.getAutoCommit();
+	        connection.setAutoCommit(false);
+	        try (PreparedStatement userStatement = connection.prepareStatement(userQuery);
+	             PreparedStatement lessonStatement = connection.prepareStatement(lessonQuery)) {
+	            userStatement.setString(1, newUsername);
+	            userStatement.setString(2, oldUsername);
+	            userStatement.executeUpdate();
+
+	            lessonStatement.setString(1, newUsername);
+	            lessonStatement.setString(2, oldUsername);
+	            lessonStatement.executeUpdate();
+        }
+        connection.commit();
+        currentUsername = newUsername;
 	    } catch (SQLException e) {
+	        try { connection.rollback(); } catch (SQLException rollbackError) { /* preserve original error */ }
 	        e.printStackTrace();
+	    } finally {
+	        try { connection.setAutoCommit(autoCommit); } catch (SQLException e) { e.printStackTrace(); }
 	    }
 	}
 
@@ -1092,14 +1131,30 @@ public class Database {
 	 */
 	// Delete a user account
 	public boolean deleteUser(String username) {
-	    String query = "DELETE FROM userDB WHERE username = ?";
-	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-	        pstmt.setString(1, username);
-	        int rowsAffected = pstmt.executeUpdate();
+	    String userQuery = "DELETE FROM userDB WHERE username = ?";
+	    String lessonQuery = "DELETE FROM lessonsLearnedDB WHERE contributorUserName = ?";
+	    boolean autoCommit = true;
+	    try {
+	        autoCommit = connection.getAutoCommit();
+	        connection.setAutoCommit(false);
+	        int rowsAffected;
+	        try (PreparedStatement userStatement = connection.prepareStatement(userQuery);
+	             PreparedStatement lessonStatement = connection.prepareStatement(lessonQuery)) {
+	            userStatement.setString(1, username);
+	            rowsAffected = userStatement.executeUpdate();
+	            if (rowsAffected > 0) {
+	                lessonStatement.setString(1, username);
+	                lessonStatement.executeUpdate();
+	            }
+	        }
+	        connection.commit();
 	        return rowsAffected > 0;
 	    } catch (SQLException e) {
+	        try { connection.rollback(); } catch (SQLException rollbackError) { /* preserve original error */ }
 	        e.printStackTrace();
 	        return false;
+	    } finally {
+	        try { connection.setAutoCommit(autoCommit); } catch (SQLException e) { e.printStackTrace(); }
 	    }
 	}
 	
@@ -1287,6 +1342,161 @@ public class Database {
 		System.out.println();
 		}
 		resultSet.close();
+	}
+
+	/** Validates and persists a lesson, returning an empty string on success. */
+	public String createLessonLearned(LessonLearned lesson) {
+		String errors = LessonLearnedValidator.checkLessonLearned(lesson);
+		if (!errors.isEmpty()) return errors;
+		try {
+			if (contributorHasTitle(lesson.getContributorUserName().trim(), lesson.getTitle().trim(), -1))
+				return "You already have a lesson with this title. Please use a different title.";
+		} catch (SQLException e) {
+			return "The lesson could not be checked for duplicate titles: " + e.getMessage();
+		}
+		String insert = "INSERT INTO lessonsLearnedDB (contributorUserName, title, category, situation, lessonText, recommendation, keywords) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		try (PreparedStatement pstmt = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)) {
+			pstmt.setString(1, lesson.getContributorUserName().trim());
+			pstmt.setString(2, lesson.getTitle().trim());
+			pstmt.setString(3, lesson.getCategory());
+			pstmt.setString(4, lesson.getSituation().trim());
+			pstmt.setString(5, lesson.getLessonText().trim());
+			pstmt.setString(6, trimOrEmpty(lesson.getRecommendation()));
+			pstmt.setString(7, trimOrEmpty(lesson.getKeywords()));
+			pstmt.executeUpdate();
+			try (ResultSet keys = pstmt.getGeneratedKeys()) {
+				if (keys.next()) lesson.setLessonID(keys.getInt(1));
+			}
+		} catch (SQLException e) {
+			return "The lesson could not be saved: " + e.getMessage();
+		}
+		return "";
+	}
+
+	/** Reads one lesson by ID; null indicates not found or a read error. */
+	public LessonLearned readLessonLearned(int lessonID) {
+		lastLessonError = "";
+		if (lessonID <= 0) {
+			lastLessonError = "Lesson ID must be positive.";
+			return null;
+		}
+		String query = "SELECT * FROM lessonsLearnedDB WHERE lessonID = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setInt(1, lessonID);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) return lessonFromRow(rs);
+			}
+		} catch (SQLException e) {
+			lastLessonError = "The lesson could not be read: " + e.getMessage();
+		}
+		if (lastLessonError.isEmpty()) lastLessonError = "Lesson #" + lessonID + " was not found.";
+		return null;
+	}
+
+	/** Reads all current lessons into the required unbounded list class. */
+	public LessonLearnedList readAllLessonsLearned() {
+		return readLessonList("SELECT * FROM lessonsLearnedDB ORDER BY lessonID", null);
+	}
+
+	/** Reads only lessons owned by the requested Contributor. */
+	public LessonLearnedList readLessonsLearnedForContributor(String userName) {
+		return readLessonList("SELECT * FROM lessonsLearnedDB WHERE contributorUserName = ? ORDER BY lessonID", userName);
+	}
+
+	/** Validates ownership and replacement fields before updating one lesson. */
+	public String updateLessonLearned(LessonLearned lesson, String requestingUserName) {
+		if (lesson == null) return "No lesson was provided to update.";
+		LessonLearned stored = readLessonLearned(lesson.getLessonID());
+		String accessError = checkChangeAllowed(stored, lesson.getLessonID(), requestingUserName, "updated");
+		if (!accessError.isEmpty()) return accessError;
+		lesson.setContributorUserName(stored.getContributorUserName());
+		String errors = LessonLearnedValidator.checkLessonLearned(lesson);
+		if (!errors.isEmpty()) return errors;
+		try {
+			if (contributorHasTitle(stored.getContributorUserName(), lesson.getTitle().trim(), lesson.getLessonID()))
+				return "You already have another lesson with this title.";
+		} catch (SQLException e) {
+			return "The lesson could not be checked for duplicate titles: " + e.getMessage();
+		}
+		String update = "UPDATE lessonsLearnedDB SET title = ?, category = ?, situation = ?, lessonText = ?, recommendation = ?, keywords = ?, updatedAt = CURRENT_TIMESTAMP WHERE lessonID = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(update)) {
+			pstmt.setString(1, lesson.getTitle().trim());
+			pstmt.setString(2, lesson.getCategory());
+			pstmt.setString(3, lesson.getSituation().trim());
+			pstmt.setString(4, lesson.getLessonText().trim());
+			pstmt.setString(5, trimOrEmpty(lesson.getRecommendation()));
+			pstmt.setString(6, trimOrEmpty(lesson.getKeywords()));
+			pstmt.setInt(7, lesson.getLessonID());
+			if (pstmt.executeUpdate() == 0) return "Lesson #" + lesson.getLessonID() + " was not found.";
+		} catch (SQLException e) { return "The lesson could not be updated: " + e.getMessage(); }
+		return "";
+	}
+
+	/** Deletes one owned lesson after the GUI has confirmed the action. */
+	public String deleteLessonLearned(int lessonID, String requestingUserName) {
+		LessonLearned stored = readLessonLearned(lessonID);
+		String accessError = checkChangeAllowed(stored, lessonID, requestingUserName, "deleted");
+		if (!accessError.isEmpty()) return accessError;
+		try (PreparedStatement pstmt = connection.prepareStatement("DELETE FROM lessonsLearnedDB WHERE lessonID = ?")) {
+			pstmt.setInt(1, lessonID);
+			if (pstmt.executeUpdate() == 0) return "Lesson #" + lessonID + " was not found.";
+		} catch (SQLException e) { return "The lesson could not be deleted: " + e.getMessage(); }
+		return "";
+	}
+
+	private boolean contributorHasTitle(String userName, String title, int excludeID) throws SQLException {
+		String query = "SELECT COUNT(*) FROM lessonsLearnedDB WHERE contributorUserName = ? AND LOWER(title) = LOWER(?) AND lessonID <> ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setString(1, userName);
+			pstmt.setString(2, title);
+			pstmt.setInt(3, excludeID);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				return rs.next() && rs.getInt(1) > 0;
+			}
+		}
+	}
+
+	private String checkChangeAllowed(LessonLearned stored, int lessonID, String requestingUserName, String action) {
+		if (stored == null) return lastLessonError.isEmpty() ? "Lesson #" + lessonID + " was not found." : lastLessonError;
+		if (requestingUserName == null || !stored.getContributorUserName().equals(requestingUserName))
+			return "Lesson #" + lessonID + " can't be " + action + " because it belongs to another Contributor.";
+		return "";
+	}
+
+	private LessonLearnedList readLessonList(String query, String parameter) {
+		lastLessonError = "";
+		LessonLearnedList list = new LessonLearnedList();
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			if (parameter != null) pstmt.setString(1, parameter);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) list.addLesson(lessonFromRow(rs));
+			}
+		} catch (SQLException e) {
+			lastLessonError = "The lessons could not be read: " + e.getMessage();
+		}
+		return list;
+	}
+
+	/** Returns the most recent database read error, or an empty string after a successful read. */
+	public String getLastLessonError() { return lastLessonError; }
+
+	private LessonLearned lessonFromRow(ResultSet rs) throws SQLException {
+		LessonLearned lesson = new LessonLearned();
+		lesson.setLessonID(rs.getInt("lessonID"));
+		lesson.setContributorUserName(rs.getString("contributorUserName"));
+		lesson.setTitle(rs.getString("title"));
+		lesson.setCategory(rs.getString("category"));
+		lesson.setSituation(rs.getString("situation"));
+		lesson.setLessonText(rs.getString("lessonText"));
+		lesson.setRecommendation(rs.getString("recommendation"));
+		lesson.setKeywords(rs.getString("keywords"));
+		lesson.setCreatedAt(rs.getTimestamp("createdAt"));
+		lesson.setUpdatedAt(rs.getTimestamp("updatedAt"));
+		return lesson;
+	}
+
+	private static String trimOrEmpty(String value) {
+		return value == null ? "" : value.trim();
 	}
 
 
