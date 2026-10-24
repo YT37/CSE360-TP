@@ -60,11 +60,13 @@ public class LessonLearnedValidatorTests {
 				"Only one process should use the H2 database file at a time.",
 				"Stop the first copy before starting another.", "h2, database");
 		performTestCase(18, "complete realistic CSE 360 lesson",
-				LessonLearnedValidator.checkLessonLearned(completeLesson), false, "");
+				LessonLearnedValidator.checkLessonLearned(completeLesson), true, "");
 
 		System.out.println("______________________________________\n");
 		System.out.println("Number of tests passed: " + numPassed);
 		System.out.println("Number of tests failed: " + numFailed);
+		// F0: Make a failed case visible to automated runners as well as to a person reading output.
+		if (numFailed > 0) throw new AssertionError("Lesson Learned validator tests failed: " + numFailed);
 	}
 
 	/**********
