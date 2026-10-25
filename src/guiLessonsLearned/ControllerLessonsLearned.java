@@ -7,13 +7,37 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
-/**
- * <p>Title: ControllerLessonsLearned Class.</p>
- * <p>Description: Handles Contributor actions for the Lessons Learned page. Database validation is
- * still authoritative so programmatic callers receive the same protection as the GUI.</p>
+/*******
+ * <p> Title: ControllerLessonsLearned Class. </p>
+ *
+ * <p> Description: The Java/FX-based Lessons Learned Page.  This class provides the controller
+ * actions based on the user's use of the JavaFX GUI widgets defined by the View class.  The
+ * database repeats every validation, lock, and ownership check, so a caller that skips this page
+ * gets the same protection as the GUI.</p>
+ *
+ * <p> Operations: performCreate, performUpdate, and performDelete build a lesson from the form
+ * and pass it to Database.createLessonLearned, updateLessonLearned, or deleteLessonLearned with
+ * the signed-in username (R1, R3, R6, R12).  Any message the database returns is shown as an
+ * error (R14, R5).  refreshList and performSelect read the Contributor's lessons and load one
+ * into the form with its lock state (R2, R4).  performSearch and performShowAll set or clear the
+ * keyword subset (R7).  performExperiences opens the Experience Records page (R8).  Delete asks
+ * for confirmation before anything is removed.</p>
+ *
+ * <p> The methods are protected static and are called only by the View.  Do not change them to
+ * public.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header; source and rationale for the attribute
+ *
  */
 public class ControllerLessonsLearned {
-	/** Guards list selection callbacks while the ListView is being rebuilt. */
+	/** True while the list is being rebuilt.  Source: R2.  Rationale: rebuilding the ListView
+	 * fires selection events, and this flag stops them from loading a lesson into the form by
+	 * mistake. */
 	private static boolean rebuildingList;
 
 	/** Creates the controller; all actions are invoked statically by the view. */

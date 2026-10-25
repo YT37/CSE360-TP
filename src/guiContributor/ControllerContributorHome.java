@@ -18,7 +18,9 @@ package guiContributor;
  * @author Lynn Robert Carter
  * 
  * @version 1.00		2025-08-17 Initial version
- * @version 1.01		2025-09-16 Update Javadoc documentation *  
+ * @version 1.01		2025-09-16 Update Javadoc documentation
+ * @version 1.02		2026-10-24 TP2: performLessonsLearned opens the Lessons Learned page
+ *
  */
 
 public class ControllerContributorHome {

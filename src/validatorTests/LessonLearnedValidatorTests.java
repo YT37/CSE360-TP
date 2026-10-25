@@ -5,29 +5,45 @@ import java.util.Map;
 import entityClasses.LessonLearned;
 import validators.LessonLearnedValidator;
 
-/**
- * <p>Title: LessonLearnedValidatorTests Class.</p>
- * <p>Description: Semi-automated tests for every lesson and experience validation rule. The tests
- * follow the TP1 validator pattern: each case supplies an input, states whether that input should
- * be accepted, prints the message returned by the validator, and updates pass and fail counts. The
- * negative cases also require the message to name the field or rule so the Contributor can fix the
- * problem.</p>
+/*******
+ * <p> Title: LessonLearnedValidatorTests Class. </p>
  *
- * <p>Requirement coverage: R1, R3, R7, R8, R10, and R14. Each rule has at least one positive case
- * that must be accepted and one negative case that must be rejected with a helpful message.</p>
+ * <p> Description: Semi-automated tests for every lesson and experience validation rule.  The
+ * tests follow the TP1 validator pattern: each case supplies an input, states whether that input
+ * should be accepted, prints the message returned by the validator, and updates pass and fail
+ * counts.  The negative cases also require the message to name the field or rule so the
+ * Contributor can fix the problem.</p>
+ *
+ * <p> Requirement coverage: R1, R3, R7, R8, R10, and R14.  Each rule has at least one positive
+ * case that must be accepted and one negative case that must be rejected with a helpful
+ * message.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header
+ *
  */
 public class LessonLearnedValidatorTests {
 	/** Creates the test runner. */
 	public LessonLearnedValidatorTests() { }
 
+	/** Number of cases that passed. */
 	private static int numPassed = 0;
+	/** Number of cases that failed. */
 	private static int numFailed = 0;
+	/** Number printed with each case. */
 	private static int testCaseNumber = 0;
 
+	/** A valid What Was Done description for experience cases. */
 	private static final String VALID_WHAT_WAS_DONE =
 			"The team completed an integration attempt and recorded the result.";
+	/** A valid How description for experience cases. */
 	private static final String VALID_HOW =
 			"The team followed the setup steps and recorded the actions taken.";
+	/** A valid effort entry for experience cases. */
 	private static final Map<String, Double> VALID_EFFORT = Map.of("Yogi", 1.5);
 
 	/**

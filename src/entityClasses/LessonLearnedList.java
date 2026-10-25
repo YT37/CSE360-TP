@@ -4,13 +4,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * <p>Title: LessonLearnedList Class.</p>
- * <p>Description: Holds all lessons or any subset of lessons without a fixed size limit. A new
+/*******
+ * <p> Title: LessonLearnedList Class. </p>
+ *
+ * <p> Description: Holds all lessons or any subset of lessons without a fixed size limit.  A new
  * list is returned for searches so the complete database result remains available.</p>
+ *
+ * <p> Operations: the database fills a list with addLesson when it reads the lessons (R2).
+ * getLesson, findByID, and getAllLessons let the GUI show and select them; updateLesson and
+ * removeLesson keep a list in step with an update or delete (R13); getSubsetByKeyword builds
+ * the search subset the Contributor sees, which may be empty (R7).</p>
+ *
+ * <p> Requirement map: R2 read, R7 keyword subsets, and R13 list update and remove.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header; source and rationale for the attribute
+ *
  */
 public class LessonLearnedList {
-	/** Backing list of lessons; order is preserved. */
+	/** Lessons in this list, in the order they were added.  Source: R2, R7, and R13; Contributor
+	 * story 2 (a list of all the lessons learned I have added).  Rationale: an ArrayList has no
+	 * fixed size, so a Contributor can keep any number of lessons, and it keeps the database order
+	 * so the list on screen is stable. */
 	private final ArrayList<LessonLearned> lessons = new ArrayList<>();
 
 	/** Creates an empty lesson list. */

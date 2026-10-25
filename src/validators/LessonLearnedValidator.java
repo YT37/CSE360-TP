@@ -4,10 +4,27 @@ import java.util.Map;
 
 import entityClasses.LessonLearned;
 
-/**
- * <p>Title: LessonLearnedValidator Class.</p>
- * <p>Description: Validates core lesson information for both the GUI and database layer. Keeping
- * the checks here prevents a future caller from bypassing GUI validation.</p>
+/*******
+ * <p> Title: LessonLearnedValidator Class. </p>
+ *
+ * <p> Description: Validates core lesson information for both the GUI and database layer.
+ * Keeping the checks here prevents a future caller from bypassing GUI validation.</p>
+ *
+ * <p> Operations: each check method returns an empty String for valid input or a message that
+ * names the field, the same pattern the Foundations validators use.  checkLessonLearned runs
+ * every lesson check and joins the messages so the form can show all problems at once (R1, R3,
+ * R14).  checkKeywords keeps search terms usable (R7), checkSummary and checkRootCause cover the
+ * coaching attributes (R10), and checkExperienceRecord covers experience records (R8).</p>
+ *
+ * <p> Requirement map: R1, R3, R7, R8, R10, and R14.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header
+ *
  */
 public class LessonLearnedValidator {
 	/** Categories presented by the lesson form and accepted by the validator. */

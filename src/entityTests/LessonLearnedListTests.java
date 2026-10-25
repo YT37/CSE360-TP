@@ -5,22 +5,34 @@ import java.util.List;
 import entityClasses.LessonLearned;
 import entityClasses.LessonLearnedList;
 
-/**
- * <p>Title: LessonLearnedListTests Class.</p>
- * <p>Description: Semi-automated tests for list CRUD and keyword subsets. The tests cover the list
- * operations required by the Contributor stories and the search behavior that produces a subset of
- * any size, including an empty one.</p>
+/*******
+ * <p> Title: LessonLearnedListTests Class. </p>
  *
- * <p>Requirement coverage: R13 (list update and remove) and R7 (keyword subsets), each with
- * positive cases that must succeed and negative cases that must be rejected without corrupting the
- * list.</p>
+ * <p> Description: Semi-automated tests for list CRUD and keyword subsets.  The tests cover the
+ * list operations required by the Contributor stories and the search behavior that produces a
+ * subset of any size, including an empty one.</p>
+ *
+ * <p> Requirement coverage: R13 (list update and remove) and R7 (keyword subsets), each with
+ * positive cases that must succeed and negative cases that must be rejected without corrupting
+ * the list.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header
+ *
  */
 public class LessonLearnedListTests {
 	/** Creates the test runner. */
 	public LessonLearnedListTests() { }
 
+	/** Number of assertions that passed. */
 	private static int passed;
+	/** Number of assertions that failed. */
 	private static int failed;
+	/** Number printed with each assertion. */
 	private static int testCaseNumber;
 
 	/**

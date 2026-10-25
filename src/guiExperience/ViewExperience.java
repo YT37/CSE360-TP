@@ -22,53 +22,88 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-/**
- * JavaFX page for creating, viewing, and deleting experience records for one Contributor lesson.
- * Requirement: R8, with R12 ownership enforced by the database when records are saved or removed.
- * Manual R8 check: add a valid record, select it to view the stored fields, then cancel and confirm
- * deletion; also attempt to save with a missing required field and verify the error is shown.
+/*******
+ * <p> Title: ViewExperience Class. </p>
+ *
+ * <p> Description: The Java/FX-based Experience Records Page.  A Contributor reaches it with the
+ * Experiences button on the Lessons Learned page.  The left side lists the Contributor's earlier
+ * attempts at the selected lesson; the right side is a form for what was done, how, the
+ * duration, and each team member's effort.</p>
+ *
+ * <p> The class follows the Foundations singleton View pattern: every use starts with
+ * displayExperience.  Each button only calls a method in ControllerExperience.</p>
+ *
+ * <p> Operations: Add saves a new record, selecting a record shows its stored values read-only,
+ * and Delete removes it after a confirmation (R8).  The database checks that the signed-in
+ * Contributor owns the lesson and the record (R12).</p>
+ *
+ * <p> Requirement map: R8, with R12 ownership enforced by the database.</p>
+ *
+ * <p> The manual R8 check for this page is M7 in guiTests.ContributorManualTests.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header; source and rationale for each attribute;
+ * 							manual check moved to ContributorManualTests M7
+ *
  */
 public class ViewExperience {
-	/** Shared application database. */
+	/** Shared application database.  Source: R11.  Rationale: records are saved in the same H2
+	 * database as the lessons they belong to. */
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
-	/** Stage used to display this page. */
+	/** Stage used to display this page.  Source: Foundations View pattern.  Rationale: Return and
+	 * Logout reuse the same window. */
 	protected static Stage theStage;
-	/** Signed-in Contributor. */
+	/** Signed-in Contributor.  Source: R12.  Rationale: only this user's records are listed and
+	 * changed. */
 	protected static User theUser;
-	/** Singleton view instance. */
+	/** Singleton view instance.  Source: Foundations View pattern.  Rationale: the page is built
+	 * once and reused. */
 	private static ViewExperience theView;
-	/** Scene containing the page. */
+	/** Scene containing the page.  Source: Foundations View pattern.  Rationale: lets the stage
+	 * switch back to this page without rebuilding it. */
 	private static Scene theScene;
 
-	/** Label showing the selected lesson. */
+	/** Shows which lesson the records belong to.  Source: R8.  Rationale: the Contributor can see
+	 * which lesson they are recording attempts for. */
 	protected static Label label_Lesson = new Label();
-	/** Status or error message shown to the user. */
+	/** Status or error message.  Source: R8 and R14.  Rationale: shows validation and ownership
+	 * messages so the Contributor knows what to fix. */
 	protected static Label label_Message = new Label();
-	/** List of the Contributor's experience records for the lesson. */
+	/** List of earlier attempts.  Source: R8 and R12.  Rationale: the Contributor picks a record
+	 * here to view or delete it. */
 	protected static ListView<ExperienceRecord> listView_Experiences = new ListView<>();
-	/** Input for what work was performed. */
+	/** What Was Done input.  Source: R8.  Rationale: describes the attempt. */
 	protected static TextArea text_WhatWasDone = new TextArea();
-	/** Input for how the work was performed. */
+	/** How input.  Source: R8.  Rationale: describes the method used. */
 	protected static TextArea text_How = new TextArea();
-	/** Input for the elapsed duration in hours. */
+	/** Duration input, in hours.  Source: R8.  Rationale: records how long the attempt took. */
 	protected static TextField text_DurationHours = new TextField();
-	/** Input for one team member's name. */
+	/** Team member name input.  Source: R8.  Rationale: names the member whose effort is being
+	 * added. */
 	protected static TextField text_TeamMember = new TextField();
-	/** Input for one team member's effort hours. */
+	/** Effort hours input.  Source: R8.  Rationale: the hours for the member named above. */
 	protected static TextField text_EffortHours = new TextField();
-	/** Displayed team-member effort entries. */
+	/** Effort entries for the current record.  Source: R8.  Rationale: shows each member's hours
+	 * before the record is saved. */
 	protected static ListView<String> listView_Efforts = new ListView<>();
-	/** Saves the form as a new experience record. */
+	/** Add button.  Source: R8.  Rationale: saves the form as a new record. */
 	protected static Button button_Add;
-	/** Adds the entered team-member effort. */
+	/** Add Effort button.  Source: R8.  Rationale: adds one member's hours to the record. */
 	protected static Button button_AddEffort;
-	/** Deletes the selected experience record. */
+	/** Delete button.  Source: R8.  Rationale: deletes the selected record after a
+	 * confirmation. */
 	protected static Button button_Delete;
-	/** Clears the form for a new record. */
+	/** New button.  Source: R8.  Rationale: clears the form so a new record can be entered. */
 	protected static Button button_New;
-	/** Removes the selected effort entry. */
+	/** Remove Effort button.  Source: R8.  Rationale: removes a member's hours entered by
+	 * mistake. */
 	private static Button button_RemoveEffort;
 
+	/** Builds the page widgets once; only displayExperience calls this. */
 	private ViewExperience() {
 		BorderPane root = new BorderPane();
 		root.getStyleClass().add("page-root");

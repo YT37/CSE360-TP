@@ -13,11 +13,12 @@ import entityClasses.LessonLearned;
 import entityClasses.LessonLearnedList;
 import entityClasses.User;
 
-/**
- * <p>Title: LessonsLearnedCRUDTests Class.</p>
- * <p>Description: Semi-automated tests for lesson persistence, CRUD, ownership, locking, search
- * subsets, experience records, reconnection, and account lifecycle. A separate H2 file keeps these
- * destructive operations away from the application's real data.</p>
+/*******
+ * <p> Title: LessonsLearnedCRUDTests Class. </p>
+ *
+ * <p> Description: Semi-automated tests for lesson persistence, CRUD, ownership, locking, search
+ * subsets, experience records, reconnection, and account lifecycle.  A separate H2 file keeps
+ * these destructive operations away from the application's real data.</p>
  *
  * <p>Requirement catalog used by this suite: R1 create a lesson, R2 read lessons, R3 update a
  * lesson, R4 lock state, R5 lock enforcement, R6 delete a lesson, R7 keyword subsets, R8 experience
@@ -30,25 +31,144 @@ import entityClasses.User;
  * Every assertion prints its requirement tag and description, then "***Success***" or
  * "***Failure***". The run ends with pass and fail totals, and any failure throws an AssertionError
  * so an automated runner also detects it.</p>
+ *
+ * <p> Requirements to tests: every requirement has at least one positive and one negative case.
+ * Each HTML path is relative to the generated Javadoc folder.</p>
+ *
+ * <table class="striped">
+ * <caption>Requirements and the tests that cover them</caption>
+ * <tr><th>Requirement ID</th><th>Requirement</th><th>Test classes and methods</th>
+ *     <th>HTML file</th></tr>
+ * <tr><td>R1</td><td>Create a lesson</td>
+ *     <td>LessonsLearnedCRUDTests: testEmptyAndCreate, testExperienceCascades<br>
+ *     LessonLearnedValidatorTests: testWholeLessonValidation<br>
+ *     ContributorManualTests: M1 manualTestCreateLesson</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     validatorTests/LessonLearnedValidatorTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R2</td><td>Read lessons</td>
+ *     <td>LessonsLearnedCRUDTests: testEmptyAndCreate, testReadAndDefaults,
+ *     testSubsetsAndLargeList</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html</td></tr>
+ * <tr><td>R3</td><td>Update a lesson</td>
+ *     <td>LessonsLearnedCRUDTests: testLessonUpdateAndOwnership<br>
+ *     ContributorManualTests: M3 manualTestUpdateLesson</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R4</td><td>Lock state</td>
+ *     <td>LessonLearnedTests: testNewLessonIsUnlocked, testFieldLockIsIndependent,
+ *     testWholeLessonLockOverridesFields, testClearingWholeLessonLockPreservesFieldLocks,
+ *     testUnlockField, testLockedFieldSetCannotBeBypassed, testUnknownFieldIsRejected<br>
+ *     LessonsLearnedCRUDTests: testReadAndDefaults, testLockedUpdate,
+ *     testPersistenceAcrossReconnect<br>
+ *     ContributorManualTests: M6 manualTestLockedLesson</td>
+ *     <td>entityTests/LessonLearnedTests.html<br>
+ *     databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R5</td><td>Lock enforcement</td>
+ *     <td>LessonsLearnedCRUDTests: testLockedUpdate, testLockedDelete, testUsernameRenameCascade,
+ *     testLockAllowsUnlockedChanges<br>
+ *     ContributorManualTests: M6 manualTestLockedLesson</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R6</td><td>Delete a lesson</td>
+ *     <td>LessonsLearnedCRUDTests: testLockedDelete, testExperienceCascades,
+ *     testLessonUpdateAndOwnership, testUsernameRenameCascade, testAccountDeletionCascade<br>
+ *     ContributorManualTests: M4 manualTestDeleteLesson</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R7</td><td>Keyword subsets</td>
+ *     <td>LessonLearnedListTests: testKeywordSubset<br>
+ *     LessonsLearnedCRUDTests: testSubsetsAndLargeList<br>
+ *     ContributorManualTests: M5 manualTestKeywordSearch</td>
+ *     <td>entityTests/LessonLearnedListTests.html<br>
+ *     databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R8</td><td>Experience records</td>
+ *     <td>LessonLearnedValidatorTests: testExperienceDescriptionRules, testExperienceDurationRules,
+ *     testExperienceEffortRules, testExperienceAcceptance<br>
+ *     LessonsLearnedCRUDTests: testExperienceValidationAndCreation, testExperienceReadAndListing,
+ *     testExperienceUpdateAndDelete, testExperienceCascades, testPersistenceAcrossReconnect<br>
+ *     ContributorManualTests: M7 manualTestExperienceRecords</td>
+ *     <td>validatorTests/LessonLearnedValidatorTests.html<br>
+ *     databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R9</td><td>Curator provenance</td>
+ *     <td>LessonsLearnedCRUDTests: testReadAndDefaults, testPersistenceAcrossReconnect,
+ *     testCuratorProvenanceNotSetByContributor</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html</td></tr>
+ * <tr><td>R10</td><td>Future coaching attributes</td>
+ *     <td>LessonLearnedValidatorTests: testSummaryRules, testRootCauseRules<br>
+ *     LessonsLearnedCRUDTests: testPersistenceAcrossReconnect</td>
+ *     <td>validatorTests/LessonLearnedValidatorTests.html<br>
+ *     databaseTests/LessonsLearnedCRUDTests.html</td></tr>
+ * <tr><td>R11</td><td>Persistence</td>
+ *     <td>LessonsLearnedCRUDTests: testExperienceCascades, testPersistenceAcrossReconnect,
+ *     testAccountDeletionCascade</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html</td></tr>
+ * <tr><td>R12</td><td>Contributor isolation</td>
+ *     <td>LessonsLearnedCRUDTests: testReadAndDefaults, testExperienceValidationAndCreation,
+ *     testExperienceReadAndListing, testExperienceUpdateAndDelete, testLessonUpdateAndOwnership,
+ *     testUsernameRenameCascade, testAccountDeletionCascade<br>
+ *     ContributorManualTests: M8 manualTestContributorIsolation</td>
+ *     <td>databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * <tr><td>R13</td><td>List CRUD</td>
+ *     <td>LessonLearnedListTests: testEmptyList, testInvalidIndexes, testAddAndRead,
+ *     testExposedListIsReadOnly, testUpdateExisting, testUpdateMissingAndNull, testRemoveExisting,
+ *     testRemoveMissing</td>
+ *     <td>entityTests/LessonLearnedListTests.html</td></tr>
+ * <tr><td>R14</td><td>Input validation</td>
+ *     <td>LessonLearnedValidatorTests: testTitleRules, testCategoryRules, testRequiredDetailRules,
+ *     testOptionalFieldRules<br>
+ *     LessonsLearnedCRUDTests: testEmptyAndCreate, testLessonUpdateAndOwnership<br>
+ *     ContributorManualTests: M1 manualTestCreateLesson, M2 manualTestInvalidLesson</td>
+ *     <td>validatorTests/LessonLearnedValidatorTests.html<br>
+ *     databaseTests/LessonsLearnedCRUDTests.html<br>
+ *     guiTests/ContributorManualTests.html</td></tr>
+ * </table>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header
+ *
  */
 public class LessonsLearnedCRUDTests {
 	/** Creates the test runner. */
 	public LessonsLearnedCRUDTests() { }
 
+	/** Number of assertions that passed. */
 	private static int passed;
+	/** Number of assertions that failed. */
 	private static int failed;
+	/** Number printed with each assertion. */
 	private static int testCaseNumber;
-	private static final String URL = "jdbc:h2:~/HW2TestDatabase";
+	/** Test database URL, kept apart from the application's FoundationDatabase. */
+	private static final String URL = "jdbc:h2:~/TP2TestDatabase";
 
+	/** First connection, used until the reconnect test. */
 	private static Database db;
+	/** Connection opened after closing db, used to prove data persisted. */
 	private static Database reopened;
+	/** Yogi's first lesson; updated and then deleted. */
 	private static LessonLearned first;
+	/** Bob's lesson with a locked title. */
 	private static LessonLearned second;
+	/** Yogi's whole-locked, curator-edited lesson. */
 	private static LessonLearned duplicate;
+	/** Yogi's lesson with lock and coaching data, read after reconnecting. */
 	private static LessonLearned persistent;
+	/** Experience record used for the create, read, update, and delete checks. */
 	private static ExperienceRecord recordedExperience;
+	/** Bob's experience record, removed when his account is deleted. */
 	private static ExperienceRecord bobAccountExperience;
+	/** Yogi's experience record, checked after the username rename. */
 	private static ExperienceRecord renamedExperience;
+	/** Lesson with only its keywords locked, used by the R5 and R9 groups. */
+	private static LessonLearned partlyLocked;
 
 	/**
 	 * <p>Creates the test database and users, runs every requirement group in order, and prints the
@@ -62,7 +182,7 @@ public class LessonsLearnedCRUDTests {
 	 * AssertionError.</p>
 	 *
 	 * <p>Run with the VM argument {@code -Duser.home=/tmp/cse360-test-home} so the test database
-	 * never replaces the real {@code ~/HW2TestDatabase} file.</p>
+	 * never replaces the real {@code ~/TP2TestDatabase} file.</p>
 	 *
 	 * @param args not used
 	 * @throws Exception if the H2 driver or schema setup fails
@@ -89,6 +209,8 @@ public class LessonsLearnedCRUDTests {
 		testPersistenceAcrossReconnect();
 		testUsernameRenameCascade();
 		testAccountDeletionCascade();
+		testLockAllowsUnlockedChanges();
+		testCuratorProvenanceNotSetByContributor();
 
 		System.out.println("______________________________________\n");
 		System.out.println("Number of tests passed: " + passed);
@@ -441,6 +563,8 @@ public class LessonsLearnedCRUDTests {
 	 * <p>Reading the output: the create successes establish the fixtures; after reconnect, the
 	 * lock, summary, individual-lock, effective-lock, effort, and curator successes all mean the
 	 * values survived. A failure identifies a column that was not persisted or not reconstructed.</p>
+	 *
+	 * @throws Exception if the database cannot be reopened
 	 */
 	private static void testPersistenceAcrossReconnect() throws Exception {
 		persistent = lesson("yogi", "Persistence test");
@@ -524,6 +648,8 @@ public class LessonsLearnedCRUDTests {
 	 * <p>Reading the output: the account-delete and null-experience successes prove the cascade; the
 	 * final empty-list success proves a recreated "bob" inherits nothing. A failure would mean
 	 * deleted data remained reachable.</p>
+	 *
+	 * @throws Exception if the recreated account cannot be registered
 	 */
 	private static void testAccountDeletionCascade() throws Exception {
 		check("R6", "Deletes a user account", reopened.deleteUser("bob"));
@@ -532,6 +658,79 @@ public class LessonsLearnedCRUDTests {
 		reopened.register(new User("bob", "password", "Bob", "", "Recreated", "Bob", "bob2@example.com", false, true, false));
 		check("R12", "Prevents a recreated username from inheriting deleted user's lessons",
 				reopened.readLessonsLearnedForContributor("bob").isEmpty());
+		reopened.closeConnection();
+	}
+
+	/**
+	 * <p>Requirement tested: R5, positive case.  A field lock must block only that field: a
+	 * Contributor update that changes a different, unlocked field and leaves the locked field as
+	 * it is must be saved, and the lock must still be there afterward.</p>
+	 *
+	 * <p>How the code satisfies it: {@code updateLessonLearned} calls
+	 * {@code checkLessonLockAllowsUpdate}, which compares the stored and submitted values only for
+	 * the fields in {@code getLockedFields}.  The keywords are unchanged, so no lock error is
+	 * returned and the UPDATE runs.  The UPDATE statement does not write the lock columns, so the
+	 * keyword lock stays set.</p>
+	 *
+	 * <p>Reading the output: the create success sets up a lesson whose keywords are locked; the
+	 * update success means the unlocked recommendation change was allowed; the last success means
+	 * the new recommendation was stored while the keywords and their lock were unchanged.</p>
+	 *
+	 * @throws Exception if the database cannot be reopened
+	 */
+	private static void testLockAllowsUnlockedChanges() throws Exception {
+		reopened = new Database(URL);
+		reopened.connectToDatabase();
+		partlyLocked = lesson("yogi_renamed", "Partly locked lesson");
+		partlyLocked.setFieldLocked("keywords", true);
+		check("R5", "Creates a lesson with only the keywords field locked",
+				reopened.createLessonLearned(partlyLocked).isEmpty() && partlyLocked.getLessonID() > 0);
+		LessonLearned recommendationEdit = lesson("yogi_renamed", "Partly locked lesson");
+		recommendationEdit.setLessonID(partlyLocked.getLessonID());
+		recommendationEdit.setRecommendation("Write down the setup steps before the next attempt.");
+		check("R5", "Allows changing an unlocked field while a different field is locked",
+				reopened.updateLessonLearned(recommendationEdit, "yogi_renamed").isEmpty());
+		LessonLearned afterEdit = reopened.readLessonLearned(partlyLocked.getLessonID());
+		check("R5", "Saves the unlocked change and keeps the locked field and its lock",
+				afterEdit != null && afterEdit.getRecommendation().equals(recommendationEdit.getRecommendation())
+						&& afterEdit.getKeywords().equals(partlyLocked.getKeywords())
+						&& afterEdit.isFieldLocked("keywords"));
+	}
+
+	/**
+	 * <p>Requirement tested: R9, negative cases.  A lesson that no Curator edited must not read
+	 * back as curator-edited after reconnecting, and a Contributor's update must not be able to
+	 * mark a lesson as curator-edited or name an editor.</p>
+	 *
+	 * <p>How the code satisfies it: {@code createLessonLearned} stores {@code curatorEdited} as
+	 * false and {@code editedBy} as null for a new lesson; {@code updateLessonLearned} writes only
+	 * the lesson text fields, summary, and root cause, never {@code curatorEdited} or
+	 * {@code editedBy}; {@code readLessonLearned} reads both columns back as stored.</p>
+	 *
+	 * <p>Reading the output: the first success means the lesson updated by its Contributor in the
+	 * R5 group still has no curator marker and no editor after reconnecting; the update success
+	 * and the last success mean a Contributor update that tried to set the marker was saved
+	 * without it.</p>
+	 *
+	 * @throws Exception if the database cannot be reopened
+	 */
+	private static void testCuratorProvenanceNotSetByContributor() throws Exception {
+		reopened.closeConnection();
+		reopened = new Database(URL);
+		reopened.connectToDatabase();
+		LessonLearned notCurated = reopened.readLessonLearned(partlyLocked.getLessonID());
+		check("R9", "Reads a lesson no Curator edited as not curator-edited with no editor after reconnecting",
+				notCurated != null && !notCurated.isCuratorEdited() && notCurated.getEditedBy() == null);
+		LessonLearned forgedMarker = lesson("yogi_renamed", "Partly locked lesson");
+		forgedMarker.setLessonID(partlyLocked.getLessonID());
+		forgedMarker.setCuratorEdited(true);
+		forgedMarker.setEditedBy("yogi_renamed");
+		check("R9", "Saves a Contributor update that tries to set the curator marker",
+				reopened.updateLessonLearned(forgedMarker, "yogi_renamed").isEmpty());
+		LessonLearned afterForgedMarker = reopened.readLessonLearned(partlyLocked.getLessonID());
+		check("R9", "Does not let a Contributor update mark a lesson as curator-edited",
+				afterForgedMarker != null && !afterForgedMarker.isCuratorEdited()
+						&& afterForgedMarker.getEditedBy() == null);
 		reopened.closeConnection();
 	}
 
@@ -578,8 +777,8 @@ public class LessonsLearnedCRUDTests {
 	 */
 	private static void deleteTestDatabase() {
 		String home = System.getProperty("user.home");
-		new File(home, "HW2TestDatabase.mv.db").delete();
-		new File(home, "HW2TestDatabase.trace.db").delete();
+		new File(home, "TP2TestDatabase.mv.db").delete();
+		new File(home, "TP2TestDatabase.trace.db").delete();
 	}
 
 	/**

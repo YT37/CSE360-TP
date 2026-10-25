@@ -5,49 +5,127 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * <p>Title: LessonLearned Class.</p>
- * <p>Description: Represents the core information in one persistent lesson learned. The database
- * assigns the ID and timestamps, so a default constructor is retained for database reconstruction.</p>
- * <p>Validation is intentionally kept in LessonLearnedValidator so the GUI, database, and tests
- * use one set of rules.</p>
- * <p>Requirement map: R1/R2/R3/R6 core data, R4/R5 lock state, R7 keyword match, R9 curator
+/*******
+ * <p> Title: LessonLearned Class. </p>
+ *
+ * <p> Description: This LessonLearned class represents one lesson learned that a Contributor
+ * shares with the rest of the system.  It holds what happened, what was learned, a category,
+ * optional advice and keywords, and the lock, curator, and coaching data the later epics need.
+ * The database assigns the ID and timestamps, so a default constructor is kept for rebuilding a
+ * lesson from a table row.</p>
+ *
+ * <p> Like the User class, this class only holds data.  The rules for each field are in
+ * validators.LessonLearnedValidator so the GUI, the database, and the tests use one set of
+ * rules.</p>
+ *
+ * <p> Operations: the getters and setters carry the lesson between the form, the validator, and
+ * the database for the create, read, update, and delete stories (R1, R2, R3, R6).
+ * setLessonLocked, setFieldLocked, and isFieldLocked hold the lock state the database checks
+ * before an update or delete (R4, R5).  matchesKeyword decides whether the lesson belongs in a
+ * search subset (R7).</p>
+ *
+ * <p> Planned for TP3: some attributes are stored and tested now but no TP2 page uses them yet.
+ * lessonLocked, lockedFields, curatorEdited, and editedBy are for the Curator epic, where a
+ * Curator reviews a lesson, locks what has been checked, and is credited for the edit.  summary and
+ * rootCause are for the AI coaching epic: they are fields 8 and 7 in the team's AICoaching plan,
+ * which proposes both for TP3.  The other six AICoaching fields are the TP2 attributes title,
+ * situation, lessonText, recommendation, keywords, and category.  createdAt and updatedAt let a
+ * Curator see which lessons are new or stale.  Adding them now means the TP3 pages will not need a
+ * schema change that could lose TP2 data.</p>
+ *
+ * <p> Requirement map: R1/R2/R3/R6 core data, R4/R5 lock state, R7 keyword match, R9 curator
  * provenance, and R10 future coaching attributes.</p>
+ *
+ * <p> Story references: Contributor stories 1 to 4 are the four Contributor (Phase Two) stories
+ * in Lessons Learned System V1 (2026-08-19), in order: 1 add lessons with core information, 2
+ * see my list and examine a lesson and its locks, 3 add experience information, and 4 see only
+ * my own content.  US numbers are the team's own user stories, as used in the AICoaching
+ * plan.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header; source and rationale for each attribute
+ *
  */
 public class LessonLearned {
-	/** Database identifier, or -1 until the lesson has been persisted. */
+	/** Database identifier, or -1 until the lesson has been persisted.  Source: R2 and R11;
+	 * Contributor story 2 (pick a lesson from my list to examine).  Rationale: update, delete, and
+	 * experience records need a key that does not change when the title is edited. */
 	private int lessonID = -1;
-	/** Username of the Contributor who owns this lesson. */
+	/** Username of the Contributor who owns this lesson.  Source: R1 and R12; Contributor story 4
+	 * (I can only see the content I have added).  Rationale: the database compares it with the
+	 * signed-in user so a Contributor sees and changes only their own lessons. */
 	private String contributorUserName;
-	/** Short title that identifies the lesson. */
+	/** Short title that identifies the lesson.  Source: R1; Contributor story 1 (core
+	 * information); US8 and US13; AICoaching field 4, Title.  Rationale: the short, searchable
+	 * name other students scan in the list, and it decides whether a lesson gets opened. */
 	private String title;
-	/** Category selected from the validator's supported category list. */
+	/** Category chosen from LessonLearnedValidator.CATEGORIES.  Source: R1; Contributor story 1
+	 * (core information); US9; AICoaching field 6, Category.  Rationale: a fixed list groups
+	 * similar lessons and stops "Testing" and "testing" from becoming two categories. */
 	private String category;
-	/** Description of the situation that produced the lesson. */
+	/** What happened that produced the lesson; shown on the form as What Happened.  Source: R1;
+	 * Contributor story 1 (core information); US10; AICoaching field 2, What Happened.
+	 * Rationale: without the situation, a reader cannot tell whether the lesson applies to
+	 * them. */
 	private String situation;
-	/** Description of what the Contributor learned. */
+	/** What the Contributor learned; shown on the form as What I Learned.  Source: R1;
+	 * Contributor story 1 (core information); US10; AICoaching field 1, What I Learned.
+	 * Rationale: this is the lesson itself and the main thing other students come to read. */
 	private String lessonText;
-	/** Optional advice for what to do next time. */
+	/** Optional advice for what to do next time; shown on the form as Next Time.  Source: R1;
+	 * Contributor story 1 (core information); US11; AICoaching field 3, Next Time.  Rationale:
+	 * turns a story into an action someone can take.  Optional because not every lesson has a
+	 * clear fix. */
 	private String recommendation;
-	/** Comma-separated search terms associated with the lesson. */
+	/** Comma-separated search terms.  Source: R7; Contributor story 1 (core information); US4
+	 * and US11; AICoaching field 5, Keywords; Viewer keyword search story (Phase 3).  Rationale:
+	 * decides whether a search can find the lesson at all, even by a word that is not in its
+	 * title or text. */
 	private String keywords;
-	/** Timestamp assigned when the lesson row was created. */
+	/** When the lesson row was created; set by the database.  Source: R11; Contributor story 1
+	 * (see and manage it).  Rationale: shows how old a lesson is, and a TP3 Curator can use it to
+	 * find new lessons to review. */
 	private Timestamp createdAt;
-	/** Timestamp assigned when the lesson row was last updated. */
+	/** When the lesson row was last updated; set by the database.  Source: R3 and R11;
+	 * Contributor story 1 (see and manage it).  Rationale: shows that an update was saved and lets
+	 * a Curator spot lessons that changed after review. */
 	private Timestamp updatedAt;
-	/** True when the whole lesson is locked against Contributor changes. */
+	/** True when the whole lesson is locked against Contributor changes.  Source: R4 and R5;
+	 * Contributor stories 1 and 2 (a locked lesson cannot be deleted); Curator epic (lock entire
+	 * lessons).  Rationale: a Curator can freeze a reviewed lesson so it is not edited or deleted
+	 * afterward. */
 	private boolean lessonLocked;
-	/** Names of individual fields that are locked. */
+	/** Names of the individual fields that are locked.  Source: R4 and R5; Contributor stories 1
+	 * and 2 (see which fields are locked and unavailable to edit); Curator epic (lock specific
+	 * fields).  Rationale: a Curator can protect the parts that were checked while the
+	 * Contributor still edits the rest. */
 	private final Set<String> lockedFields = new HashSet<>();
-	/** True when a Curator has edited the lesson. */
+	/** True when a Curator has edited the lesson.  Source: R9; Contributor story 4 (content I
+	 * added after a curator has edited it); Curator epic (edit and refine lesson details).
+	 * Rationale: readers and the Contributor can tell the text is no longer exactly what the
+	 * Contributor wrote. */
 	private boolean curatorEdited;
-	/** Username of the Curator who last edited the lesson, or null. */
+	/** Username of the Curator who last edited the lesson, or null.  Source: R9; Contributor
+	 * story 4; Curator epic (edit and refine lesson details).  Rationale: records who is
+	 * responsible for a curated change. */
 	private String editedBy;
-	/** Optional short coaching summary. */
+	/** Optional one-sentence summary, at most 200 characters.  Source: R10; Contributor Phase
+	 * Three epic (AI-based writing tools); AICoaching field 8, One-line Summary (proposed for
+	 * TP3).  Rationale: lets viewers scan a long list of lessons.  It is written once and stored,
+	 * not made again every time the lesson is viewed. */
 	private String summary;
-	/** Optional coaching root-cause description. */
+	/** Optional root-cause description, at most 1000 characters.  Source: R10; Contributor Phase
+	 * Three epic (AI-based writing tools); AICoaching field 7, Root Cause (proposed for TP3).
+	 * Rationale: separates why something happened from what happened, so the lesson deals with
+	 * the cause and not only the symptom. */
 	private String rootCause;
-	/** Field names that may be locked individually. */
+	/** Field names that may be locked one at a time.  Source: R4; Curator epic (lock specific
+	 * fields).  Rationale: one list that both the setters and the database check against, so an
+	 * unknown name is rejected. */
 	private static final Set<String> LOCKABLE_FIELDS = Set.of("title", "category", "situation",
 			"lessonText", "recommendation", "keywords");
 

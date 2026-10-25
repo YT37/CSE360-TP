@@ -25,7 +25,8 @@ import entityClasses.User;
  * @author Lynn Robert Carter
  * 
  * @version 1.00		2025-08-20 Initial version
- *  
+ * @version 1.01		2026-10-24 TP2: Lessons Learned button that opens the Contributor's lessons
+ *
  */
 
 public class ViewContributorHome {
@@ -38,7 +39,9 @@ public class ViewContributorHome {
 	
 	// These are the application values required by the user interface
 	
+	/** Window width. */
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
+	/** Window height. */
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 
 
@@ -85,10 +88,12 @@ public class ViewContributorHome {
 	// This is the end of the GUI objects for the page.
 	
 	// These attributes are used to configure the page and populate it with this user's information
+	/** The single instance of this page. */
 	private static ViewContributorHome theView;		// Used to determine if instantiation of the class
 												// is needed
 
 	// Reference for the in-memory database so this package has access
+	/** The application database. */
 	private static Database theDatabase = applicationMain.FoundationsMain.database;
 
 	/** Stage that displays the page. */
@@ -99,6 +104,7 @@ public class ViewContributorHome {
 	protected static User theUser;				// The current logged in User
 	
 
+	/** The scene shown on the stage. */
 	private static Scene theViewContributorHomeScene;	// The shared Scene each invocation populates
 	/** Role number for this home page. */
 	protected static final int theRole = 2;		// Admin: 1; Contributor: 2; Viewer: 3

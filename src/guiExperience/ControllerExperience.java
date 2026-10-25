@@ -12,10 +12,35 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import validators.LessonLearnedValidator;
 
-/** R8: handles creation, viewing, and deletion actions for one lesson's experience records; the
- * database repeats validation and ownership checks so this controller cannot bypass them. */
+/*******
+ * <p> Title: ControllerExperience Class. </p>
+ *
+ * <p> Description: The Java/FX-based Experience Records Page.  This class provides the
+ * controller actions based on the user's use of the JavaFX GUI widgets defined by the View
+ * class.  The database repeats the validation and ownership checks, so this controller cannot
+ * bypass them.</p>
+ *
+ * <p> Operations: performAddEffort and performRemoveEffort build the per-member effort list.
+ * performAdd checks the form with LessonLearnedValidator.checkExperienceRecord and then calls
+ * Database.createExperienceRecord (R8, R14).  refreshList and performSelect read and show only the
+ * signed-in Contributor's records (R8, R12).  performDelete asks for confirmation and then calls
+ * Database.deleteExperienceRecord, which checks the owner (R8, R12).</p>
+ *
+ * <p> The methods are protected static and are called only by the View.  Do not change them to
+ * public.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header; source and rationale for the attribute
+ *
+ */
 public class ControllerExperience {
-	/** Guards list selection callbacks while the ListView is being rebuilt. */
+	/** True while the list is being rebuilt.  Source: R8.  Rationale: rebuilding the ListView
+	 * fires selection events, and this flag stops them from loading a record into the form by
+	 * mistake. */
 	private static boolean rebuildingList;
 
 	/** Creates the controller; all actions are invoked statically by the view. */

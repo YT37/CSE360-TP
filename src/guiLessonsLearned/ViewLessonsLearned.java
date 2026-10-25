@@ -24,64 +24,106 @@ import entityClasses.LessonLearned;
 import entityClasses.User;
 import validators.LessonLearnedValidator;
 
-/**
- * <p>Title: ViewLessonsLearned Class.</p>
- * <p>Description: JavaFX page for Contributor lesson CRUD and keyword subsets. The page follows
- * the TP1 singleton View pattern and delegates actions to ControllerLessonsLearned.</p>
- * <p>Requirement map: R1/R2/R3/R6 form actions, R4/R5 lock display, R7 search controls,
+/*******
+ * <p> Title: ViewLessonsLearned Class. </p>
+ *
+ * <p> Description: The Java/FX-based Lessons Learned Page.  A Contributor reaches this page from
+ * the Contributor Home page.  The left side lists the Contributor's own lessons or a keyword
+ * subset of them; the right side is a form for one lesson with the Clear, Create, Update, Delete,
+ * and Experiences buttons and a message area.</p>
+ *
+ * <p> The class follows the Foundations singleton View pattern: every use starts with
+ * displayLessonsLearned, which builds the page once and then reloads it for the signed-in user.
+ * Each button only calls a method in ControllerLessonsLearned.</p>
+ *
+ * <p> Operations: the Create, Update, and Delete buttons and the list support the create, read,
+ * update, and delete stories (R1, R2, R3, R6); the search box, Search, and All Lessons give the
+ * keyword subsets (R7); applyLockState marks locked fields read-only and disables Delete (R4,
+ * R5); Experiences opens the experience records for the selected lesson (R8); label_Message
+ * shows every validation error the database returns (R14).</p>
+ *
+ * <p> Requirement map: R1/R2/R3/R6 form actions, R4/R5 lock display, R7 search controls,
  * R8 experience navigation, and R14 validation messages.</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header; source and rationale for each attribute
+ *
  */
 public class ViewLessonsLearned {
-	/** Shared application database. */
+	/** Shared application database.  Source: R11.  Rationale: the page reads and writes the same
+	 * H2 database as the rest of the application. */
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
-	/** Stage used to display this page. */
+	/** Stage used to display this page.  Source: Foundations View pattern.  Rationale: Return and
+	 * Logout reuse the same window. */
 	protected static Stage theStage;
-	/** Signed-in Contributor. */
+	/** Signed-in Contributor.  Source: R12.  Rationale: the list and every change are limited to
+	 * this user's lessons. */
 	protected static User theUser;
-	/** Singleton view instance. */
+	/** Singleton view instance.  Source: Foundations View pattern.  Rationale: the page is built
+	 * once and reused. */
 	private static ViewLessonsLearned theView;
-	/** Scene containing the page. */
+	/** Scene containing the page.  Source: Foundations View pattern.  Rationale: lets the stage
+	 * switch back to this page without rebuilding it. */
 	private static Scene theScene;
-	/** Label showing who is signed in. */
+	/** Shows who is signed in.  Source: TP1 page layout.  Rationale: the Contributor can see whose
+	 * lessons are listed. */
 	private static Label label_SignedIn = new Label();
 
-	/** Label showing the displayed and total lesson counts. */
+	/** Shows how many lessons are displayed out of the total.  Source: R7.  Rationale: makes it
+	 * clear when a search subset, including an empty one, is being shown. */
 	protected static Label label_ListCount = new Label();
-	/** Status or error message shown to the user. */
+	/** Status or error message.  Source: R14.  Rationale: shows every validation, lock, and
+	 * ownership message so the Contributor knows what to fix. */
 	protected static Label label_Message = new Label();
-	/** Keyword search input. */
+	/** Search box.  Source: R7 keyword subsets.  Rationale: lets the Contributor narrow their
+	 * lessons by keyword. */
 	protected static TextField text_Search = new TextField();
-	/** List of the Contributor's lessons. */
+	/** List of the Contributor's lessons.  Source: R2 and R12.  Rationale: the Contributor picks a
+	 * lesson here to view, update, or delete it. */
 	protected static ListView<LessonLearned> listView_Lessons = new ListView<>();
-	/** Label for the title field. */
+	/** Title label.  Source: R1 and R4.  Rationale: shows "(Locked)" when the title is locked. */
 	protected static Label label_Title;
-	/** Input for the lesson title. */
+	/** Title input.  Source: R1 and R3.  Rationale: enters or edits the lesson title. */
 	protected static TextField text_Title = new TextField();
-	/** Label for the category field. */
+	/** Category label.  Source: R1 and R4.  Rationale: shows "(Locked)" when the category is
+	 * locked. */
 	protected static Label label_Category;
-	/** Input for the lesson category. */
+	/** Category choice.  Source: R1 and R14.  Rationale: a drop-down offers only the categories the
+	 * validator accepts. */
 	protected static ComboBox<String> combo_Category = new ComboBox<>();
-	/** Label for the situation field. */
+	/** What Happened label.  Source: R1 and R4.  Rationale: shows "(Locked)" when the field is
+	 * locked. */
 	protected static Label label_Situation;
-	/** Input for the situation description. */
+	/** What Happened input.  Source: R1 and R3.  Rationale: enters or edits the situation. */
 	protected static TextArea text_Situation = new TextArea();
-	/** Label for the lesson text field. */
+	/** What I Learned label.  Source: R1 and R4.  Rationale: shows "(Locked)" when the field is
+	 * locked. */
 	protected static Label label_Lesson;
-	/** Input for what was learned. */
+	/** What I Learned input.  Source: R1 and R3.  Rationale: enters or edits the lesson text. */
 	protected static TextArea text_Lesson = new TextArea();
-	/** Label for the recommendation field. */
+	/** Next Time label.  Source: R1 and R4.  Rationale: shows "(Locked)" when the field is
+	 * locked. */
 	protected static Label label_Recommendation;
-	/** Input for the optional recommendation. */
+	/** Next Time input.  Source: R1 and R3.  Rationale: enters or edits the optional
+	 * recommendation. */
 	protected static TextArea text_Recommendation = new TextArea();
-	/** Label for the keywords field. */
+	/** Keywords label.  Source: R1 and R4.  Rationale: shows "(Locked)" when the field is
+	 * locked. */
 	protected static Label label_Keywords;
-	/** Input for comma-separated keywords. */
+	/** Keywords input.  Source: R7.  Rationale: enters the terms the keyword search matches. */
 	protected static TextField text_Keywords = new TextField();
-	/** Deletes the selected lesson. */
+	/** Delete button.  Source: R6 and R5.  Rationale: deletes the selected lesson after a
+	 * confirmation, and is disabled when any lock is set. */
 	protected static Button button_Delete;
-	/** Opens the selected lesson's experience records. */
+	/** Experiences button.  Source: R8.  Rationale: opens the experience records for the selected
+	 * lesson; disabled until a lesson is selected. */
 	protected static Button button_Experiences;
 
+	/** Builds the page widgets once; only displayLessonsLearned calls this. */
 	private ViewLessonsLearned() {
 		BorderPane root = new BorderPane();
 		root.getStyleClass().add("page-root");

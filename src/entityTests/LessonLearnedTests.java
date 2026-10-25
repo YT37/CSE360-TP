@@ -2,22 +2,34 @@ package entityTests;
 
 import entityClasses.LessonLearned;
 
-/**
- * <p>Title: LessonLearnedTests Class.</p>
- * <p>Description: Semi-automated tests for the lesson lock state that supports the Contributor
- * stories about locked lessons. Every test method names the requirement it exercises, explains how
- * the code satisfies that requirement, and explains how to read the console output.</p>
+/*******
+ * <p> Title: LessonLearnedTests Class. </p>
  *
- * <p>Requirement coverage: R4 (whole-lesson and individual-field lock state) with both positive
+ * <p> Description: Semi-automated tests for the lesson lock state that supports the Contributor
+ * stories about locked lessons.  Every test method names the requirement it exercises, explains
+ * how the code satisfies that requirement, and explains how to read the console output.</p>
+ *
+ * <p> Requirement coverage: R4 (whole-lesson and individual-field lock state) with both positive
  * cases (a lock blocks the intended fields) and negative cases (clearing a lock or supplying an
  * unsupported field does not leave a false lock behind).</p>
+ *
+ * <p> Copyright: Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge © 2026 </p>
+ *
+ * @author Yug Thapar, Ishaan Arekar, Avishek Lodh, Shreetej Hadge
+ *
+ * @version 1.00		2026-10-24 Initial version for TP2
+ * @version 1.01		2026-10-25 Foundations-style header
+ *
  */
 public class LessonLearnedTests {
 	/** Creates the test runner. */
 	public LessonLearnedTests() { }
 
+	/** Number of assertions that passed. */
 	private static int passed;
+	/** Number of assertions that failed. */
 	private static int failed;
+	/** Number printed with each assertion. */
 	private static int testCaseNumber;
 
 	/**

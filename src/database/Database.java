@@ -34,6 +34,9 @@ import validators.LessonLearnedValidator;
  * @version 2.00		2025-04-29 Updated and expanded from the version produce by Pravalika 
  * 							Mukkiri and Ishwarya Hidkimath Basavaraj
  * @version 2.01		2025-12-17 Minor updates for Spring 2026
+ * @version 2.02		2026-10-24 TP2: lesson and experience tables, lesson and experience CRUD with
+ * 							ownership, lock, and validation checks, and username and account
+ * 							cascades to lessons and experiences
  */
 
 /*
@@ -44,32 +47,55 @@ import validators.LessonLearnedValidator;
 public class Database {
 
 	// JDBC driver name and database URL 
-	static final String JDBC_DRIVER = "org.h2.Driver";   
-	static final String DB_URL = "jdbc:h2:~/FoundationDatabase";  
+	/** The H2 JDBC driver class. */
+	static final String JDBC_DRIVER = "org.h2.Driver";
+	/** The application's database URL. */
+	static final String DB_URL = "jdbc:h2:~/FoundationDatabase";
 
-	//  Database credentials 
-	static final String USER = "sa"; 
-	static final String PASS = ""; 
+	//  Database credentials
+	/** Database user name. */
+	static final String USER = "sa";
+	/** Database password. */
+	static final String PASS = "";
+	/** URL this object connects to.  Source: R11.  Rationale: the tests pass their own URL so they
+	 * never touch the application's data. */
 	private String databaseURL = DB_URL;
 
 	//  Shared variables used within this class
-	private Connection connection = null;		// Singleton to access the database 
-	private Statement statement = null;			// The H2 Statement is used to construct queries
+	/** Singleton to access the database. */
+	private Connection connection = null;
+	/** The H2 Statement is used to construct queries. */
+	private Statement statement = null;
+	/** Error from the last lesson read, or "".  Source: R2 and R14.  Rationale: a read returns a
+	 * list or null, so the GUI needs a separate place to find out why a read failed. */
 	private String lastLessonError = "";
+	/** Error from the last experience read, or "".  Source: R8.  Rationale: same reason as
+	 * lastLessonError, for experience records. */
 	private String lastExperienceError = "";
-	
+
 	// These are the easily accessible attributes of the currently logged-in user
 	// This is only useful for single user applications
+	/** Current user's username. */
 	private String currentUsername;
+	/** Current user's password. */
 	private String currentPassword;
+	/** Current user's first name. */
 	private String currentFirstName;
+	/** Current user's middle name. */
 	private String currentMiddleName;
+	/** Current user's last name. */
 	private String currentLastName;
+	/** Current user's preferred first name. */
 	private String currentPreferredFirstName;
+	/** Current user's email address. */
 	private String currentEmailAddress;
+	/** True when the current user has the Admin role. */
 	private boolean currentAdminRole;
+	/** True when the current user has the Contributor role. */
 	private boolean currentContributorRole;
+	/** True when the current user has the Viewer role. */
 	private boolean currentViewerRole;
+	/** True when the current user signed in with a one-time password. */
 	private boolean currentIsOneTimePassword;
 
 	/*******
@@ -119,7 +145,8 @@ public class Database {
 /*******
  * <p> Method: createTables </p>
  * 
- * <p> Description: Used to create new instances of the two database tables used by this class.</p>
+ * <p> Description: Used to create new instances of the database tables used by this class: users,
+ * invitation codes, lessons learned, experience records, and experience effort.</p>
  *
  * @throws SQLException when a table cannot be created
  */
