@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 
 /**
  * JavaFX page for creating, viewing, and deleting experience records for one Contributor lesson.
+ * Requirement: R8, with R12 ownership enforced by the database when records are saved or removed.
  * Manual R8 check: add a valid record, select it to view the stored fields, then cancel and confirm
  * deletion; also attempt to save with a missing required field and verify the error is shown.
  */

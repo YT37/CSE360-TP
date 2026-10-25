@@ -15,7 +15,7 @@ import javafx.scene.control.ButtonType;
 public class ControllerLessonsLearned {
 	private static boolean rebuildingList;
 
-	/** Reads the current Contributor's lessons and applies the active search subset. */
+	/** R2/R7/R12: reads the current Contributor's lessons and applies the active keyword subset. */
 	protected static void refreshList() {
 		LessonLearnedList mine = ViewLessonsLearned.theDatabase
 				.readLessonsLearnedForContributor(ViewLessonsLearned.theUser.getUserName());
@@ -30,6 +30,7 @@ public class ControllerLessonsLearned {
 			showMessage(ViewLessonsLearned.theDatabase.getLastLessonError(), true);
 	}
 
+	/** R2/R4: loads the selected lesson and shows which fields are locked. */
 	protected static void performSelect(LessonLearned lesson) {
 		if (lesson == null || rebuildingList) return;
 		ModelLessonsLearned.selectedLesson = lesson;
@@ -72,7 +73,7 @@ public class ControllerLessonsLearned {
 				ViewLessonsLearned.theUser, lesson);
 	}
 
-	/** Creates a validated lesson and refreshes the persisted list. */
+	/** R1/R14: creates a validated lesson and refreshes the persisted list. */
 	protected static void performCreate() {
 		LessonLearned lesson = lessonFromForm();
 		String result = ViewLessonsLearned.theDatabase.createLessonLearned(lesson);
@@ -85,7 +86,7 @@ public class ControllerLessonsLearned {
 		showMessage("Lesson #" + lesson.getLessonID() + " was created.", false);
 	}
 
-	/** Updates the selected owned lesson after the database repeats validation and ownership checks. */
+	/** R3/R5/R12: updates the selected owned lesson after database validation, lock, and ownership checks. */
 	protected static void performUpdate() {
 		if (ModelLessonsLearned.selectedLesson == null) {
 			showMessage("Select a lesson before updating.", true);
@@ -101,7 +102,7 @@ public class ControllerLessonsLearned {
 		showMessage("Lesson was updated.", false);
 	}
 
-	/** Confirms and deletes the selected owned lesson. */
+	/** R6/R5/R12: confirms and deletes the selected owned lesson; locked lessons are refused. */
 	protected static void performDelete() {
 		LessonLearned selected = ModelLessonsLearned.selectedLesson;
 		if (selected == null) { showMessage("Select a lesson before deleting.", true); return; }
@@ -123,6 +124,7 @@ public class ControllerLessonsLearned {
 		showMessage("Lesson was deleted.", false);
 	}
 
+	/** R7: applies a keyword search to the Contributor's own lessons. */
 	protected static void performSearch() {
 		String search = ViewLessonsLearned.text_Search.getText().trim();
 		if (search.isEmpty()) {

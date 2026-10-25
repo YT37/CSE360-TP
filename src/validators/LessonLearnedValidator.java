@@ -25,7 +25,7 @@ public class LessonLearnedValidator {
 	public static final int MAX_SUMMARY_LENGTH = 200;
 	public static final int MAX_ROOT_CAUSE_LENGTH = 1000;
 
-	/** Checks title presence, length, line format, and meaningful content. */
+	/** R1 and R14: checks title presence, length, line format, and meaningful content. */
 	public static String checkTitle(String input) {
 		if (isBlank(input)) return "Title is required. Please enter a short title (5 to 80 characters).";
 		String title = input.trim();
@@ -37,7 +37,7 @@ public class LessonLearnedValidator {
 		return "Title must contain at least one letter.";
 	}
 
-	/** Checks that category is one of the categories presented by the GUI. */
+	/** R1 and R14: checks that category is one of the categories presented by the GUI. */
 	public static String checkCategory(String input) {
 		if (isBlank(input)) return "Category is required. Please choose a category.";
 		for (String category : CATEGORIES)
@@ -45,14 +45,17 @@ public class LessonLearnedValidator {
 		return "Invalid category. Choose one of: " + String.join(", ", CATEGORIES) + ".";
 	}
 
+	/** R1 and R14: requires 20 to 2000 characters of situation detail. */
 	public static String checkSituation(String input) {
 		return checkRequiredDetail("What Happened", input);
 	}
 
+	/** R1 and R14: requires 20 to 2000 characters of lesson detail. */
 	public static String checkLessonText(String input) {
 		return checkRequiredDetail("What I Learned", input);
 	}
 
+	/** R1 and R14: allows an empty recommendation but caps it at 1000 characters. */
 	public static String checkRecommendation(String input) {
 		if (input == null || input.trim().isEmpty()) return "";
 		if (input.trim().length() > MAX_RECOMMENDATION_LENGTH)
@@ -60,6 +63,8 @@ public class LessonLearnedValidator {
 		return "";
 	}
 
+	/** R1, R7, and R14: allows empty keywords but enforces count, length, and character rules so
+	 * search terms stay meaningful. */
 	public static String checkKeywords(String input) {
 		if (input == null || input.trim().isEmpty()) return "";
 		String keywords = input.trim();
@@ -126,7 +131,8 @@ public class LessonLearnedValidator {
 		return errors.toString();
 	}
 
-	/** Runs every lesson-field check and returns all errors separated by newlines. */
+	/** R1, R3, and R10: runs every lesson-field check, including the optional coaching attributes, and
+	 * returns all errors separated by newlines so the GUI can show every problem at once. */
 	public static String checkLessonLearned(LessonLearned lesson) {
 		if (lesson == null) return "No lesson was provided.";
 		StringBuilder errors = new StringBuilder();

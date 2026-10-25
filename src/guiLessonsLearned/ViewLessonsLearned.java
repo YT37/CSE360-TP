@@ -28,6 +28,8 @@ import validators.LessonLearnedValidator;
  * <p>Title: ViewLessonsLearned Class.</p>
  * <p>Description: JavaFX page for Contributor lesson CRUD and keyword subsets. The page follows
  * the TP1 singleton View pattern and delegates actions to ControllerLessonsLearned.</p>
+ * <p>Requirement map: R1/R2/R3/R6 form actions, R4/R5 lock display, R7 search controls,
+ * R8 experience navigation, and R14 validation messages.</p>
  */
 public class ViewLessonsLearned {
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;

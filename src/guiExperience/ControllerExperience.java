@@ -12,11 +12,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import validators.LessonLearnedValidator;
 
-/** Handles creation, viewing, and deletion actions for one lesson's experience records. */
+/** R8: handles creation, viewing, and deletion actions for one lesson's experience records; the
+ * database repeats validation and ownership checks so this controller cannot bypass them. */
 public class ControllerExperience {
 	private static boolean rebuildingList;
 
-	/** Loads the signed-in Contributor's experience records for the selected lesson. */
+	/** R8/R12: loads only the signed-in Contributor's records for the selected lesson. */
 	protected static void refreshList() {
 		ModelExperience.experiences = ViewExperience.theDatabase.readExperienceRecordsForLesson(
 				ModelExperience.lesson.getLessonID(), ViewExperience.theUser.getUserName());
@@ -89,6 +90,7 @@ public class ControllerExperience {
 		refreshEffortList();
 	}
 
+	/** R8/R14: validates descriptions, duration, and effort before asking the database to store. */
 	protected static void performAdd() {
 		double durationHours;
 		try {
@@ -117,6 +119,7 @@ public class ControllerExperience {
 		showMessage("Experience #" + experience.getExperienceID() + " was added.", false);
 	}
 
+	/** R8/R12: confirms deletion and lets the database verify the owner before removing. */
 	protected static void performDelete() {
 		ExperienceRecord selected = ModelExperience.selectedExperience;
 		if (selected == null) {

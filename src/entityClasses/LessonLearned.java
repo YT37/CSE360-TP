@@ -11,6 +11,8 @@ import java.util.Set;
  * assigns the ID and timestamps, so a default constructor is retained for database reconstruction.</p>
  * <p>Validation is intentionally kept in LessonLearnedValidator so the GUI, database, and tests
  * use one set of rules.</p>
+ * <p>Requirement map: R1/R2/R3/R6 core data, R4/R5 lock state, R7 keyword match, R9 curator
+ * provenance, and R10 future coaching attributes.</p>
  */
 public class LessonLearned {
 	private int lessonID = -1;
@@ -132,7 +134,7 @@ public class LessonLearned {
 			throw new IllegalArgumentException("Unknown lockable lesson field: " + field);
 	}
 
-	/** Returns true when a nonblank search term occurs in any searchable lesson field. */
+	/** R7: returns true when a nonblank search term occurs in any searchable lesson field. */
 	public boolean matchesKeyword(String searchText) {
 		if (searchText == null || searchText.trim().isEmpty()) return false;
 		String search = searchText.trim().toLowerCase();

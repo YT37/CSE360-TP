@@ -1386,7 +1386,8 @@ public class Database {
 		resultSet.close();
 	}
 
-	/** Validates and persists a lesson, returning an empty string on success. */
+	/** R1 create and R14 validation: validates every field, rejects a duplicate title, assigns the
+	 * generated ID, and stores lock and coaching metadata so later reads can satisfy R4 and R10. */
 	public String createLessonLearned(LessonLearned lesson) {
 		String errors = LessonLearnedValidator.checkLessonLearned(lesson);
 		if (!errors.isEmpty()) return errors;
@@ -1426,7 +1427,7 @@ public class Database {
 		return "";
 	}
 
-	/** Reads one lesson by ID; null indicates not found or a read error. */
+	/** R2 read: reconstructs one lesson by ID, including every lock, curator, and coaching attribute. */
 	public LessonLearned readLessonLearned(int lessonID) {
 		lastLessonError = "";
 		if (lessonID <= 0) {
@@ -1446,17 +1447,19 @@ public class Database {
 		return null;
 	}
 
-	/** Reads all current lessons into the required unbounded list class. */
+	/** R2 read and R7 subset source: returns every stored lesson in an unbounded list. */
 	public LessonLearnedList readAllLessonsLearned() {
 		return readLessonList("SELECT * FROM lessonsLearnedDB ORDER BY lessonID", null);
 	}
 
-	/** Reads only lessons owned by the requested Contributor. */
+	/** R2 read and R12 isolation: filters by owner so a Contributor never sees another Contributor's
+	 * lessons. */
 	public LessonLearnedList readLessonsLearnedForContributor(String userName) {
 		return readLessonList("SELECT * FROM lessonsLearnedDB WHERE contributorUserName = ? ORDER BY lessonID", userName);
 	}
 
-	/** Validates ownership and replacement fields before updating one lesson. */
+	/** R3 update, R5 lock enforcement, R12 ownership, and R14 validation: rejects a missing lesson, a
+	 * non-owner, a locked change, or invalid fields before writing. */
 	public String updateLessonLearned(LessonLearned lesson, String requestingUserName) {
 		if (lesson == null) return "No lesson was provided to update.";
 		LessonLearned stored = readLessonLearned(lesson.getLessonID());
@@ -1492,7 +1495,8 @@ public class Database {
 		return "";
 	}
 
-	/** Deletes one owned lesson after the GUI has confirmed the action. */
+	/** R6 delete with R5 lock enforcement and R12 ownership: the GUI confirms first; the database then
+	 * rejects a missing, locked, or non-owned lesson before deleting. */
 	public String deleteLessonLearned(int lessonID, String requestingUserName) {
 		LessonLearned stored = readLessonLearned(lessonID);
 		String accessError = checkChangeAllowed(stored, lessonID, requestingUserName, "deleted");
@@ -1548,7 +1552,7 @@ public class Database {
 		return "";
 	}
 
-	/** Reads an experience record and its effort entries by ID; null indicates it was not found. */
+	/** R8 read: reconstructs an experience and its per-member effort entries by ID. */
 	public ExperienceRecord readExperienceRecord(int experienceID) {
 		lastExperienceError = "";
 		if (experienceID <= 0) {
@@ -1593,7 +1597,7 @@ public class Database {
 		}
 	}
 
-	/** Reads experience records for one lesson, restricted to the owning Contributor (R8). */
+	/** R8 read and R12 isolation: lists only the requesting Contributor's records for a lesson. */
 	public List<ExperienceRecord> readExperienceRecordsForLesson(int lessonID, String contributorUserName) {
 		lastExperienceError = "";
 		List<ExperienceRecord> experiences = new ArrayList<>();
@@ -1620,7 +1624,8 @@ public class Database {
 	/** Returns the most recent experience read error, or an empty string after a successful read. */
 	public String getLastExperienceError() { return lastExperienceError; }
 
-	/** Updates an experience record and its member efforts when requested by its owner (R8). */
+	/** R8 update and R12 ownership: the stored owner must match the requester before the record and
+	 * its effort rows are replaced in one transaction. */
 	public String updateExperienceRecord(ExperienceRecord experience, String requestingUserName) {
 		if (experience == null) return "No experience record was provided to update.";
 		ExperienceRecord stored = readExperienceRecord(experience.getExperienceID());
@@ -1657,7 +1662,7 @@ public class Database {
 		return "";
 	}
 
-	/** Deletes an experience record and its member efforts when requested by its owner (R8). */
+	/** R8 delete and R12 ownership: only the stored owner may delete the record and its effort rows. */
 	public String deleteExperienceRecord(int experienceID, String requestingUserName) {
 		ExperienceRecord stored = readExperienceRecord(experienceID);
 		String accessError = checkExperienceChangeAllowed(stored, experienceID, requestingUserName, "delete");
@@ -1682,7 +1687,7 @@ public class Database {
 		return "";
 	}
 
-	/** Replaces normalized member effort rows inside the caller's database transaction. */
+	/** R8 effort storage: replaces the per-member rows so an update cannot leave stale effort data. */
 	private void replaceExperienceEfforts(int experienceID, Map<String, Double> efforts) throws SQLException {
 		try (PreparedStatement delete = connection.prepareStatement(
 				"DELETE FROM experienceEffortDB WHERE experienceID = ?")) {
@@ -1700,6 +1705,8 @@ public class Database {
 		}
 	}
 
+	/** R1 create and R3 update duplicate-title rule: comparison is case-insensitive and ignores the
+	 * row being updated. */
 	private boolean contributorHasTitle(String userName, String title, int excludeID) throws SQLException {
 		String query = "SELECT COUNT(*) FROM lessonsLearnedDB WHERE contributorUserName = ? AND LOWER(title) = LOWER(?) AND lessonID <> ?";
 		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -1712,6 +1719,7 @@ public class Database {
 		}
 	}
 
+	/** R12 isolation: a lesson change is allowed only when the stored owner matches the requester. */
 	private String checkChangeAllowed(LessonLearned stored, int lessonID, String requestingUserName, String action) {
 		if (stored == null) return lastLessonError.isEmpty() ? "Lesson #" + lessonID + " was not found." : lastLessonError;
 		if (requestingUserName == null || !stored.getContributorUserName().equals(requestingUserName))

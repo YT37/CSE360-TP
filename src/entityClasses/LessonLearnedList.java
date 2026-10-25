@@ -70,7 +70,8 @@ public class LessonLearnedList {
 		return Collections.unmodifiableList(lessons);
 	}
 
-	/** Builds a new subset containing lessons matching the supplied keyword. */
+	/** R7 and R13: builds a new subset containing only lessons matching the keyword, including an
+	 * empty subset when nothing matches. */
 	public LessonLearnedList getSubsetByKeyword(String searchText) {
 		LessonLearnedList subset = new LessonLearnedList();
 		for (LessonLearned lesson : lessons)
