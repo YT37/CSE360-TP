@@ -14,7 +14,7 @@ import validators.LessonLearnedValidator;
  * counts.  The negative cases also require the message to name the field or rule so the
  * Contributor can fix the problem.</p>
  *
- * <p> Requirement coverage: R1, R3, R7, R8, R10, and R14.  Each rule has at least one positive
+ * <p> Requirement coverage: R1, R8, R10, and R14.  Each rule has at least one positive
  * case that must be accepted and one negative case that must be rejected with a helpful
  * message.</p>
  *
@@ -24,6 +24,8 @@ import validators.LessonLearnedValidator;
  *
  * @version 1.00		2026-10-24 Initial version for TP2
  * @version 1.01		2026-10-25 Foundations-style header
+ * @version 1.02		2026-10-25 Requirement coverage lists only the requirements the cases are
+ * 							tagged with
  *
  */
 public class LessonLearnedValidatorTests {
