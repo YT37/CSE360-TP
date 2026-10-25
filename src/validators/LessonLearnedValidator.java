@@ -1,5 +1,7 @@
 package validators;
 
+import java.util.Map;
+
 import entityClasses.LessonLearned;
 
 /**
@@ -19,6 +21,9 @@ public class LessonLearnedValidator {
 	public static final int MAX_NUMBER_OF_KEYWORDS = 10;
 	public static final int MIN_KEYWORD_LENGTH = 2;
 	public static final int MAX_KEYWORD_LENGTH = 30;
+	public static final double MAX_EXPERIENCE_DURATION_HOURS = 168.0;
+	public static final int MAX_SUMMARY_LENGTH = 200;
+	public static final int MAX_ROOT_CAUSE_LENGTH = 1000;
 
 	/** Checks title presence, length, line format, and meaningful content. */
 	public static String checkTitle(String input) {
@@ -75,6 +80,52 @@ public class LessonLearnedValidator {
 		return "";
 	}
 
+	/** Checks the optional coaching summary length (R10). */
+	public static String checkSummary(String input) {
+		if (isBlank(input)) return "";
+		if (input.trim().length() > MAX_SUMMARY_LENGTH)
+			return "Summary must be 200 characters or fewer.";
+		return "";
+	}
+
+	/** Checks the optional root-cause description length (R10). */
+	public static String checkRootCause(String input) {
+		if (isBlank(input)) return "";
+		if (input.trim().length() > MAX_ROOT_CAUSE_LENGTH)
+			return "Root Cause must be 1000 characters or fewer.";
+		return "";
+	}
+
+	/** Validates an experience attempt and per-member effort entries (R8).
+	 *
+	 * @param whatWasDone required description of the work performed
+	 * @param how required description of how the work was performed
+	 * @param durationHours elapsed time in hours; must be greater than zero and no more than 168
+	 * @param effortHoursByMember member names mapped to their positive effort hours
+	 * @return an empty string when valid, or field-specific errors separated by newlines
+	 */
+	public static String checkExperienceRecord(String whatWasDone, String how, double durationHours,
+			Map<String, Double> effortHoursByMember) {
+		StringBuilder errors = new StringBuilder();
+		add(errors, checkRequiredDetail("What Was Done", whatWasDone));
+		add(errors, checkRequiredDetail("How", how));
+		add(errors, !Double.isFinite(durationHours) || durationHours <= 0
+				|| durationHours > MAX_EXPERIENCE_DURATION_HOURS
+				? "Duration must be greater than 0 and 168 hours or fewer." : "");
+		if (effortHoursByMember == null || effortHoursByMember.isEmpty()) {
+			add(errors, "At least one team member effort entry is required.");
+		} else {
+			for (Map.Entry<String, Double> effort : effortHoursByMember.entrySet()) {
+				if (isBlank(effort.getKey()))
+					add(errors, "Each effort entry must identify a team member.");
+				Double hours = effort.getValue();
+				if (hours == null || !Double.isFinite(hours) || hours <= 0)
+					add(errors, "Effort hours for each team member must be greater than 0.");
+			}
+		}
+		return errors.toString();
+	}
+
 	/** Runs every lesson-field check and returns all errors separated by newlines. */
 	public static String checkLessonLearned(LessonLearned lesson) {
 		if (lesson == null) return "No lesson was provided.";
@@ -86,6 +137,8 @@ public class LessonLearnedValidator {
 		add(errors, checkLessonText(lesson.getLessonText()));
 		add(errors, checkRecommendation(lesson.getRecommendation()));
 		add(errors, checkKeywords(lesson.getKeywords()));
+		add(errors, checkSummary(lesson.getSummary()));
+		add(errors, checkRootCause(lesson.getRootCause()));
 		return errors.toString();
 	}
 

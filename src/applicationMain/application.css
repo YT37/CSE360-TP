@@ -70,6 +70,57 @@
 	-fx-font-weight: bold;
 }
 
+.locked-label {
+	-fx-text-fill: -app-error;
+}
+
+.page-root {
+	-fx-background-color: -app-background;
+}
+
+.page-header {
+	-fx-spacing: 4;
+	-fx-padding: 2 4 10 4;
+}
+
+.page-section, .form-section {
+	-fx-spacing: 8;
+	-fx-padding: 12;
+	-fx-background-color: -app-surface;
+	-fx-background-radius: 8;
+	-fx-border-color: -app-border;
+	-fx-border-radius: 8;
+}
+
+.form-field {
+	-fx-spacing: 4;
+}
+
+.form-actions {
+	-fx-hgap: 8;
+	-fx-vgap: 8;
+	-fx-padding: 4 0 0 0;
+}
+
+.page-footer {
+	-fx-spacing: 6;
+	-fx-padding: 10 0 0 0;
+}
+
+.form-scroll, .form-scroll > .viewport {
+	-fx-background-color: transparent;
+}
+
+.page-content {
+	-fx-background-color: transparent;
+	-fx-padding: 0;
+}
+
+.page-content > .split-pane-divider {
+	-fx-padding: 0 3 0 3;
+	-fx-background-color: transparent;
+}
+
 .page-title {
 	-fx-font-size: 28px;
 	-fx-font-weight: bold;

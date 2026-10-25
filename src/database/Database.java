@@ -6,10 +6,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import entityClasses.User;
+import entityClasses.ExperienceRecord;
 import entityClasses.LessonLearned;
 import entityClasses.LessonLearnedList;
 import validators.LessonLearnedValidator;
@@ -52,6 +56,7 @@ public class Database {
 	private Connection connection = null;		// Singleton to access the database 
 	private Statement statement = null;			// The H2 Statement is used to construct queries
 	private String lastLessonError = "";
+	private String lastExperienceError = "";
 	
 	// These are the easily accessible attributes of the currently logged-in user
 	// This is only useful for single user applications
@@ -152,6 +157,37 @@ public class Database {
 				+ "createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
 				+ "updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
 		statement.execute(lessonTable);
+		// R4: Add the lock metadata to new and existing lesson tables without destroying lesson data.
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS lessonLocked BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS titleLocked BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS categoryLocked BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS situationLocked BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS lessonTextLocked BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS recommendationLocked BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS keywordsLocked BOOL DEFAULT FALSE");
+		// R9: Preserve curator edit provenance when lessons are reopened from storage.
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS curatorEdited BOOL DEFAULT FALSE");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS editedBy VARCHAR(255)");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS summary VARCHAR(200)");
+		statement.execute("ALTER TABLE lessonsLearnedDB ADD COLUMN IF NOT EXISTS rootCause VARCHAR(1000)");
+		String experienceTable = "CREATE TABLE IF NOT EXISTS experienceRecordsDB ("
+				+ "experienceID INT AUTO_INCREMENT PRIMARY KEY, "
+				+ "lessonID INT NOT NULL, "
+				+ "contributorUserName VARCHAR(255) NOT NULL, "
+				+ "whatWasDone VARCHAR(2000) NOT NULL, "
+				+ "how VARCHAR(2000) NOT NULL, "
+				+ "durationHours DOUBLE NOT NULL, "
+				+ "createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+				+ "updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+				+ "FOREIGN KEY (lessonID) REFERENCES lessonsLearnedDB(lessonID) ON DELETE CASCADE)";
+		statement.execute(experienceTable);
+		String effortTable = "CREATE TABLE IF NOT EXISTS experienceEffortDB ("
+				+ "experienceID INT NOT NULL, "
+				+ "teamMemberName VARCHAR(255) NOT NULL, "
+				+ "effortHours DOUBLE NOT NULL, "
+				+ "PRIMARY KEY (experienceID, teamMemberName), "
+				+ "FOREIGN KEY (experienceID) REFERENCES experienceRecordsDB(experienceID) ON DELETE CASCADE)";
+		statement.execute(effortTable);
 	}
 
 
@@ -1095,12 +1131,14 @@ public class Database {
 	public void updateUsername(String oldUsername, String newUsername) {
 	    String userQuery = "UPDATE userDB SET username = ? WHERE username = ?";
 	    String lessonQuery = "UPDATE lessonsLearnedDB SET contributorUserName = ? WHERE contributorUserName = ?";
+	    String experienceQuery = "UPDATE experienceRecordsDB SET contributorUserName = ? WHERE contributorUserName = ?";
 	    boolean autoCommit = true;
 	    try {
 	        autoCommit = connection.getAutoCommit();
 	        connection.setAutoCommit(false);
 	        try (PreparedStatement userStatement = connection.prepareStatement(userQuery);
-	             PreparedStatement lessonStatement = connection.prepareStatement(lessonQuery)) {
+	             PreparedStatement lessonStatement = connection.prepareStatement(lessonQuery);
+	             PreparedStatement experienceStatement = connection.prepareStatement(experienceQuery)) {
 	            userStatement.setString(1, newUsername);
 	            userStatement.setString(2, oldUsername);
 	            userStatement.executeUpdate();
@@ -1108,6 +1146,10 @@ public class Database {
 	            lessonStatement.setString(1, newUsername);
 	            lessonStatement.setString(2, oldUsername);
 	            lessonStatement.executeUpdate();
+
+	            experienceStatement.setString(1, newUsername);
+	            experienceStatement.setString(2, oldUsername);
+	            experienceStatement.executeUpdate();
         }
         connection.commit();
         currentUsername = newUsername;
@@ -1354,7 +1396,7 @@ public class Database {
 		} catch (SQLException e) {
 			return "The lesson could not be checked for duplicate titles: " + e.getMessage();
 		}
-		String insert = "INSERT INTO lessonsLearnedDB (contributorUserName, title, category, situation, lessonText, recommendation, keywords) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String insert = "INSERT INTO lessonsLearnedDB (contributorUserName, title, category, situation, lessonText, recommendation, keywords, lessonLocked, titleLocked, categoryLocked, situationLocked, lessonTextLocked, recommendationLocked, keywordsLocked, curatorEdited, editedBy, summary, rootCause) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pstmt = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS)) {
 			pstmt.setString(1, lesson.getContributorUserName().trim());
 			pstmt.setString(2, lesson.getTitle().trim());
@@ -1363,6 +1405,17 @@ public class Database {
 			pstmt.setString(5, lesson.getLessonText().trim());
 			pstmt.setString(6, trimOrEmpty(lesson.getRecommendation()));
 			pstmt.setString(7, trimOrEmpty(lesson.getKeywords()));
+			pstmt.setBoolean(8, lesson.isLessonLocked());
+			pstmt.setBoolean(9, lesson.getLockedFields().contains("title"));
+			pstmt.setBoolean(10, lesson.getLockedFields().contains("category"));
+			pstmt.setBoolean(11, lesson.getLockedFields().contains("situation"));
+			pstmt.setBoolean(12, lesson.getLockedFields().contains("lessonText"));
+			pstmt.setBoolean(13, lesson.getLockedFields().contains("recommendation"));
+			pstmt.setBoolean(14, lesson.getLockedFields().contains("keywords"));
+			pstmt.setBoolean(15, lesson.isCuratorEdited());
+			pstmt.setString(16, lesson.getEditedBy());
+			pstmt.setString(17, trimOrEmpty(lesson.getSummary()));
+			pstmt.setString(18, trimOrEmpty(lesson.getRootCause()));
 			pstmt.executeUpdate();
 			try (ResultSet keys = pstmt.getGeneratedKeys()) {
 				if (keys.next()) lesson.setLessonID(keys.getInt(1));
@@ -1409,7 +1462,12 @@ public class Database {
 		LessonLearned stored = readLessonLearned(lesson.getLessonID());
 		String accessError = checkChangeAllowed(stored, lesson.getLessonID(), requestingUserName, "updated");
 		if (!accessError.isEmpty()) return accessError;
+		String lockError = checkLessonLockAllowsUpdate(stored, lesson);
+		if (!lockError.isEmpty()) return lockError;
 		lesson.setContributorUserName(stored.getContributorUserName());
+		// Older Contributor forms do not edit these optional TP3 fields, so keep their stored values.
+		if (lesson.getSummary() == null) lesson.setSummary(stored.getSummary());
+		if (lesson.getRootCause() == null) lesson.setRootCause(stored.getRootCause());
 		String errors = LessonLearnedValidator.checkLessonLearned(lesson);
 		if (!errors.isEmpty()) return errors;
 		try {
@@ -1418,7 +1476,7 @@ public class Database {
 		} catch (SQLException e) {
 			return "The lesson could not be checked for duplicate titles: " + e.getMessage();
 		}
-		String update = "UPDATE lessonsLearnedDB SET title = ?, category = ?, situation = ?, lessonText = ?, recommendation = ?, keywords = ?, updatedAt = CURRENT_TIMESTAMP WHERE lessonID = ?";
+		String update = "UPDATE lessonsLearnedDB SET title = ?, category = ?, situation = ?, lessonText = ?, recommendation = ?, keywords = ?, summary = ?, rootCause = ?, updatedAt = CURRENT_TIMESTAMP WHERE lessonID = ?";
 		try (PreparedStatement pstmt = connection.prepareStatement(update)) {
 			pstmt.setString(1, lesson.getTitle().trim());
 			pstmt.setString(2, lesson.getCategory());
@@ -1426,7 +1484,9 @@ public class Database {
 			pstmt.setString(4, lesson.getLessonText().trim());
 			pstmt.setString(5, trimOrEmpty(lesson.getRecommendation()));
 			pstmt.setString(6, trimOrEmpty(lesson.getKeywords()));
-			pstmt.setInt(7, lesson.getLessonID());
+			pstmt.setString(7, trimOrEmpty(lesson.getSummary()));
+			pstmt.setString(8, trimOrEmpty(lesson.getRootCause()));
+			pstmt.setInt(9, lesson.getLessonID());
 			if (pstmt.executeUpdate() == 0) return "Lesson #" + lesson.getLessonID() + " was not found.";
 		} catch (SQLException e) { return "The lesson could not be updated: " + e.getMessage(); }
 		return "";
@@ -1437,11 +1497,207 @@ public class Database {
 		LessonLearned stored = readLessonLearned(lessonID);
 		String accessError = checkChangeAllowed(stored, lessonID, requestingUserName, "deleted");
 		if (!accessError.isEmpty()) return accessError;
+		String lockError = checkLessonLockAllowsDelete(stored);
+		if (!lockError.isEmpty()) return lockError;
 		try (PreparedStatement pstmt = connection.prepareStatement("DELETE FROM lessonsLearnedDB WHERE lessonID = ?")) {
 			pstmt.setInt(1, lessonID);
 			if (pstmt.executeUpdate() == 0) return "Lesson #" + lessonID + " was not found.";
 		} catch (SQLException e) { return "The lesson could not be deleted: " + e.getMessage(); }
 		return "";
+	}
+
+	/** Validates and persists one experience record and its per-member effort entries (R8). */
+	public String createExperienceRecord(ExperienceRecord experience, String requestingUserName) {
+		if (experience == null) return "No experience record was provided.";
+		String errors = LessonLearnedValidator.checkExperienceRecord(experience.getWhatWasDone(),
+				experience.getHow(), experience.getDurationHours(), experience.getEffortHoursByMember());
+		if (!errors.isEmpty()) return errors;
+		LessonLearned parent = readLessonLearned(experience.getLessonID());
+		if (parent == null) return "The lesson for this experience record was not found.";
+		if (requestingUserName == null || !parent.getContributorUserName().equals(requestingUserName))
+			return "Only the owner of the lesson can add experience records.";
+		// The DTO's owner field is data, not proof of identity; trust the authenticated caller instead.
+		experience.setContributorUserName(requestingUserName);
+
+		boolean originalAutoCommit = true;
+		try {
+			originalAutoCommit = connection.getAutoCommit();
+			connection.setAutoCommit(false);
+			String insertExperience = "INSERT INTO experienceRecordsDB (lessonID, contributorUserName, whatWasDone, how, durationHours) VALUES (?, ?, ?, ?, ?)";
+			try (PreparedStatement pstmt = connection.prepareStatement(insertExperience, Statement.RETURN_GENERATED_KEYS)) {
+				pstmt.setInt(1, experience.getLessonID());
+				pstmt.setString(2, experience.getContributorUserName());
+				pstmt.setString(3, experience.getWhatWasDone().trim());
+				pstmt.setString(4, experience.getHow().trim());
+				pstmt.setDouble(5, experience.getDurationHours());
+				pstmt.executeUpdate();
+				try (ResultSet keys = pstmt.getGeneratedKeys()) {
+					if (!keys.next()) throw new SQLException("No experience record ID was generated.");
+					experience.setExperienceID(keys.getInt(1));
+				}
+			}
+			replaceExperienceEfforts(experience.getExperienceID(), experience.getEffortHoursByMember());
+			connection.commit();
+		} catch (SQLException e) {
+			try { connection.rollback(); } catch (SQLException rollbackError) { /* preserve original error */ }
+			experience.setExperienceID(-1);
+			return "The experience record could not be saved: " + e.getMessage();
+		} finally {
+			try { connection.setAutoCommit(originalAutoCommit); } catch (SQLException e) { e.printStackTrace(); }
+		}
+		return "";
+	}
+
+	/** Reads an experience record and its effort entries by ID; null indicates it was not found. */
+	public ExperienceRecord readExperienceRecord(int experienceID) {
+		lastExperienceError = "";
+		if (experienceID <= 0) {
+			lastExperienceError = "Experience ID must be positive.";
+			return null;
+		}
+		String query = "SELECT * FROM experienceRecordsDB WHERE experienceID = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setInt(1, experienceID);
+			ExperienceRecord experience = null;
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					experience = new ExperienceRecord();
+					experience.setExperienceID(rs.getInt("experienceID"));
+					experience.setLessonID(rs.getInt("lessonID"));
+					experience.setContributorUserName(rs.getString("contributorUserName"));
+					experience.setWhatWasDone(rs.getString("whatWasDone"));
+					experience.setHow(rs.getString("how"));
+					experience.setDurationHours(rs.getDouble("durationHours"));
+					experience.setCreatedAt(rs.getTimestamp("createdAt"));
+					experience.setUpdatedAt(rs.getTimestamp("updatedAt"));
+				}
+			}
+			if (experience == null) {
+				lastExperienceError = "Experience #" + experienceID + " was not found.";
+				return null;
+			}
+			Map<String, Double> effortHoursByMember = new LinkedHashMap<>();
+			String effortQuery = "SELECT teamMemberName, effortHours FROM experienceEffortDB WHERE experienceID = ? ORDER BY teamMemberName";
+			try (PreparedStatement effortStatement = connection.prepareStatement(effortQuery)) {
+				effortStatement.setInt(1, experienceID);
+				try (ResultSet efforts = effortStatement.executeQuery()) {
+					while (efforts.next())
+						effortHoursByMember.put(efforts.getString("teamMemberName"), efforts.getDouble("effortHours"));
+				}
+			}
+			experience.setEffortHoursByMember(effortHoursByMember);
+			return experience;
+		} catch (SQLException e) {
+			lastExperienceError = "The experience record could not be read: " + e.getMessage();
+			return null;
+		}
+	}
+
+	/** Reads experience records for one lesson, restricted to the owning Contributor (R8). */
+	public List<ExperienceRecord> readExperienceRecordsForLesson(int lessonID, String contributorUserName) {
+		lastExperienceError = "";
+		List<ExperienceRecord> experiences = new ArrayList<>();
+		if (lessonID <= 0 || contributorUserName == null) return experiences;
+		String query = "SELECT experienceID FROM experienceRecordsDB WHERE lessonID = ? AND contributorUserName = ? ORDER BY experienceID";
+		List<Integer> experienceIDs = new ArrayList<>();
+		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+			pstmt.setInt(1, lessonID);
+			pstmt.setString(2, contributorUserName);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) experienceIDs.add(rs.getInt("experienceID"));
+			}
+		} catch (SQLException e) {
+			lastExperienceError = "The lesson experiences could not be read: " + e.getMessage();
+			return experiences;
+		}
+		for (int experienceID : experienceIDs) {
+			ExperienceRecord experience = readExperienceRecord(experienceID);
+			if (experience != null) experiences.add(experience);
+		}
+		return experiences;
+	}
+
+	/** Returns the most recent experience read error, or an empty string after a successful read. */
+	public String getLastExperienceError() { return lastExperienceError; }
+
+	/** Updates an experience record and its member efforts when requested by its owner (R8). */
+	public String updateExperienceRecord(ExperienceRecord experience, String requestingUserName) {
+		if (experience == null) return "No experience record was provided to update.";
+		ExperienceRecord stored = readExperienceRecord(experience.getExperienceID());
+		String accessError = checkExperienceChangeAllowed(stored, experience.getExperienceID(),
+				requestingUserName, "update");
+		if (!accessError.isEmpty()) return accessError;
+		experience.setLessonID(stored.getLessonID());
+		experience.setContributorUserName(stored.getContributorUserName());
+		String errors = LessonLearnedValidator.checkExperienceRecord(experience.getWhatWasDone(),
+				experience.getHow(), experience.getDurationHours(), experience.getEffortHoursByMember());
+		if (!errors.isEmpty()) return errors;
+
+		boolean originalAutoCommit = true;
+		try {
+			originalAutoCommit = connection.getAutoCommit();
+			connection.setAutoCommit(false);
+			String update = "UPDATE experienceRecordsDB SET whatWasDone = ?, how = ?, durationHours = ?, updatedAt = CURRENT_TIMESTAMP WHERE experienceID = ? AND contributorUserName = ?";
+			try (PreparedStatement pstmt = connection.prepareStatement(update)) {
+				pstmt.setString(1, experience.getWhatWasDone().trim());
+				pstmt.setString(2, experience.getHow().trim());
+				pstmt.setDouble(3, experience.getDurationHours());
+				pstmt.setInt(4, experience.getExperienceID());
+				pstmt.setString(5, requestingUserName);
+				if (pstmt.executeUpdate() == 0) throw new SQLException("Experience record was not found.");
+			}
+			replaceExperienceEfforts(experience.getExperienceID(), experience.getEffortHoursByMember());
+			connection.commit();
+		} catch (SQLException e) {
+			try { connection.rollback(); } catch (SQLException rollbackError) { /* preserve original error */ }
+			return "The experience record could not be updated: " + e.getMessage();
+		} finally {
+			try { connection.setAutoCommit(originalAutoCommit); } catch (SQLException e) { e.printStackTrace(); }
+		}
+		return "";
+	}
+
+	/** Deletes an experience record and its member efforts when requested by its owner (R8). */
+	public String deleteExperienceRecord(int experienceID, String requestingUserName) {
+		ExperienceRecord stored = readExperienceRecord(experienceID);
+		String accessError = checkExperienceChangeAllowed(stored, experienceID, requestingUserName, "delete");
+		if (!accessError.isEmpty()) return accessError;
+		String delete = "DELETE FROM experienceRecordsDB WHERE experienceID = ? AND contributorUserName = ?";
+		try (PreparedStatement pstmt = connection.prepareStatement(delete)) {
+			pstmt.setInt(1, experienceID);
+			pstmt.setString(2, requestingUserName);
+			if (pstmt.executeUpdate() == 0) return "Experience record was not found.";
+		} catch (SQLException e) {
+			return "The experience record could not be deleted: " + e.getMessage();
+		}
+		return "";
+	}
+
+	private String checkExperienceChangeAllowed(ExperienceRecord stored, int experienceID,
+			String requestingUserName, String action) {
+		if (stored == null)
+			return lastExperienceError.isEmpty() ? "Experience #" + experienceID + " was not found." : lastExperienceError;
+		if (requestingUserName == null || !stored.getContributorUserName().equals(requestingUserName))
+			return "Only the owner can " + action + " this experience record.";
+		return "";
+	}
+
+	/** Replaces normalized member effort rows inside the caller's database transaction. */
+	private void replaceExperienceEfforts(int experienceID, Map<String, Double> efforts) throws SQLException {
+		try (PreparedStatement delete = connection.prepareStatement(
+				"DELETE FROM experienceEffortDB WHERE experienceID = ?")) {
+			delete.setInt(1, experienceID);
+			delete.executeUpdate();
+		}
+		String insert = "INSERT INTO experienceEffortDB (experienceID, teamMemberName, effortHours) VALUES (?, ?, ?)";
+		try (PreparedStatement pstmt = connection.prepareStatement(insert)) {
+			for (Map.Entry<String, Double> effort : efforts.entrySet()) {
+				pstmt.setInt(1, experienceID);
+				pstmt.setString(2, effort.getKey());
+				pstmt.setDouble(3, effort.getValue());
+				pstmt.executeUpdate();
+			}
+		}
 	}
 
 	private boolean contributorHasTitle(String userName, String title, int excludeID) throws SQLException {
@@ -1461,6 +1717,47 @@ public class Database {
 		if (requestingUserName == null || !stored.getContributorUserName().equals(requestingUserName))
 			return "Lesson #" + lessonID + " can't be " + action + " because it belongs to another Contributor.";
 		return "";
+	}
+
+	/** R5: Rejects whole-lesson locks and edits that change explicitly locked fields. */
+	private String checkLessonLockAllowsUpdate(LessonLearned stored, LessonLearned replacement) {
+		String wholeLessonError = checkWholeLessonLock(stored, "updated");
+		if (!wholeLessonError.isEmpty()) return wholeLessonError;
+		for (String field : stored.getLockedFields()) {
+			String oldValue = lessonFieldValue(stored, field);
+			String newValue = lessonFieldValue(replacement, field);
+			if (!Objects.equals(oldValue == null ? "" : oldValue, newValue == null ? "" : newValue))
+				return "Lesson #" + stored.getLessonID() + " field '" + field + "' is locked and cannot be changed.";
+		}
+		return "";
+	}
+
+	/** R5: A whole-lesson lock or any field lock prevents deleting the lesson. */
+	private String checkLessonLockAllowsDelete(LessonLearned stored) {
+		String wholeLessonError = checkWholeLessonLock(stored, "deleted");
+		if (!wholeLessonError.isEmpty()) return wholeLessonError;
+		if (!stored.getLockedFields().isEmpty())
+			return "Lesson #" + stored.getLessonID() + " cannot be deleted because one or more fields are locked.";
+		return "";
+	}
+
+	/** Shared whole-lesson lock message for edit and delete checks. */
+	private String checkWholeLessonLock(LessonLearned stored, String action) {
+		return stored.isLessonLocked()
+				? "Lesson #" + stored.getLessonID() + " is locked and cannot be " + action + "."
+				: "";
+	}
+
+	private String lessonFieldValue(LessonLearned lesson, String field) {
+		return switch (field) {
+			case "title" -> lesson.getTitle();
+			case "category" -> lesson.getCategory();
+			case "situation" -> lesson.getSituation();
+			case "lessonText" -> lesson.getLessonText();
+			case "recommendation" -> lesson.getRecommendation();
+			case "keywords" -> lesson.getKeywords();
+			default -> throw new IllegalArgumentException("Unknown lockable lesson field: " + field);
+		};
 	}
 
 	private LessonLearnedList readLessonList(String query, String parameter) {
@@ -1492,6 +1789,17 @@ public class Database {
 		lesson.setKeywords(rs.getString("keywords"));
 		lesson.setCreatedAt(rs.getTimestamp("createdAt"));
 		lesson.setUpdatedAt(rs.getTimestamp("updatedAt"));
+		lesson.setLessonLocked(rs.getBoolean("lessonLocked"));
+		lesson.setFieldLocked("title", rs.getBoolean("titleLocked"));
+		lesson.setFieldLocked("category", rs.getBoolean("categoryLocked"));
+		lesson.setFieldLocked("situation", rs.getBoolean("situationLocked"));
+		lesson.setFieldLocked("lessonText", rs.getBoolean("lessonTextLocked"));
+		lesson.setFieldLocked("recommendation", rs.getBoolean("recommendationLocked"));
+		lesson.setFieldLocked("keywords", rs.getBoolean("keywordsLocked"));
+		lesson.setCuratorEdited(rs.getBoolean("curatorEdited"));
+		lesson.setEditedBy(rs.getString("editedBy"));
+		lesson.setSummary(rs.getString("summary"));
+		lesson.setRootCause(rs.getString("rootCause"));
 		return lesson;
 	}
 

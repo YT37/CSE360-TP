@@ -1,5 +1,7 @@
 package validatorTests;
 
+import java.util.Map;
+
 import entityClasses.LessonLearned;
 import validators.LessonLearnedValidator;
 
@@ -61,6 +63,61 @@ public class LessonLearnedValidatorTests {
 				"Stop the first copy before starting another.", "h2, database");
 		performTestCase(18, "complete realistic CSE 360 lesson",
 				LessonLearnedValidator.checkLessonLearned(completeLesson), true, "");
+
+		// R8: experience descriptions, duration in hours, and effort per team member
+		String whatWasDone = "The team completed an integration attempt and recorded the result.";
+		String howItWasDone = "The team followed the setup steps and recorded the actions taken.";
+		Map<String, Double> effort = Map.of("Yogi", 1.5);
+		performTestCase(19, "missing what was done",
+				LessonLearnedValidator.checkExperienceRecord("", howItWasDone, 1.0, effort),
+				false, "What Was Done");
+		performTestCase(20, "missing how it was done",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, "", 1.0, effort),
+				false, "How");
+		performTestCase(21, "19-character what-was-done description",
+				LessonLearnedValidator.checkExperienceRecord("a".repeat(19), howItWasDone, 1.0, effort),
+				false, "What Was Done");
+		performTestCase(22, "2001-character how description",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, "a".repeat(2001), 1.0, effort),
+				false, "How");
+		performTestCase(23, "zero-hour duration",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 0.0, effort),
+				false, "Duration");
+		performTestCase(24, "negative duration",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, -1.0, effort),
+				false, "Duration");
+		performTestCase(25, "duration above 168 hours",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 168.1, effort),
+				false, "168");
+		performTestCase(26, "empty effort list",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 1.0, Map.of()),
+				false, "effort");
+		performTestCase(27, "blank effort member",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 1.0, Map.of(" ", 1.0)),
+				false, "member");
+		performTestCase(28, "zero effort for a member",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 1.0, Map.of("Yogi", 0.0)),
+				false, "Effort");
+		performTestCase(29, "valid fractional duration and team effort",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 0.5, effort),
+				true, "");
+		performTestCase(30, "maximum duration of 168 hours",
+				LessonLearnedValidator.checkExperienceRecord(whatWasDone, howItWasDone, 168.0, effort),
+				true, "");
+
+		// R10: optional TP3 coaching attributes have documented maximum lengths
+		performTestCase(31, "missing optional summary",
+				LessonLearnedValidator.checkSummary(null), true, "");
+		performTestCase(32, "200-character summary",
+				LessonLearnedValidator.checkSummary("a".repeat(200)), true, "");
+		performTestCase(33, "201-character summary",
+				LessonLearnedValidator.checkSummary("a".repeat(201)), false, "Summary");
+		performTestCase(34, "missing optional root cause",
+				LessonLearnedValidator.checkRootCause(""), true, "");
+		performTestCase(35, "1000-character root cause",
+				LessonLearnedValidator.checkRootCause("a".repeat(1000)), true, "");
+		performTestCase(36, "1001-character root cause",
+				LessonLearnedValidator.checkRootCause("a".repeat(1001)), false, "Root Cause");
 
 		System.out.println("______________________________________\n");
 		System.out.println("Number of tests passed: " + numPassed);

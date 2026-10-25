@@ -33,17 +33,24 @@ public class ControllerLessonsLearned {
 	protected static void performSelect(LessonLearned lesson) {
 		if (lesson == null || rebuildingList) return;
 		ModelLessonsLearned.selectedLesson = lesson;
+		ViewLessonsLearned.button_Experiences.setDisable(false);
 		ViewLessonsLearned.text_Title.setText(lesson.getTitle());
 		ViewLessonsLearned.combo_Category.setValue(lesson.getCategory());
 		ViewLessonsLearned.text_Situation.setText(lesson.getSituation());
 		ViewLessonsLearned.text_Lesson.setText(lesson.getLessonText());
 		ViewLessonsLearned.text_Recommendation.setText(lesson.getRecommendation());
 		ViewLessonsLearned.text_Keywords.setText(lesson.getKeywords());
-		showMessage("Lesson #" + lesson.getLessonID() + " selected.", false);
+		ViewLessonsLearned.applyLockState(lesson);
+		if (lesson.isLessonLocked())
+			showMessage("Lesson is locked: fields are read-only and Delete is disabled.", true);
+		else if (!lesson.getLockedFields().isEmpty())
+			showMessage("Locked fields are read-only; Delete is disabled.", true);
+		else showMessage("Lesson #" + lesson.getLessonID() + " selected.", false);
 	}
 
 	protected static void performClear() {
 		ModelLessonsLearned.selectedLesson = null;
+		ViewLessonsLearned.button_Experiences.setDisable(true);
 		ViewLessonsLearned.listView_Lessons.getSelectionModel().clearSelection();
 		ViewLessonsLearned.text_Title.clear();
 		ViewLessonsLearned.combo_Category.getSelectionModel().clearSelection();
@@ -51,6 +58,18 @@ public class ControllerLessonsLearned {
 		ViewLessonsLearned.text_Lesson.clear();
 		ViewLessonsLearned.text_Recommendation.clear();
 		ViewLessonsLearned.text_Keywords.clear();
+		ViewLessonsLearned.clearLockState();
+	}
+
+	/** Opens experience history and entry for the selected lesson (R8). */
+	protected static void performExperiences() {
+		LessonLearned lesson = ModelLessonsLearned.selectedLesson;
+		if (lesson == null) {
+			showMessage("Select a lesson before opening its experiences.", true);
+			return;
+		}
+		guiExperience.ViewExperience.displayExperience(ViewLessonsLearned.theStage,
+				ViewLessonsLearned.theUser, lesson);
 	}
 
 	/** Creates a validated lesson and refreshes the persisted list. */
@@ -86,6 +105,10 @@ public class ControllerLessonsLearned {
 	protected static void performDelete() {
 		LessonLearned selected = ModelLessonsLearned.selectedLesson;
 		if (selected == null) { showMessage("Select a lesson before deleting.", true); return; }
+		if (selected.isLessonLocked() || !selected.getLockedFields().isEmpty()) {
+			showMessage("This lesson or one of its fields is locked; Delete is unavailable.", true);
+			return;
+		}
 		Alert confirmation = new Alert(AlertType.CONFIRMATION);
 		confirmation.setTitle("Delete Lesson");
 		confirmation.setHeaderText("Delete lesson #" + selected.getLessonID() + "?");
