@@ -17,6 +17,9 @@ import validators.UserNameRecognizer;
  * letter or digit.</p>
  */
 public class UserNameValidatorTests {
+	/** Creates the test runner. */
+	public UserNameValidatorTests() { }
+
 	static int numPassed = 0;
 	static int numFailed = 0;
 

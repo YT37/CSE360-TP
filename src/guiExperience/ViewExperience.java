@@ -29,25 +29,44 @@ import javafx.stage.Stage;
  * deletion; also attempt to save with a missing required field and verify the error is shown.
  */
 public class ViewExperience {
+	/** Shared application database. */
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
+	/** Stage used to display this page. */
 	protected static Stage theStage;
+	/** Signed-in Contributor. */
 	protected static User theUser;
+	/** Singleton view instance. */
 	private static ViewExperience theView;
+	/** Scene containing the page. */
 	private static Scene theScene;
 
+	/** Label showing the selected lesson. */
 	protected static Label label_Lesson = new Label();
+	/** Status or error message shown to the user. */
 	protected static Label label_Message = new Label();
+	/** List of the Contributor's experience records for the lesson. */
 	protected static ListView<ExperienceRecord> listView_Experiences = new ListView<>();
+	/** Input for what work was performed. */
 	protected static TextArea text_WhatWasDone = new TextArea();
+	/** Input for how the work was performed. */
 	protected static TextArea text_How = new TextArea();
+	/** Input for the elapsed duration in hours. */
 	protected static TextField text_DurationHours = new TextField();
+	/** Input for one team member's name. */
 	protected static TextField text_TeamMember = new TextField();
+	/** Input for one team member's effort hours. */
 	protected static TextField text_EffortHours = new TextField();
+	/** Displayed team-member effort entries. */
 	protected static ListView<String> listView_Efforts = new ListView<>();
+	/** Saves the form as a new experience record. */
 	protected static Button button_Add;
+	/** Adds the entered team-member effort. */
 	protected static Button button_AddEffort;
+	/** Deletes the selected experience record. */
 	protected static Button button_Delete;
+	/** Clears the form for a new record. */
 	protected static Button button_New;
+	/** Removes the selected effort entry. */
 	private static Button button_RemoveEffort;
 
 	private ViewExperience() {
@@ -135,7 +154,12 @@ public class ViewExperience {
 		root.setBottom(footer);
 	}
 
-	/** Displays experience records for the supplied lesson and current Contributor. */
+	/** Displays experience records for the supplied lesson and current Contributor.
+	 *
+	 * @param stage the stage that displays the page
+	 * @param user the signed-in Contributor
+	 * @param lesson the lesson whose experiences are shown
+	 */
 	public static void displayExperience(Stage stage, User user, LessonLearned lesson) {
 		theStage = stage;
 		theUser = user;
@@ -152,6 +176,10 @@ public class ViewExperience {
 		stage.show();
 	}
 
+	/** Enables or disables the form and action controls for the current mode.
+	 *
+	 * @param editing true when creating or editing a record
+	 */
 	protected static void setEditing(boolean editing) {
 		text_WhatWasDone.setEditable(editing);
 		text_How.setEditable(editing);
@@ -165,6 +193,12 @@ public class ViewExperience {
 		button_Delete.setDisable(editing);
 	}
 
+	/** Builds a labeled form field.
+	 *
+	 * @param text the field label
+	 * @param control the input control
+	 * @return a VBox containing the label and control
+	 */
 	private static VBox formField(String text, javafx.scene.layout.Region control) {
 		Label label = label(text, 13);
 		label.getStyleClass().add("form-label");
@@ -174,12 +208,24 @@ public class ViewExperience {
 		return field;
 	}
 
+	/** Creates a label using the application font.
+	 *
+	 * @param text the label text
+	 * @param size the font size
+	 * @return the configured label
+	 */
 	private static Label label(String text, double size) {
 		Label label = new Label(text);
 		label.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, size));
 		return label;
 	}
 
+	/** Creates a button using the application font.
+	 *
+	 * @param text the button text
+	 * @param minWidth the minimum button width
+	 * @return the configured button
+	 */
 	private static Button button(String text, double minWidth) {
 		Button button = new Button(text);
 		button.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, 14));

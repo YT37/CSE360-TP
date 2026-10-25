@@ -17,6 +17,9 @@ import validators.InvitationCodeValidator;
  * characters.</p>
  */
 public class InvitationCodeValidatorTests {
+	/** Creates the test runner. */
+	public InvitationCodeValidatorTests() { }
+
 	static int numPassed = 0;
 	static int numFailed = 0;
 

@@ -63,8 +63,11 @@ public class ViewAdminHome {
 	
 	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
 	// and a button to allow this user to update the account settings
+	/** Page title label. */
 	protected static Label label_PageTitle = new Label();
+	/** Label showing the signed-in user. */
 	protected static Label label_UserDetails = new Label();
+	/** Opens the account update page. */
 	protected static Button button_UpdateThisUser = new Button("Account Update");
 
 	// This is a separator and it is used to partition the GUI for various tasks
@@ -72,8 +75,10 @@ public class ViewAdminHome {
 
 	// GUI Area 2: This area is used to provide status of the system.  This basic foundational code
 	// does not have much current status information to display.
+	/** Displays the number of outstanding invitations. */
 	protected static Label label_NumberOfInvitations = 
 			new Label("Number of Oustanding Invitations: x");
+	/** Displays the number of user accounts. */
 	protected static Label label_NumberOfUsers = new Label("Number of Users: x");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
@@ -82,13 +87,21 @@ public class ViewAdminHome {
 	// GUI Area 3: This is the first of two areas provided the admin with a set of action buttons
 	// that can be used to perform the tasks allocated to the admin role.  This part is about
 	// inviting potential new users to establish an account and what role that user will have.
+	/** Label for the invitation area. */
 	protected static Label label_Invitations = new Label("Send An Invitation");
+	/** Label for the invitation email field. */
 	protected static Label label_InvitationEmailAddress = new Label("Email Address");
+	/** Input for the invitation email address. */
 	protected static TextField text_InvitationEmailAddress = new TextField();
+	/** Selects the role granted by an invitation. */
 	protected static ComboBox <String> combobox_SelectRole = new ComboBox <String>();
+	/** Roles that can be granted by an invitation. */
 	protected static String [] roles = {"Admin", "Contributor", "Viewer"};
+	/** Sends an invitation. */
 	protected static Button button_SendInvitation = new Button("Send Invitation");
+	/** Alert shown for an invalid invitation email. */
 	protected static Alert alertEmailError = new Alert(AlertType.INFORMATION);
+	/** Alert shown after an invitation is sent. */
 	protected static Alert alertEmailSent = new Alert(AlertType.INFORMATION);
 	
 	// This is a separator and it is used to partition the GUI for various tasks
@@ -97,12 +110,19 @@ public class ViewAdminHome {
 	// GUI Area 4: This is the second of the two action item areas.  This provides a set of other
 	// admin buttons to use to perform other roles, and the alerts used by the one-time password
 	// button.
+	/** Opens the invitation-management window. */
 	protected static Button button_ManageInvitations = new Button("Manage Invitations");
+	/** Sets a one-time password for a user. */
 	protected static Button button_SetOnetimePassword = new Button("Set a One-Time Password");
+	/** Opens the user-deletion window. */
 	protected static Button button_DeleteUser = new Button("Delete a User");
+	/** Opens the user-list window. */
 	protected static Button button_ListUsers = new Button("List All Users");
+	/** Opens the role-management page. */
 	protected static Button button_AddRemoveRoles = new Button("Add/Remove Roles");
+	/** Alert shown for one-time-password errors. */
 	protected static Alert alertOneTimePasswordError = new Alert(AlertType.ERROR);
+	/** Alert shown after a one-time password is set. */
 	protected static Alert alertOneTimePasswordSet = new Alert(AlertType.INFORMATION);
 
 	// This is a separator and it is used to partition the GUI for various tasks
@@ -112,7 +132,9 @@ public class ViewAdminHome {
 	// out, and on other pages a return is provided so the user can return to a previous page when
 	// the actions on that page are complete.  Be advised that in most cases in this code, the 
 	// return is to a fixed page as opposed to the actual page that invoked the pages.
+	/** Logs out the current user. */
 	protected static Button button_Logout = new Button("Logout");
+	/** Exits the application. */
 	protected static Button button_Quit = new Button("Quit");
 
 	// This is the end of the GUI objects for the page.
@@ -124,8 +146,10 @@ public class ViewAdminHome {
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;
 	
+	/** Stage that displays the page. */
 	protected static Stage theStage;			// The Stage that JavaFX has established for us
 	private static Pane theRootPane;			// The Pane that holds all the GUI widgets 
+	/** Currently signed-in user. */
 	protected static User theUser;				// The current logged in User
 
 	private static Scene theAdminHomeScene;		// The shared Scene each invocation populates

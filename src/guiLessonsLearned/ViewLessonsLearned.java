@@ -32,30 +32,54 @@ import validators.LessonLearnedValidator;
  * R8 experience navigation, and R14 validation messages.</p>
  */
 public class ViewLessonsLearned {
+	/** Shared application database. */
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
+	/** Stage used to display this page. */
 	protected static Stage theStage;
+	/** Signed-in Contributor. */
 	protected static User theUser;
+	/** Singleton view instance. */
 	private static ViewLessonsLearned theView;
+	/** Scene containing the page. */
 	private static Scene theScene;
+	/** Label showing who is signed in. */
 	private static Label label_SignedIn = new Label();
 
+	/** Label showing the displayed and total lesson counts. */
 	protected static Label label_ListCount = new Label();
+	/** Status or error message shown to the user. */
 	protected static Label label_Message = new Label();
+	/** Keyword search input. */
 	protected static TextField text_Search = new TextField();
+	/** List of the Contributor's lessons. */
 	protected static ListView<LessonLearned> listView_Lessons = new ListView<>();
+	/** Label for the title field. */
 	protected static Label label_Title;
+	/** Input for the lesson title. */
 	protected static TextField text_Title = new TextField();
+	/** Label for the category field. */
 	protected static Label label_Category;
+	/** Input for the lesson category. */
 	protected static ComboBox<String> combo_Category = new ComboBox<>();
+	/** Label for the situation field. */
 	protected static Label label_Situation;
+	/** Input for the situation description. */
 	protected static TextArea text_Situation = new TextArea();
+	/** Label for the lesson text field. */
 	protected static Label label_Lesson;
+	/** Input for what was learned. */
 	protected static TextArea text_Lesson = new TextArea();
+	/** Label for the recommendation field. */
 	protected static Label label_Recommendation;
+	/** Input for the optional recommendation. */
 	protected static TextArea text_Recommendation = new TextArea();
+	/** Label for the keywords field. */
 	protected static Label label_Keywords;
+	/** Input for comma-separated keywords. */
 	protected static TextField text_Keywords = new TextField();
+	/** Deletes the selected lesson. */
 	protected static Button button_Delete;
+	/** Opens the selected lesson's experience records. */
 	protected static Button button_Experiences;
 
 	private ViewLessonsLearned() {
@@ -153,7 +177,10 @@ public class ViewLessonsLearned {
 		root.setBottom(navigation);
 	}
 
-	/** Displays field lock indicators and disables deletion when any lock is present (R4, R5). */
+	/** Displays field lock indicators and disables deletion when any lock is present (R4, R5).
+	 *
+	 * @param lesson the lesson whose lock state is displayed
+	 */
 	protected static void applyLockState(LessonLearned lesson) {
 		setTextLock(label_Title, "Title", text_Title, lesson, "title");
 		setLabelLock(label_Category, "Category", lesson.isFieldLocked("category"));
@@ -177,6 +204,14 @@ public class ViewLessonsLearned {
 		button_Delete.setDisable(false);
 	}
 
+	/** Applies a field lock indicator and editability state to a text control.
+	 *
+	 * @param label the field label
+	 * @param text the unlocked label text
+	 * @param control the input control
+	 * @param lesson the lesson providing lock state, or null to clear locks
+	 * @param field the lockable field name
+	 */
 	private static void setTextLock(Label label, String text, javafx.scene.control.TextInputControl control,
 			LessonLearned lesson, String field) {
 		boolean locked = lesson != null && lesson.isFieldLocked(field);
@@ -184,13 +219,23 @@ public class ViewLessonsLearned {
 		control.setEditable(!locked);
 	}
 
+	/** Updates one field label to show its lock state.
+	 *
+	 * @param label the field label
+	 * @param text the unlocked label text
+	 * @param locked true to append the locked marker
+	 */
 	private static void setLabelLock(Label label, String text, boolean locked) {
 		label.setText(locked ? text + " (Locked)" : text);
 		label.getStyleClass().remove("locked-label");
 		if (locked) label.getStyleClass().add("locked-label");
 	}
 
-	/** Displays the page for the logged-in Contributor and reloads persisted data. */
+	/** Displays the page for the logged-in Contributor and reloads persisted data.
+	 *
+	 * @param stage the stage that displays the page
+	 * @param user the signed-in Contributor
+	 */
 	public static void displayLessonsLearned(Stage stage, User user) {
 		theStage = stage;
 		theUser = user;
@@ -208,12 +253,23 @@ public class ViewLessonsLearned {
 		stage.show();
 	}
 
+	/** Creates a form field label.
+	 *
+	 * @param text the label text
+	 * @return the configured label
+	 */
 	private static Label fieldLabel(String text) {
 		Label label = label(text, 14);
 		label.getStyleClass().add("form-label");
 		return label;
 	}
 
+	/** Builds a labeled form field.
+	 *
+	 * @param label the field label
+	 * @param control the input control
+	 * @return a VBox containing the label and control
+	 */
 	private static VBox formField(Label label, javafx.scene.layout.Region control) {
 		control.setMaxWidth(Double.MAX_VALUE);
 		VBox field = new VBox(4, label, control);
@@ -221,12 +277,24 @@ public class ViewLessonsLearned {
 		return field;
 	}
 
+	/** Creates a label using the application font.
+	 *
+	 * @param text the label text
+	 * @param size the font size
+	 * @return the configured label
+	 */
 	private static Label label(String text, double size) {
 		Label label = new Label(text);
 		label.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, size));
 		return label;
 	}
 
+	/** Creates a button using the application font.
+	 *
+	 * @param text the button text
+	 * @param minWidth the minimum button width
+	 * @return the configured button
+	 */
 	private static Button button(String text, double minWidth) {
 		Button button = new Button(text);
 		button.setFont(Font.font(applicationMain.Theme.FONT_FAMILY, 14));

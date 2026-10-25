@@ -5,12 +5,16 @@ import entityClasses.User;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+/** Static controller for the User Update page. */
 public class ControllerUserUpdate {
 	/*-********************************************************************************************
 
 	The Controller for ViewUserUpdate 
 	
 	**********************************************************************************************/
+
+	/** Creates the controller; its actions are static. */
+	public ControllerUserUpdate() { }
 
 	/**********
 	 * <p> Title: ControllerUserUpdate Class</p>

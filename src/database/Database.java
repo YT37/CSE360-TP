@@ -83,6 +83,10 @@ public class Database {
 		
 	}
 
+	/** Creates a database facade that uses the supplied JDBC URL.
+	 *
+	 * @param databaseURL JDBC URL for the H2 database
+	 */
 	public Database(String databaseURL) {
 		this.databaseURL = databaseURL;
 	}
@@ -116,7 +120,8 @@ public class Database {
  * <p> Method: createTables </p>
  * 
  * <p> Description: Used to create new instances of the two database tables used by this class.</p>
- * 
+ *
+ * @throws SQLException when a table cannot be created
  */
 	private void createTables() throws SQLException {
 		// Create the user database
@@ -1387,7 +1392,11 @@ public class Database {
 	}
 
 	/** R1 create and R14 validation: validates every field, rejects a duplicate title, assigns the
-	 * generated ID, and stores lock and coaching metadata so later reads can satisfy R4 and R10. */
+	 * generated ID, and stores lock and coaching metadata so later reads can satisfy R4 and R10.
+	 *
+	 * @param lesson the lesson to validate and persist
+	 * @return an empty string on success, or a user-facing error message
+	 */
 	public String createLessonLearned(LessonLearned lesson) {
 		String errors = LessonLearnedValidator.checkLessonLearned(lesson);
 		if (!errors.isEmpty()) return errors;
@@ -1427,7 +1436,11 @@ public class Database {
 		return "";
 	}
 
-	/** R2 read: reconstructs one lesson by ID, including every lock, curator, and coaching attribute. */
+	/** R2 read: reconstructs one lesson by ID, including every lock, curator, and coaching attribute.
+	 *
+	 * @param lessonID positive ID of the lesson to read
+	 * @return the lesson, or null when it is missing or cannot be read
+	 */
 	public LessonLearned readLessonLearned(int lessonID) {
 		lastLessonError = "";
 		if (lessonID <= 0) {
@@ -1447,19 +1460,31 @@ public class Database {
 		return null;
 	}
 
-	/** R2 read and R7 subset source: returns every stored lesson in an unbounded list. */
+	/** R2 read and R7 subset source: returns every stored lesson in an unbounded list.
+	 *
+	 * @return all stored lessons, ordered by ID
+	 */
 	public LessonLearnedList readAllLessonsLearned() {
 		return readLessonList("SELECT * FROM lessonsLearnedDB ORDER BY lessonID", null);
 	}
 
 	/** R2 read and R12 isolation: filters by owner so a Contributor never sees another Contributor's
-	 * lessons. */
+	 * lessons.
+	 *
+	 * @param userName owner whose lessons should be returned
+	 * @return the owner's lessons, ordered by ID
+	 */
 	public LessonLearnedList readLessonsLearnedForContributor(String userName) {
 		return readLessonList("SELECT * FROM lessonsLearnedDB WHERE contributorUserName = ? ORDER BY lessonID", userName);
 	}
 
 	/** R3 update, R5 lock enforcement, R12 ownership, and R14 validation: rejects a missing lesson, a
-	 * non-owner, a locked change, or invalid fields before writing. */
+	 * non-owner, a locked change, or invalid fields before writing.
+	 *
+	 * @param lesson the lesson containing the replacement values
+	 * @param requestingUserName authenticated user requesting the update
+	 * @return an empty string on success, or a user-facing error message
+	 */
 	public String updateLessonLearned(LessonLearned lesson, String requestingUserName) {
 		if (lesson == null) return "No lesson was provided to update.";
 		LessonLearned stored = readLessonLearned(lesson.getLessonID());
@@ -1496,7 +1521,12 @@ public class Database {
 	}
 
 	/** R6 delete with R5 lock enforcement and R12 ownership: the GUI confirms first; the database then
-	 * rejects a missing, locked, or non-owned lesson before deleting. */
+	 * rejects a missing, locked, or non-owned lesson before deleting.
+	 *
+	 * @param lessonID ID of the lesson to delete
+	 * @param requestingUserName authenticated user requesting the delete
+	 * @return an empty string on success, or a user-facing error message
+	 */
 	public String deleteLessonLearned(int lessonID, String requestingUserName) {
 		LessonLearned stored = readLessonLearned(lessonID);
 		String accessError = checkChangeAllowed(stored, lessonID, requestingUserName, "deleted");
@@ -1510,7 +1540,12 @@ public class Database {
 		return "";
 	}
 
-	/** Validates and persists one experience record and its per-member effort entries (R8). */
+	/** Validates and persists one experience record and its per-member effort entries (R8).
+	 *
+	 * @param experience the experience record to persist
+	 * @param requestingUserName authenticated user requesting the create
+	 * @return an empty string on success, or a user-facing error message
+	 */
 	public String createExperienceRecord(ExperienceRecord experience, String requestingUserName) {
 		if (experience == null) return "No experience record was provided.";
 		String errors = LessonLearnedValidator.checkExperienceRecord(experience.getWhatWasDone(),
@@ -1552,7 +1587,11 @@ public class Database {
 		return "";
 	}
 
-	/** R8 read: reconstructs an experience and its per-member effort entries by ID. */
+	/** R8 read: reconstructs an experience and its per-member effort entries by ID.
+	 *
+	 * @param experienceID positive ID of the experience to read
+	 * @return the experience, or null when it is missing or cannot be read
+	 */
 	public ExperienceRecord readExperienceRecord(int experienceID) {
 		lastExperienceError = "";
 		if (experienceID <= 0) {
@@ -1597,7 +1636,12 @@ public class Database {
 		}
 	}
 
-	/** R8 read and R12 isolation: lists only the requesting Contributor's records for a lesson. */
+	/** R8 read and R12 isolation: lists only the requesting Contributor's records for a lesson.
+	 *
+	 * @param lessonID ID of the lesson whose experiences should be read
+	 * @param contributorUserName owner whose records should be returned
+	 * @return the matching experience records, possibly empty
+	 */
 	public List<ExperienceRecord> readExperienceRecordsForLesson(int lessonID, String contributorUserName) {
 		lastExperienceError = "";
 		List<ExperienceRecord> experiences = new ArrayList<>();
@@ -1621,11 +1665,19 @@ public class Database {
 		return experiences;
 	}
 
-	/** Returns the most recent experience read error, or an empty string after a successful read. */
+	/** Returns the most recent experience read error, or an empty string after a successful read.
+	 *
+	 * @return the last experience error message, or an empty string
+	 */
 	public String getLastExperienceError() { return lastExperienceError; }
 
 	/** R8 update and R12 ownership: the stored owner must match the requester before the record and
-	 * its effort rows are replaced in one transaction. */
+	 * its effort rows are replaced in one transaction.
+	 *
+	 * @param experience the experience containing the replacement values
+	 * @param requestingUserName authenticated user requesting the update
+	 * @return an empty string on success, or a user-facing error message
+	 */
 	public String updateExperienceRecord(ExperienceRecord experience, String requestingUserName) {
 		if (experience == null) return "No experience record was provided to update.";
 		ExperienceRecord stored = readExperienceRecord(experience.getExperienceID());
@@ -1662,7 +1714,12 @@ public class Database {
 		return "";
 	}
 
-	/** R8 delete and R12 ownership: only the stored owner may delete the record and its effort rows. */
+	/** R8 delete and R12 ownership: only the stored owner may delete the record and its effort rows.
+	 *
+	 * @param experienceID ID of the experience to delete
+	 * @param requestingUserName authenticated user requesting the delete
+	 * @return an empty string on success, or a user-facing error message
+	 */
 	public String deleteExperienceRecord(int experienceID, String requestingUserName) {
 		ExperienceRecord stored = readExperienceRecord(experienceID);
 		String accessError = checkExperienceChangeAllowed(stored, experienceID, requestingUserName, "delete");
@@ -1678,6 +1735,14 @@ public class Database {
 		return "";
 	}
 
+	/** R12: verifies that the requester owns the stored experience record.
+	 *
+	 * @param stored the stored record, or null when it was not found
+	 * @param experienceID ID used in error messages
+	 * @param requestingUserName authenticated user requesting the change
+	 * @param action action name used in error messages
+	 * @return an empty string when allowed, or an error message
+	 */
 	private String checkExperienceChangeAllowed(ExperienceRecord stored, int experienceID,
 			String requestingUserName, String action) {
 		if (stored == null)
@@ -1687,7 +1752,12 @@ public class Database {
 		return "";
 	}
 
-	/** R8 effort storage: replaces the per-member rows so an update cannot leave stale effort data. */
+	/** R8 effort storage: replaces the per-member rows so an update cannot leave stale effort data.
+	 *
+	 * @param experienceID ID of the experience whose effort rows are replaced
+	 * @param efforts member names mapped to effort hours
+	 * @throws SQLException when the effort rows cannot be replaced
+	 */
 	private void replaceExperienceEfforts(int experienceID, Map<String, Double> efforts) throws SQLException {
 		try (PreparedStatement delete = connection.prepareStatement(
 				"DELETE FROM experienceEffortDB WHERE experienceID = ?")) {
@@ -1706,7 +1776,14 @@ public class Database {
 	}
 
 	/** R1 create and R3 update duplicate-title rule: comparison is case-insensitive and ignores the
-	 * row being updated. */
+	 * row being updated.
+	 *
+	 * @param userName owner whose titles are checked
+	 * @param title title to compare
+	 * @param excludeID lesson ID to exclude, or -1 for a create
+	 * @return true when the owner already has the title
+	 * @throws SQLException when the check cannot be completed
+	 */
 	private boolean contributorHasTitle(String userName, String title, int excludeID) throws SQLException {
 		String query = "SELECT COUNT(*) FROM lessonsLearnedDB WHERE contributorUserName = ? AND LOWER(title) = LOWER(?) AND lessonID <> ?";
 		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -1719,7 +1796,14 @@ public class Database {
 		}
 	}
 
-	/** R12 isolation: a lesson change is allowed only when the stored owner matches the requester. */
+	/** R12 isolation: a lesson change is allowed only when the stored owner matches the requester.
+	 *
+	 * @param stored the stored lesson, or null when it was not found
+	 * @param lessonID ID used in error messages
+	 * @param requestingUserName authenticated user requesting the change
+	 * @param action action name used in error messages
+	 * @return an empty string when allowed, or an error message
+	 */
 	private String checkChangeAllowed(LessonLearned stored, int lessonID, String requestingUserName, String action) {
 		if (stored == null) return lastLessonError.isEmpty() ? "Lesson #" + lessonID + " was not found." : lastLessonError;
 		if (requestingUserName == null || !stored.getContributorUserName().equals(requestingUserName))
@@ -1727,7 +1811,12 @@ public class Database {
 		return "";
 	}
 
-	/** R5: Rejects whole-lesson locks and edits that change explicitly locked fields. */
+	/** R5: Rejects whole-lesson locks and edits that change explicitly locked fields.
+	 *
+	 * @param stored the currently stored lesson
+	 * @param replacement the requested replacement values
+	 * @return an empty string when the update is allowed, or an error message
+	 */
 	private String checkLessonLockAllowsUpdate(LessonLearned stored, LessonLearned replacement) {
 		String wholeLessonError = checkWholeLessonLock(stored, "updated");
 		if (!wholeLessonError.isEmpty()) return wholeLessonError;
@@ -1740,7 +1829,11 @@ public class Database {
 		return "";
 	}
 
-	/** R5: A whole-lesson lock or any field lock prevents deleting the lesson. */
+	/** R5: A whole-lesson lock or any field lock prevents deleting the lesson.
+	 *
+	 * @param stored the lesson to check
+	 * @return an empty string when deletion is allowed, or an error message
+	 */
 	private String checkLessonLockAllowsDelete(LessonLearned stored) {
 		String wholeLessonError = checkWholeLessonLock(stored, "deleted");
 		if (!wholeLessonError.isEmpty()) return wholeLessonError;
@@ -1749,13 +1842,25 @@ public class Database {
 		return "";
 	}
 
-	/** Shared whole-lesson lock message for edit and delete checks. */
+	/** Shared whole-lesson lock message for edit and delete checks.
+	 *
+	 * @param stored the lesson to check
+	 * @param action action name used in the error message
+	 * @return an empty string when unlocked, or an error message
+	 */
 	private String checkWholeLessonLock(LessonLearned stored, String action) {
 		return stored.isLessonLocked()
 				? "Lesson #" + stored.getLessonID() + " is locked and cannot be " + action + "."
 				: "";
 	}
 
+	/** Returns the value of one lockable lesson field.
+	 *
+	 * @param lesson the lesson to inspect
+	 * @param field the lockable field name
+	 * @return the field value, possibly null
+	 * @throws IllegalArgumentException if the field is not lockable
+	 */
 	private String lessonFieldValue(LessonLearned lesson, String field) {
 		return switch (field) {
 			case "title" -> lesson.getTitle();
@@ -1768,6 +1873,12 @@ public class Database {
 		};
 	}
 
+	/** Executes a lesson query and builds a list from the result rows.
+	 *
+	 * @param query SQL query to execute
+	 * @param parameter optional first parameter, or null when the query has none
+	 * @return the resulting lesson list, possibly empty
+	 */
 	private LessonLearnedList readLessonList(String query, String parameter) {
 		lastLessonError = "";
 		LessonLearnedList list = new LessonLearnedList();
@@ -1782,9 +1893,18 @@ public class Database {
 		return list;
 	}
 
-	/** Returns the most recent database read error, or an empty string after a successful read. */
+	/** Returns the most recent database read error, or an empty string after a successful read.
+	 *
+	 * @return the last lesson error message, or an empty string
+	 */
 	public String getLastLessonError() { return lastLessonError; }
 
+	/** Reconstructs a lesson from its current result-set row.
+	 *
+	 * @param rs result set positioned at the lesson row
+	 * @return the populated lesson
+	 * @throws SQLException when a column cannot be read
+	 */
 	private LessonLearned lessonFromRow(ResultSet rs) throws SQLException {
 		LessonLearned lesson = new LessonLearned();
 		lesson.setLessonID(rs.getInt("lessonID"));
@@ -1811,6 +1931,11 @@ public class Database {
 		return lesson;
 	}
 
+	/** Trims a nullable string, returning an empty string for null.
+	 *
+	 * @param value the string to trim
+	 * @return the trimmed string, or an empty string
+	 */
 	private static String trimOrEmpty(String value) {
 		return value == null ? "" : value.trim();
 	}

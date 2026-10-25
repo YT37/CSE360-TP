@@ -17,6 +17,9 @@ import validators.LessonLearnedValidator;
  * that must be accepted and one negative case that must be rejected with a helpful message.</p>
  */
 public class LessonLearnedValidatorTests {
+	/** Creates the test runner. */
+	public LessonLearnedValidatorTests() { }
+
 	private static int numPassed = 0;
 	private static int numFailed = 0;
 	private static int testCaseNumber = 0;

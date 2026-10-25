@@ -9,7 +9,11 @@ package validators;
  */
 public class NameValidator {
 
-	public static final int MAX_NAME_LENGTH = 32;	// The maximum length of a name
+	/** Maximum accepted name length, in characters. */
+	public static final int MAX_NAME_LENGTH = 32;
+
+	/** Creates the validator; its API is static. */
+	public NameValidator() { }
 
 	/**********
 	 * <p> Method: String checkName(String input) </p>

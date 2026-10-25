@@ -49,6 +49,11 @@ public class User {
      * @param userName specifies the account userName for this user
      * 
      * @param password specifies the account password for this user
+     * @param fn specifies the first name for this user
+     * @param mn specifies the middle name for this user
+     * @param ln specifies the last name for this user
+     * @param pfn specifies the preferred first name for this user
+     * @param ea specifies the email address for this user
      * 
      * @param r1 specifies the the Admin attribute (TRUE or FALSE) for this user
      * 
@@ -198,12 +203,46 @@ public class User {
     // Gets the current value of the EmailAddress.
     public String getEmailAddress() { return emailAddress; }
 
+    /** Sets the account username.
+     *
+     * @param s the new username
+     */
     public void setUserName(String s) { userName = s; }
+
+    /** Sets the account password.
+     *
+     * @param s the new password
+     */
     public void setPassword(String s) { password = s; }
+
+    /** Sets the first name.
+     *
+     * @param s the new first name
+     */
     public void setFirstName(String s) { firstName = s; }
+
+    /** Sets the middle name.
+     *
+     * @param s the new middle name
+     */
     public void setMiddleName(String s) { middleName = s; }
+
+    /** Sets the last name.
+     *
+     * @param s the new last name
+     */
     public void setLastName(String s) { lastName = s; }
+
+    /** Sets the preferred first name.
+     *
+     * @param s the new preferred first name
+     */
     public void setPreferredFirstName(String s) { preferredFirstName = s; }
+
+    /** Sets the email address.
+     *
+     * @param s the new email address
+     */
     public void setEmailAddress(String s) { emailAddress = s; }
 
     

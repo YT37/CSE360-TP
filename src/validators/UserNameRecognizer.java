@@ -1,6 +1,7 @@
 package validators;
 
 
+/** Finite-state recognizer for username input used by the account forms. */
 public class UserNameRecognizer {
 	/**
 	 * <p> Title: FSM-translated UserNameRecognizer. </p>
@@ -26,11 +27,14 @@ public class UserNameRecognizer {
 	 * 
 	 */
 
-	public static String userNameRecognizerErrorMessage = "";	// The error message text
-	public static String userNameRecognizerInput = "";			// The input being processed
-	public static int userNameRecognizerIndexofError = -1;		// The index of error location
-	public static final int MAX_USERNAME_LENGTH = 16;	// The maximum length, also checked by
-														// callers before any lookup
+	/** Error message produced by the most recent evaluation. */
+	public static String userNameRecognizerErrorMessage = "";
+	/** Input processed by the most recent evaluation. */
+	public static String userNameRecognizerInput = "";
+	/** Index where the most recent error was located, or -1. */
+	public static int userNameRecognizerIndexofError = -1;
+	/** Maximum accepted username length. */
+	public static final int MAX_USERNAME_LENGTH = 16;
 	private static int state = 0;						// The current state value
 	private static int nextState = 0;					// The next state value
 	private static boolean finalState = false;			// Is this state a final state?
@@ -41,7 +45,10 @@ public class UserNameRecognizer {
 														// running
 	private static int userNameSize = 0;			// A numeric value may not exceed 16 characters
 
-	// Private method to display debugging data
+	/** Creates the recognizer; its API is static. */
+	public UserNameRecognizer() { }
+
+	/** Displays one line of FSM debugging state on the console. */
 	private static void displayDebuggingInfo() {
 		// Display the current state of the FSM as part of an execution trace
 		if (currentCharNdx >= inputLine.length())

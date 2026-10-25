@@ -18,22 +18,39 @@ import java.util.ArrayList;
  */
 public class PasswordValidator {
 
+	/** Error message produced by the most recent evaluation. */
 	public static String passwordErrorMessage = "";
+	/** Password processed by the most recent evaluation. */
 	public static String passwordInput = "";
+	/** Index where the most recent error was located. */
 	public static int passwordIndexofError = -1;
-	public static final int MAX_PASSWORD_LENGTH = 64;	// The maximum length, checked before any
-														// other processing is performed
+	/** Maximum accepted password length. */
+	public static final int MAX_PASSWORD_LENGTH = 64;
+	/** True when the most recent password contained an uppercase letter. */
 	public static boolean foundUpperCase = false;
+	/** True when the most recent password contained a lowercase letter. */
 	public static boolean foundLowerCase = false;
+	/** True when the most recent password contained a digit. */
 	public static boolean foundNumericDigit = false;
+	/** True when the most recent password contained a special character. */
 	public static boolean foundSpecialChar = false;
+	/** True when the most recent password met the minimum length. */
 	public static boolean foundLongEnough = false;
+	/** True when the most recent password contained a disallowed character. */
 	public static boolean foundInvalidChar = false;
+
+	/** Creates the validator; its API is static. */
+	public PasswordValidator() { }
 	private static String inputLine = "";
 	private static char currentChar;
 	private static int currentCharNdx;
 	private static boolean running;
 
+	/** Evaluates a password and records each requirement result.
+	 *
+	 * @param input the password to evaluate
+	 * @return an empty string when the password is valid, or an error message
+	 */
 	public static String evaluatePassword(String input) {
 		passwordErrorMessage = "";
 		passwordIndexofError = 0;

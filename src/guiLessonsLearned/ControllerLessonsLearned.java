@@ -13,7 +13,11 @@ import javafx.scene.control.ButtonType;
  * still authoritative so programmatic callers receive the same protection as the GUI.</p>
  */
 public class ControllerLessonsLearned {
+	/** Guards list selection callbacks while the ListView is being rebuilt. */
 	private static boolean rebuildingList;
+
+	/** Creates the controller; all actions are invoked statically by the view. */
+	public ControllerLessonsLearned() { }
 
 	/** R2/R7/R12: reads the current Contributor's lessons and applies the active keyword subset. */
 	protected static void refreshList() {
@@ -30,7 +34,10 @@ public class ControllerLessonsLearned {
 			showMessage(ViewLessonsLearned.theDatabase.getLastLessonError(), true);
 	}
 
-	/** R2/R4: loads the selected lesson and shows which fields are locked. */
+	/** R2/R4: loads the selected lesson and shows which fields are locked.
+	 *
+	 * @param lesson the selected lesson, or null when the selection was cleared
+	 */
 	protected static void performSelect(LessonLearned lesson) {
 		if (lesson == null || rebuildingList) return;
 		ModelLessonsLearned.selectedLesson = lesson;
@@ -49,6 +56,7 @@ public class ControllerLessonsLearned {
 		else showMessage("Lesson #" + lesson.getLessonID() + " selected.", false);
 	}
 
+	/** Clears the form and removes the current lesson selection. */
 	protected static void performClear() {
 		ModelLessonsLearned.selectedLesson = null;
 		ViewLessonsLearned.button_Experiences.setDisable(true);
@@ -136,6 +144,7 @@ public class ControllerLessonsLearned {
 		refreshList();
 	}
 
+	/** Clears the active keyword filter and shows all of the Contributor's lessons. */
 	protected static void performShowAll() {
 		ModelLessonsLearned.currentSearch = "";
 		ViewLessonsLearned.text_Search.clear();
@@ -143,17 +152,24 @@ public class ControllerLessonsLearned {
 		refreshList();
 	}
 
+	/** Returns to the Contributor home page. */
 	protected static void performReturn() {
 		guiContributor.ViewContributorHome.displayContributorHome(ViewLessonsLearned.theStage,
 				ViewLessonsLearned.theUser);
 	}
 
+	/** Logs out and returns to the login page. */
 	protected static void performLogout() {
 		guiUserLogin.ViewUserLogin.displayUserLogin(ViewLessonsLearned.theStage);
 	}
 
+	/** Exits the application. */
 	protected static void performQuit() { System.exit(0); }
 
+	/** Builds a lesson from the current form values.
+	 *
+	 * @return a lesson populated from the form
+	 */
 	private static LessonLearned lessonFromForm() {
 		return new LessonLearned(ViewLessonsLearned.theUser.getUserName(), ViewLessonsLearned.text_Title.getText(),
 				ViewLessonsLearned.combo_Category.getValue(), ViewLessonsLearned.text_Situation.getText(),
@@ -161,11 +177,20 @@ public class ControllerLessonsLearned {
 				ViewLessonsLearned.text_Keywords.getText());
 	}
 
+	/** Selects a displayed lesson by ID.
+	 *
+	 * @param id persistent lesson ID
+	 */
 	private static void select(int id) {
 		LessonLearned lesson = ModelLessonsLearned.displayedLessons.findByID(id);
 		if (lesson != null) ViewLessonsLearned.listView_Lessons.getSelectionModel().select(lesson);
 	}
 
+	/** Displays a status or error message using the matching style class.
+	 *
+	 * @param message the message to display
+	 * @param error true for an error style, false for success
+	 */
 	private static void showMessage(String message, boolean error) {
 		ViewLessonsLearned.label_Message.setText(message);
 		ViewLessonsLearned.label_Message.getStyleClass().removeAll("error-text", "success-text");

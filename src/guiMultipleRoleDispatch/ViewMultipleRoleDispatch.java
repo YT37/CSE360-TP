@@ -56,6 +56,7 @@ public class ViewMultipleRoleDispatch {
 	// GUI Area 2: This area consists of a label to ask the user what roles to place, a ComboBox 
 	// so the user can select the role, and a button to perform that role.
 	private static Label label_WhichRole = new Label("Which role do you want to use?");
+	/** Selects the role to use. */
 	protected static ComboBox <String> combobox_SelectRole = new ComboBox <String>();
 	private static Button button_PerformRole = new Button("Continue");		
 	private static Region panel_Role = new Region();	// The panel that groups these widgets
@@ -79,8 +80,10 @@ public class ViewMultipleRoleDispatch {
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;
 
+	/** Stage that displays the page. */
 	protected static Stage theStage;			// The Stage that JavaFX has established for us
 	private static Pane theRootPane;			// The Pane that holds all the GUI widgets 
+	/** Currently signed-in user. */
 	protected static User theUser;				// The current user of the application
 
 	private static Scene theMultipleRoleDispatchScene = null;	
@@ -92,6 +95,11 @@ public class ViewMultipleRoleDispatch {
 
 	 */
 
+	/** Displays the role-selection page.
+	 *
+	 * @param ps the stage that displays the page
+	 * @param user the signed-in user who has multiple roles
+	 */
 	public static void displayMultipleRoleDispatch(Stage ps, User user) {
 		
 		// Establish the references to the GUI and the current user

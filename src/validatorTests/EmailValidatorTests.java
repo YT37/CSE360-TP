@@ -18,6 +18,9 @@ import validators.EmailAddressRecognizer;
  * appear inside a domain label.</p>
  */
 public class EmailValidatorTests {
+	/** Creates the test runner. */
+	public EmailValidatorTests() { }
+
 	static int numPassed = 0;
 	static int numFailed = 0;
 

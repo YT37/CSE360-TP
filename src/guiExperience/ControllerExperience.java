@@ -15,7 +15,11 @@ import validators.LessonLearnedValidator;
 /** R8: handles creation, viewing, and deletion actions for one lesson's experience records; the
  * database repeats validation and ownership checks so this controller cannot bypass them. */
 public class ControllerExperience {
+	/** Guards list selection callbacks while the ListView is being rebuilt. */
 	private static boolean rebuildingList;
+
+	/** Creates the controller; all actions are invoked statically by the view. */
+	public ControllerExperience() { }
 
 	/** R8/R12: loads only the signed-in Contributor's records for the selected lesson. */
 	protected static void refreshList() {
@@ -28,6 +32,10 @@ public class ControllerExperience {
 			showMessage(ViewExperience.theDatabase.getLastExperienceError(), true);
 	}
 
+	/** R8: loads a selected experience record into the form.
+	 *
+	 * @param experience the selected record, or null when the selection was cleared
+	 */
 	protected static void performSelect(ExperienceRecord experience) {
 		if (experience == null || rebuildingList) return;
 		ModelExperience.selectedExperience = experience;
@@ -41,6 +49,7 @@ public class ControllerExperience {
 		showMessage("Experience #" + experience.getExperienceID() + " selected.", false);
 	}
 
+	/** Clears the form so the Contributor can enter a new experience record. */
 	protected static void performNew() {
 		ModelExperience.selectedExperience = null;
 		ViewExperience.listView_Experiences.getSelectionModel().clearSelection();
@@ -55,6 +64,7 @@ public class ControllerExperience {
 		showMessage("Enter the experience details and team-member effort.", false);
 	}
 
+	/** Adds or replaces one team member's effort entry in the form. */
 	protected static void performAddEffort() {
 		String member = ViewExperience.text_TeamMember.getText().trim();
 		if (member.isEmpty()) {
@@ -79,6 +89,7 @@ public class ControllerExperience {
 		showMessage("Effort saved for " + member + ".", false);
 	}
 
+	/** Removes the effort entry currently selected in the effort list. */
 	protected static void performRemoveEffort() {
 		int selectedIndex = ViewExperience.listView_Efforts.getSelectionModel().getSelectedIndex();
 		if (selectedIndex < 0) {
@@ -143,17 +154,21 @@ public class ControllerExperience {
 		showMessage("Experience record was deleted.", false);
 	}
 
+	/** Returns to the Lessons Learned page. */
 	protected static void performReturn() {
 		guiLessonsLearned.ViewLessonsLearned.displayLessonsLearned(ViewExperience.theStage,
 				ViewExperience.theUser);
 	}
 
+	/** Logs out and returns to the login page. */
 	protected static void performLogout() {
 		guiUserLogin.ViewUserLogin.displayUserLogin(ViewExperience.theStage);
 	}
 
+	/** Exits the application. */
 	protected static void performQuit() { System.exit(0); }
 
+	/** Rebuilds the displayed effort entries from the model's map. */
 	private static void refreshEffortList() {
 		List<String> entries = new ArrayList<>();
 		for (Map.Entry<String, Double> effort : ModelExperience.effortHoursByMember.entrySet())
@@ -161,6 +176,10 @@ public class ControllerExperience {
 		ViewExperience.listView_Efforts.getItems().setAll(FXCollections.observableArrayList(entries));
 	}
 
+	/** Selects a persisted experience record in the list by ID.
+	 *
+	 * @param experienceID ID of the record to select
+	 */
 	private static void select(int experienceID) {
 		for (ExperienceRecord experience : ModelExperience.experiences) {
 			if (experience.getExperienceID() == experienceID) {
@@ -170,6 +189,11 @@ public class ControllerExperience {
 		}
 	}
 
+	/** Displays a status or error message using the matching style class.
+	 *
+	 * @param message the message to display
+	 * @param error true for an error style, false for success
+	 */
 	private static void showMessage(String message, boolean error) {
 		ViewExperience.label_Message.setText(message);
 		ViewExperience.label_Message.getStyleClass().removeAll("error-text", "success-text");

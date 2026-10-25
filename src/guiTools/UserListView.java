@@ -30,6 +30,9 @@ import javafx.stage.Stage;
  */
 public class UserListView {
 
+	/** Creates the utility view; its API is static. */
+	public UserListView() { }
+
 	/**********
 	 * <p> Title: UserRow Class. </p>
 	 *
@@ -57,16 +60,28 @@ public class UserListView {
 			this.username = username; this.name = name; this.email = email; this.roles = roles;
 		}
 
-		/** @return the account username */
+		/** Returns the account username.
+		 *
+		 * @return the account username
+		 */
 		public String getUsername() { return username; }
 
-		/** @return the user's first and last name */
+		/** Returns the user's first and last name.
+		 *
+		 * @return the user's full name
+		 */
 		public String getName() { return name; }
 
-		/** @return the user's email address */
+		/** Returns the user's email address.
+		 *
+		 * @return the email address
+		 */
 		public String getEmail() { return email; }
 
-		/** @return the roles this user plays */
+		/** Returns the roles this user plays.
+		 *
+		 * @return the user's roles
+		 */
 		public String getRoles() { return roles; }
 	}
 

@@ -13,6 +13,9 @@ import entityClasses.LessonLearned;
  * unsupported field does not leave a false lock behind).</p>
  */
 public class LessonLearnedTests {
+	/** Creates the test runner. */
+	public LessonLearnedTests() { }
+
 	private static int passed;
 	private static int failed;
 	private static int testCaseNumber;

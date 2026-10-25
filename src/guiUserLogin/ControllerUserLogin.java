@@ -63,7 +63,8 @@ public class ControllerUserLogin {
 	 * 
 	 * The method reaches batch to the view page and to fetch the information needed rather than
 	 * passing that information as parameters.
-	 * 
+	 *
+	 * @param ts the stage that displays the next page
 	 */	
 	protected static void doLogin(Stage ts) {
 		theStage = ts;

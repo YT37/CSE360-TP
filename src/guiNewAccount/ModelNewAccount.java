@@ -16,4 +16,6 @@ package guiNewAccount;
  */
 public class ModelNewAccount {
 
+	/** Creates the placeholder model. */
+	public ModelNewAccount() { }
 }

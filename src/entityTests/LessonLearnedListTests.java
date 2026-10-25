@@ -16,6 +16,9 @@ import entityClasses.LessonLearnedList;
  * list.</p>
  */
 public class LessonLearnedListTests {
+	/** Creates the test runner. */
+	public LessonLearnedListTests() { }
+
 	private static int passed;
 	private static int failed;
 	private static int testCaseNumber;

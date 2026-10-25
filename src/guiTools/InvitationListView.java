@@ -28,6 +28,9 @@ import javafx.stage.Stage;
  */
 public class InvitationListView {
 
+	/** Creates the utility view; its API is static. */
+	public InvitationListView() { }
+
 	/**********
 	 * <p> Title: InvitationRow Class. </p>
 	 *
@@ -55,16 +58,28 @@ public class InvitationListView {
 			this.code = code; this.email = email; this.role = role; this.deadline = deadline;
 		}
 
-		/** @return the invitation code */
+		/** Returns the invitation code.
+		 *
+		 * @return the invitation code
+		 */
 		public String getCode() { return code; }
 
-		/** @return the email address the invitation was sent to */
+		/** Returns the email address the invitation was sent to.
+		 *
+		 * @return the invitation email address
+		 */
 		public String getEmail() { return email; }
 
-		/** @return the role the invitation grants */
+		/** Returns the role the invitation grants.
+		 *
+		 * @return the granted role
+		 */
 		public String getRole() { return role; }
 
-		/** @return when the invitation expires */
+		/** Returns when the invitation expires.
+		 *
+		 * @return the expiration deadline
+		 */
 		public String getDeadline() { return deadline; }
 	}
 

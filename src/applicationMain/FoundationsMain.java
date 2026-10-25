@@ -60,25 +60,26 @@ import javafx.scene.control.Alert.AlertType;
 
 public class FoundationsMain extends Application {
 	
+	/** Creates the JavaFX application instance. */
+	public FoundationsMain() { }
+
 	/*-*******************************************************************************************
 
 	Attributes
 	
 	**********************************************************************************************/
 	
-	// These are the application values required by the user interface.  All the other classes
-	// access these constants to provide a uniform window size.	
+	/** Standard application window width shared by every page. */
 	public final static double WINDOW_WIDTH = 800;
+	/** Standard application window height shared by every page. */
 	public final static double WINDOW_HEIGHT = 600;
 
-	// These attributes establish the database and the fixed reference to it for the rest of the
-	// application so we do not need to keep passing the reference in parameters to the rest of the
-	// system for other methods that need it can access it.
+	/** Shared application database used by every page. */
 	public static Database database = new Database();
     private Alert databaseInUse = new Alert(AlertType.INFORMATION);
 
-	public static int activeHomePage = 0;		// Which role's home page is currently active?
-												// Role 0 is the admin role number
+	/** Role number of the home page currently displayed; 0 means no home page yet (Admin: 1, Contributor: 2, Viewer: 3). */
+	public static int activeHomePage = 0;
 	@Override
 	public void start(Stage theStage) {
 		

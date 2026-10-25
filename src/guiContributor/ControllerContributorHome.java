@@ -49,6 +49,7 @@ public class ControllerContributorHome {
 	protected static void performUpdate () {
 		guiUserUpdate.ViewUserUpdate.displayUserUpdate(ViewContributorHome.theStage, ViewContributorHome.theUser);
 	}	
+	/** Opens the Contributor's Lessons Learned page. */
 	protected static void performLessonsLearned() {
 		guiLessonsLearned.ViewLessonsLearned.displayLessonsLearned(ViewContributorHome.theStage,
 				ViewContributorHome.theUser);

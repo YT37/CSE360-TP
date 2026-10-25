@@ -17,4 +17,6 @@ package guiFirstAdmin;
 
 public class ModelFirstAdmin {
 
+	/** Creates the placeholder model. */
+	public ModelFirstAdmin() { }
 }

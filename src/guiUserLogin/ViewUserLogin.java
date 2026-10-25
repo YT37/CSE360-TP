@@ -45,12 +45,16 @@ public class ViewUserLogin {
 	// This set is for all subsequent starts of the system
 	private static Label label_OperationalStartTitle = new Label("Sign in");
 	private static Label label_LogInInsrtuctions = new Label("Enter your username and password.");
+	/** Alert shown for invalid username or password input. */
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
+	/** Alert shown for an invalid invitation code. */
 	protected static Alert alertInvitationCodeError = new Alert(AlertType.INFORMATION);
 
 
 	//	private User user;
+	/** Username input. */
 	protected static TextField text_Username = new TextField();
+	/** Password input. */
 	protected static PasswordField text_Password = new PasswordField();
 	private static Button button_Login = new Button("Log In");	
 
@@ -66,6 +70,7 @@ public class ViewUserLogin {
 
 	private static Stage theStage;	
 	private static Pane theRootPane;
+	/** Scene that displays the login page. */
 	public static Scene theUserLoginScene = null;	
 
 
@@ -78,6 +83,10 @@ public class ViewUserLogin {
 
 	 *********************************************************************************************/
 
+	/** Displays the login page.
+	 *
+	 * @param ps the stage that displays the page
+	 */
 	public static void displayUserLogin(Stage ps) {
 		
 		// Establish the references to the GUI. There is no current user yet.

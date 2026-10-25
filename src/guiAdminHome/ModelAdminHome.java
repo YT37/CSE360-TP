@@ -17,4 +17,6 @@ package guiAdminHome;
 
 public class ModelAdminHome {
 
+	/** Creates the placeholder model. */
+	public ModelAdminHome() { }
 }

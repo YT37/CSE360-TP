@@ -23,6 +23,9 @@ import validators.PasswordValidator;
  */
 public class PasswordEntryDialog {
 
+	/** Creates the dialog; its API is static. */
+	public PasswordEntryDialog() { }
+
 	/**********
 	 * <p> Method: Optional&lt;String&gt; showAndWait(Window owner, String title, String headerText)
 	 * </p>

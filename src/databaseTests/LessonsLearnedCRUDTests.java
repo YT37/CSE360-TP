@@ -32,6 +32,9 @@ import entityClasses.User;
  * so an automated runner also detects it.</p>
  */
 public class LessonsLearnedCRUDTests {
+	/** Creates the test runner. */
+	public LessonsLearnedCRUDTests() { }
+
 	private static int passed;
 	private static int failed;
 	private static int testCaseNumber;

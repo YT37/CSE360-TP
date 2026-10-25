@@ -49,27 +49,37 @@ public class ViewNewAccount {
 	// invitation to the potential user.
 	private static Label label_ApplicationTitle = 
 			new Label("Lessons Learned System");
-    protected static Label label_NewUserCreation = new Label("Create your account");
-    protected static Label label_NewUserLine = new Label("Please enter a username and a password.");
-    protected static TextField text_Username = new TextField();
-    protected static PasswordField text_Password1 = new PasswordField();
-    protected static PasswordField text_Password2 = new PasswordField();
-    protected static Button button_UserSetup = new Button("Create Account");
+    /** Page heading label. */
+	protected static Label label_NewUserCreation = new Label("Create your account");
+    /** Instruction for the account form. */
+	protected static Label label_NewUserLine = new Label("Please enter a username and a password.");
+    /** New username input. */
+	protected static TextField text_Username = new TextField();
+    /** New password input. */
+	protected static PasswordField text_Password1 = new PasswordField();
+    /** Password confirmation input. */
+	protected static PasswordField text_Password2 = new PasswordField();
+    /** Creates the new account. */
+	protected static Button button_UserSetup = new Button("Create Account");
 
 	// The panel that groups the account fields and the password requirements
 	private static Region panel_Account = new Region();
-    protected static TextField text_Invitation = new TextField();
+    /** Invitation code input. */
+	protected static TextField text_Invitation = new TextField();
 
 	// This alert is used should the invitation code be invalid
-    protected static Alert alertInvitationCodeIsInvalid = new Alert(AlertType.INFORMATION);
+    /** Alert shown for an invalid invitation code. */
+	protected static Alert alertInvitationCodeIsInvalid = new Alert(AlertType.INFORMATION);
 
 	// This alert is used should the user enter two passwords that do not match
+	/** Alert shown for invalid account credentials. */
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
 
 	// Password status panel for live requirement feedback, shown from the start
 	private static PasswordStatusPanel passwordStatus = new PasswordStatusPanel(true, true);
 
-    protected static Button button_Quit = new Button("Quit");
+    /** Exits the application. */
+	protected static Button button_Quit = new Button("Quit");
 
 	// These attributes are used to configure the page and populate it with this user's information
 	private static ViewNewAccount theView;		// Is instantiation of the class needed?
@@ -77,14 +87,20 @@ public class ViewNewAccount {
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;		
 
+	/** Stage that displays the page. */
 	protected static Stage theStage;			// The Stage that JavaFX has established for us
 	private static Pane theRootPane;			// The Pane that holds all the GUI widgets 
+	/** User created by the account form. */
 	protected static User theUser;				// The current logged in User
    
-    protected static String theInvitationCode;	// The invitation code links to an email address
+    /** Invitation code entered by the new user. */
+	protected static String theInvitationCode;	// The invitation code links to an email address
     											// and a role for this user
-    protected static String emailAddress;		// Established here for use by the controller
-    protected static String theRole;			// Established here for use by the controller
+    /** Email address associated with the invitation. */
+	protected static String emailAddress;		// Established here for use by the controller
+    /** Role granted by the invitation. */
+	protected static String theRole;			// Established here for use by the controller
+	/** Scene that displays the new-account page. */
 	public static Scene theNewAccountScene = null;	// Access to the User Update page's GUI Widgets
 	
 

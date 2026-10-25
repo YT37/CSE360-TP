@@ -17,4 +17,6 @@ package guiMultipleRoleDispatch;
 
 public class ModelMultipleRoleDispatch {
 
+	/** Creates the placeholder model. */
+	public ModelMultipleRoleDispatch() { }
 }

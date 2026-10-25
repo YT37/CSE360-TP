@@ -17,4 +17,6 @@ package guiAddRemoveRoles;
 
 public class ModelAddRemoveRoles {
 
+	/** Creates the placeholder model. */
+	public ModelAddRemoveRoles() { }
 }

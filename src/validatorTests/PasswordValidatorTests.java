@@ -17,6 +17,9 @@ import validators.PasswordValidator;
  * lowercase letter, a digit, and a special character.</p>
  */
 public class PasswordValidatorTests {
+	/** Creates the test runner. */
+	public PasswordValidatorTests() { }
+
 	static int numPassed = 0;
 	static int numFailed = 0;
 

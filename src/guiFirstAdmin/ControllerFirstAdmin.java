@@ -43,6 +43,7 @@ public class ControllerFirstAdmin {
 	private static String adminUsername = "";
 	private static String adminPassword1 = "";
 	private static String adminPassword2 = "";		
+	/** Shared application database. */
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;		
 
 	/*-********************************************************************************************
@@ -101,7 +102,9 @@ public class ControllerFirstAdmin {
 	 * <p> Description: This method is called when the user presses the button to set up the Admin
 	 * account.  It start by trying to establish a new user and placing that user into the
 	 * database.  If that is successful, we proceed to the UserUpdate page.</p>
-	 * 
+	 *
+	 * @param ps the stage that displays the next page
+	 * @param r the role number to assign to the first Admin
 	 */
 	protected static void doSetupAdmin(Stage ps, int r) {
 		

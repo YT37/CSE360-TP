@@ -46,29 +46,40 @@ public class ViewContributorHome {
 	
 	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
 	// and a button to allow this user to update the account settings
+	/** Page title label. */
 	protected static Label label_PageTitle = new Label();
+	/** Label showing the signed-in user. */
 	protected static Label label_UserDetails = new Label();
+	/** Opens the account update page. */
 	protected static Button button_UpdateThisUser = new Button("Account Update");
+	/** Opens the Lessons Learned page. */
 	protected static Button button_LessonsLearned = new Button("Lessons Learned");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
+	/** Separator between page areas. */
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 
 	// GUI Area 2: A panel that welcomes the user by name and describes what this role will be
 	// able to do.  In later phases, this area will hold the widgets the user needs to play the
 	// Contributor role.
+	/** Panel that groups the welcome content. */
 	protected static Region panel_Welcome = new Region();
+	/** Personalized welcome label. */
 	protected static Label label_Welcome = new Label();
+	/** Description of what this role can do. */
 	protected static Label label_RoleDescription = new Label(
 			"Contributors will be able to create and share content with the other members of the system.");
 	
 	
 	// This is a separator and it is used to partition the GUI for various tasks
+	/** Separator above the navigation area. */
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
 	
 	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
 	// logging out.
+	/** Logs out the current user. */
 	protected static Button button_Logout = new Button("Logout");
+	/** Exits the application. */
 	protected static Button button_Quit = new Button("Quit");
 
 	// This is the end of the GUI objects for the page.
@@ -80,12 +91,16 @@ public class ViewContributorHome {
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;
 
+	/** Stage that displays the page. */
 	protected static Stage theStage;			// The Stage that JavaFX has established for us	
+	/** Root pane containing the page widgets. */
 	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets
+	/** Currently signed-in user. */
 	protected static User theUser;				// The current logged in User
 	
 
 	private static Scene theViewContributorHomeScene;	// The shared Scene each invocation populates
+	/** Role number for this home page. */
 	protected static final int theRole = 2;		// Admin: 1; Contributor: 2; Viewer: 3
 
 	/*-*******************************************************************************************

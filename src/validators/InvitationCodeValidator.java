@@ -12,8 +12,11 @@ package validators;
  */
 public class InvitationCodeValidator {
 
-	public static final int INVITATION_CODE_LENGTH = 6;	// Invitation codes are always this long,
-														// so this is also the maximum
+	/** Required invitation-code length, in characters. */
+	public static final int INVITATION_CODE_LENGTH = 6;
+
+	/** Creates the validator; its API is static. */
+	public InvitationCodeValidator() { }
 
 	/**********
 	 * <p> Method: String checkInvitationCode(String input) </p>

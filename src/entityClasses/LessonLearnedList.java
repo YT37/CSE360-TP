@@ -10,23 +10,47 @@ import java.util.List;
  * list is returned for searches so the complete database result remains available.</p>
  */
 public class LessonLearnedList {
+	/** Backing list of lessons; order is preserved. */
 	private final ArrayList<LessonLearned> lessons = new ArrayList<>();
 
-	/** Adds a nonnull lesson to the list. */
+	/** Creates an empty lesson list. */
+	public LessonLearnedList() { }
+
+	/** Adds a nonnull lesson to the list.
+	 *
+	 * @param lesson the lesson to add; null is ignored
+	 */
 	public void addLesson(LessonLearned lesson) {
 		if (lesson != null) lessons.add(lesson);
 	}
 
+	/** Returns the number of lessons in this list.
+	 *
+	 * @return the list size
+	 */
 	public int size() { return lessons.size(); }
+
+	/** Returns whether this list contains no lessons.
+	 *
+	 * @return true when the list is empty
+	 */
 	public boolean isEmpty() { return lessons.isEmpty(); }
 
-	/** Returns a lesson by position, or null for an invalid position. */
+	/** Returns a lesson by position, or null for an invalid position.
+	 *
+	 * @param index zero-based position in the list
+	 * @return the lesson at index, or null when index is out of range
+	 */
 	public LessonLearned getLesson(int index) {
 		if (index < 0 || index >= lessons.size()) return null;
 		return lessons.get(index);
 	}
 
-	/** Finds a lesson by its persistent ID, or returns null when the ID is not in this list. */
+	/** Finds a lesson by its persistent ID, or returns null when the ID is not in this list.
+	 *
+	 * @param lessonID persistent ID to find
+	 * @return the matching lesson, or null when not present
+	 */
 	public LessonLearned findByID(int lessonID) {
 		int index = indexOfID(lessonID);
 		return index < 0 ? null : lessons.get(index);
@@ -58,20 +82,31 @@ public class LessonLearnedList {
 		return true;
 	}
 
-	/** Shared ID lookup keeps find, update, and remove aligned on the same matching rule. */
+	/** Shared ID lookup keeps find, update, and remove aligned on the same matching rule.
+	 *
+	 * @param lessonID persistent ID to find
+	 * @return the list position, or -1 when not present
+	 */
 	private int indexOfID(int lessonID) {
 		for (int i = 0; i < lessons.size(); i++)
 			if (lessons.get(i).getLessonID() == lessonID) return i;
 		return -1;
 	}
 
-	/** Returns a read-only view so callers cannot bypass list ownership. */
+	/** Returns a read-only view so callers cannot bypass list ownership.
+	 *
+	 * @return an unmodifiable list of all lessons
+	 */
 	public List<LessonLearned> getAllLessons() {
 		return Collections.unmodifiableList(lessons);
 	}
 
 	/** R7 and R13: builds a new subset containing only lessons matching the keyword, including an
-	 * empty subset when nothing matches. */
+	 * empty subset when nothing matches.
+	 *
+	 * @param searchText keyword to search for
+	 * @return a new list containing only matching lessons
+	 */
 	public LessonLearnedList getSubsetByKeyword(String searchText) {
 		LessonLearnedList subset = new LessonLearnedList();
 		for (LessonLearned lesson : lessons)

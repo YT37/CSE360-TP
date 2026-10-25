@@ -1,6 +1,7 @@
 package validators;
 
 
+/** Finite-state recognizer for email-address input used by the account forms. */
 public class EmailAddressRecognizer {
 	/**
 	 * <p> Title: FSM-translated EmailAddressRecognizer. </p>
@@ -30,9 +31,12 @@ public class EmailAddressRecognizer {
 	 * 
 	 */
 
-	public static String emailAddressErrorMessage = "";	// The error message text
-	public static String emailAddressInput = "";		// The input being processed
-	public static int emailAddressIndexofError = -1;	// The index where the error was located
+	/** Error message produced by the most recent evaluation. */
+	public static String emailAddressErrorMessage = "";
+	/** Input processed by the most recent evaluation. */
+	public static String emailAddressInput = "";
+	/** Index where the most recent error was located, or -1. */
+	public static int emailAddressIndexofError = -1;
 	private static int state = 0;						// The current state value
 	private static int nextState = 0;					// The next state value
 	private static boolean finalState = false;			// Is this state a final state?
@@ -42,6 +46,9 @@ public class EmailAddressRecognizer {
 	private static boolean running;						// The flag that specifies if the FSM is 
 														// running
 	private static int domainPartCounter = 0;			// A domain name may not exceed 63 characters
+
+	/** Creates the recognizer; its API is static. */
+	public EmailAddressRecognizer() { }
 
 	/**********
 	 * This private method display the input line and then on a line under it displays an up arrow

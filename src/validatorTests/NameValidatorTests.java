@@ -15,6 +15,9 @@ import validators.NameValidator;
  * <p> Rules tested: a name may be no more than 32 characters long.</p>
  */
 public class NameValidatorTests {
+	/** Creates the test runner. */
+	public NameValidatorTests() { }
+
 	static int numPassed = 0;
 	static int numFailed = 0;
 

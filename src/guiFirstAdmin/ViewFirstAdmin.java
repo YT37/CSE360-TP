@@ -58,9 +58,13 @@ public class ViewFirstAdmin {
 			new Label("You are the first user, so this account will be an administrator. " + 
 					"Choose a username and a password.");
 	
+	/** Label shown when the two passwords differ. */
 	protected static Label label_PasswordsDoNotMatch = new Label();
+	/** Admin username input. */
 	protected static TextField text_AdminUsername = new TextField();
+	/** First admin password input. */
 	protected static PasswordField text_AdminPassword1 = new PasswordField();
+	/** Password confirmation input. */
 	protected static PasswordField text_AdminPassword2 = new PasswordField();
 	private static Button button_AdminSetup = new Button("Create Admin Account");
 
@@ -68,6 +72,7 @@ public class ViewFirstAdmin {
 	private static Region panel_Account = new Region();
 
 	// This alert is used should the user enter two passwords that do not match
+	/** Alert shown for invalid admin credentials. */
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
 
 	// Password status panel for live requirement feedback, shown from the start
@@ -77,6 +82,7 @@ public class ViewFirstAdmin {
 	private static Button button_Quit = new Button("Quit");
 
 	// These attributes are used to configure the page and populate it with this user's information
+	/** Stage that displays the page. */
 	protected static Stage theStage;	
 	private static Pane theRootPane;
 	private static Scene theFirstAdminScene = null;

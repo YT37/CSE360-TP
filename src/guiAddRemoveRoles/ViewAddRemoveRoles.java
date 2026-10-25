@@ -47,11 +47,15 @@ public class ViewAddRemoveRoles {
 	
 	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
 	// and a button to allow this user to update the account settings.
+	/** Page title label. */
 	protected static Label label_PageTitle = new Label();
+	/** Label showing the signed-in user. */
 	protected static Label label_UserDetails = new Label();
+	/** Opens the account update page. */
 	protected static Button button_UpdateThisUser = new Button("Account Update");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
+	/** Separator between page areas. */
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 	
 	// When no user has been selected, only Area 2a is shown.  If a user in the ComboBox in Area 1a
@@ -60,30 +64,45 @@ public class ViewAddRemoveRoles {
 	// Area 2a: This allows the admin to select a user of the system as the first step in adding or
 	// removing a role.  The act of selecting a user causes the change is the GUI.  The Admin does
 	// not need to push a button to make this happen.
+	/** Label for the user-selection combo box. */
 	protected static Label label_SelectUser = new Label("Select a user to be updated:");
+	/** Selects the user whose roles are changed. */
 	protected static ComboBox <String> combobox_SelectUser = new ComboBox <String>();
 	
 	// Area 2b: When a user has been selected these widgets are shown and can be used
+	/** Roles available to add. */
 	protected static List<String> addList = new ArrayList<String>();
+	/** Adds the selected role. */
 	protected static Button button_AddRole = new Button("Add This Role");
 	private static final double CONTROL_HEIGHT = 38;
+	/** Roles available to remove. */
 	protected static List<String> removeList = new ArrayList<String>();
+	/** Removes the selected role. */
 	protected static Button button_RemoveRole = new Button("Remove This Role");
+	/** Label for the current-roles list. */
 	protected static Label label_CurrentRoles = new Label("This user's current roles:");
+	/** Label for the role-to-add combo box. */
 	protected static Label label_SelectRoleToBeAdded = new Label("Select a role to be added:");
+	/** Selects a role to add. */
 	protected static ComboBox <String> combobox_SelectRoleToAdd = new ComboBox <String>();	
+	/** Label for the role-to-remove combo box. */
 	protected static Label label_SelectRoleToBeRemoved = new Label("Select a role to be removed:");
+	/** Selects a role to remove. */
 	protected static ComboBox <String> combobox_SelectRoleToRemove = new ComboBox <String>();
 		
 	// This is a separator and it is used to partition the GUI for various tasks
+	/** Separator above the navigation area. */
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
 	
 	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application, logging
 	// out, and on other pages a return is provided so the user can return to a previous page when
 	// the actions on that page are complete.  Be advised that in most cases in this code, the 
 	// return is to a fixed page as opposed to the actual page that invoked the pages.
+	/** Returns to the previous page. */
 	protected static Button button_Return = new Button("Return");
+	/** Logs out the current user. */
 	protected static Button button_Logout = new Button("Logout");
+	/** Exits the application. */
 	protected static Button button_Quit = new Button("Quit");
 
 	// This is the end of the GUI objects for the page.
@@ -94,13 +113,20 @@ public class ViewAddRemoveRoles {
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;		
 
+	/** Stage that displays the page. */
 	protected static Stage theStage;			// The Stage that JavaFX has established for us
+	/** Root pane containing the page widgets. */
 	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets 
+	/** Currently signed-in user. */
 	protected static User theUser;				// The current user of the application
 	
+	/** Scene that displays the role-management page. */
 	public static Scene theAddRemoveRolesScene = null;	// The Scene each invocation populates
+	/** Username of the user whose roles are being changed. */
 	protected static String theSelectedUser = "";	// The user whose roles are being updated
+	/** Role selected to add. */
 	protected static String theAddRole = "";		// The role being added
+	/** Role selected to remove. */
 	protected static String theRemoveRole = "";		// The roles being removed
 
 
